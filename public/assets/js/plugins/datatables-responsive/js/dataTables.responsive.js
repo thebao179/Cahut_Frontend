@@ -162,7 +162,7 @@ $.extend( Responsive.prototype, {
 		} ) );
 
 		// DataTables doesn't currently trigger an event when a row is added, so
-		// we need to hook into its private API to enforce the hidden rows when
+		// we need to hook into its private api to enforce the hidden rows when
 		// new data is added
 		dtPrivateSettings.oApi._fnCallbackReg( dtPrivateSettings, 'aoRowCreatedCallback', function (tr, data, idx) {
 			if ( $.inArray( false, that.s.current ) !== -1 ) {
@@ -622,7 +622,7 @@ $.extend( Responsive.prototype, {
 	/**
 	 * Show the details for the child row
 	 *
-	 * @param  {DataTables.Api} row    API instance for the row
+	 * @param  {DataTables.Api} row    api instance for the row
 	 * @param  {boolean}        update Update flag
 	 * @private
 	 */
@@ -1410,7 +1410,7 @@ Responsive.defaults = {
 
 
 /*
- * API
+ * api
  */
 var Api = $.fn.dataTable.Api;
 

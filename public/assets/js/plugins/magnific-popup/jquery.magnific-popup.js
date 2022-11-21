@@ -911,7 +911,7 @@ $.fn.magnificPopup = function(options) {
 
 	var jqEl = $(this);
 
-	// We call some API method of first param is a string
+	// We call some api method of first param is a string
 	if (typeof options === "string" ) {
 
 		if(options === 'open') {

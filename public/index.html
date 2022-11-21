@@ -13,7 +13,11 @@
 
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
-    <link rel="stylesheet" id="css-main" href="assets/css/oneui.min.css">
+    <link rel="stylesheet" href="/assets/js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="/assets/js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="/assets/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css">
+
+    <link rel="stylesheet" id="css-main" href="/assets/css/oneui.min.css">
 
     <title>Realtime Learning Platform</title>
   </head>
@@ -21,11 +25,22 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
 
-    <script src="assets/js/oneui.app.min.js"></script>
+    <script src="/assets/js/oneui.app.min.js"></script>
 
-    <script src="assets/js/lib/jquery.min.js"></script>
+    <script src="/assets/js/lib/jquery.min.js"></script>
 
-    <script src="assets/js/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/assets/js/plugins/jquery-validation/jquery.validate.min.js"></script>
+
+    <script src="/assets/js/plugins/bootstrap-notify/bootstrap-notify.min.js"></script>
+
+    <script src="/assets/js/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/assets/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="/assets/js/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/assets/js/plugins/datatables-buttons/dataTables.buttons.min.js"></script>
+
+    <script>
+      One.helpersOnLoad(['jq-notify']);
+    </script>
 
   </body>
 </html>

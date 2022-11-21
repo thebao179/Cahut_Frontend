@@ -2379,8 +2379,8 @@ GenericWorker.prototype = {
     },
     /**
      * Same as `pipe` in the other direction.
-     * Using an API with `pipe(next)` is very easy.
-     * Implementing the API with the point of view of the next one registering
+     * Using an api with `pipe(next)` is very easy.
+     * Implementing the api with the point of view of the next one registering
      * a source is easier, see the ZipFileWorker.
      * @param {Worker} previous the previous worker, sending events to this one
      * @return {Worker} the current worker for chainability

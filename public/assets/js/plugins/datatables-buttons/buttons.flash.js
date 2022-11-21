@@ -594,7 +594,7 @@ var _newLine = function ( config )
  * Combine the data from the `buttons.exportData` method into a string that
  * will be used in the export file.
  *
- * @param  {DataTable.Api} dt     DataTables API instance
+ * @param  {DataTable.Api} dt     DataTables api instance
  * @param  {object}        config Button configuration
  * @return {object}               The data to export
  */
@@ -1100,7 +1100,7 @@ var excelStrings = {
 // virtually no difference in size, since the above can be easily compressed
 
 // Pattern matching for special number formats. Perhaps this should be exposed
-// via an API in future?
+// via an api in future?
 var _excelSpecials = [
 	{ match: /^\-?\d+\.\d%$/,       style: 60, fmt: function (d) { return d/100; } }, // Precent with d.p.
 	{ match: /^\-?\d+\.?\d*%$/,     style: 56, fmt: function (d) { return d/100; } }, // Percent

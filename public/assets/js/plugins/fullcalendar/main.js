@@ -2965,7 +2965,7 @@ var FullCalendar = (function (exports) {
             return this.currentDataManager.dispatch(action);
         };
         Object.defineProperty(CalendarApi.prototype, "view", {
-            get: function () { return this.getCurrentData().viewApi; } // for public API
+            get: function () { return this.getCurrentData().viewApi; } // for public api
             ,
             enumerable: false,
             configurable: true
@@ -3145,7 +3145,7 @@ var FullCalendar = (function (exports) {
                 });
             }
         };
-        // for external API
+        // for external api
         CalendarApi.prototype.getDate = function () {
             var state = this.getCurrentData();
             return state.dateEnv.toDate(state.currentDate);
@@ -3203,7 +3203,7 @@ var FullCalendar = (function (exports) {
                 triggerDateUnselect(pev, state);
             }
         };
-        // Public Events API
+        // Public Events api
         // -----------------------------------------------------------------------------------------------------------------
         CalendarApi.prototype.addEvent = function (eventInput, sourceInput) {
             if (eventInput instanceof EventApi) {
@@ -3292,7 +3292,7 @@ var FullCalendar = (function (exports) {
         CalendarApi.prototype.removeAllEvents = function () {
             this.dispatch({ type: 'REMOVE_ALL_EVENTS' });
         };
-        // Public Event Sources API
+        // Public Event Sources api
         // -----------------------------------------------------------------------------------------------------------------
         CalendarApi.prototype.getEventSources = function () {
             var state = this.getCurrentData();
@@ -5163,7 +5163,7 @@ var FullCalendar = (function (exports) {
         return ScrollResponder;
     }());
 
-    var ViewContextType = createContext({}); // for Components
+    var ViewContextType = createContext({}); // for components
     function buildViewContext(viewSpec, viewApi, viewOptions, dateProfileGenerator, dateEnv, theme, pluginHooks, dispatch, getCurrentData, emitter, calendarApi, registerInteractiveComponent, unregisterInteractiveComponent) {
         return {
             dateEnv: dateEnv,
@@ -9112,7 +9112,7 @@ var FullCalendar = (function (exports) {
         return sectionConfig.maxHeight != null || // if its possible for the height to max out, we might need scrollbars
             getSectionHasLiquidHeight(props, sectionConfig); // if the section is liquid height, it might condense enough to require scrollbars
     }
-    // TODO: ONLY use `arg`. force out internal function to use same API
+    // TODO: ONLY use `arg`. force out internal function to use same api
     function renderChunkContent(sectionConfig, chunkConfig, arg, isHeader) {
         var expandRows = arg.expandRows;
         var content = typeof chunkConfig.content === 'function' ?
@@ -9856,7 +9856,7 @@ var FullCalendar = (function (exports) {
             return _this;
         }
         Object.defineProperty(Calendar.prototype, "view", {
-            get: function () { return this.currentData.viewApi; } // for public API
+            get: function () { return this.currentData.viewApi; } // for public api
             ,
             enumerable: false,
             configurable: true
@@ -10432,7 +10432,7 @@ var FullCalendar = (function (exports) {
         return WindowScrollGeomCache;
     }(ScrollGeomCache));
 
-    // If available we are using native "performance" API instead of "Date"
+    // If available we are using native "performance" api instead of "Date"
     // Read more about it on MDN:
     // https://developer.mozilla.org/en-US/docs/Web/API/Performance
     var getTime = typeof performance === 'function' ? performance.now : Date.now;
@@ -14659,7 +14659,7 @@ var FullCalendar = (function (exports) {
                 requestJson('GET', url, requestParams_1, function (body, xhr) {
                     if (body.error) {
                         onFailure({
-                            message: 'Google Calendar API: ' + body.error.message,
+                            message: 'Google Calendar api: ' + body.error.message,
                             errors: body.error.errors,
                             xhr: xhr,
                         });

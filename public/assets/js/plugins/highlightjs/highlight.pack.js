@@ -37,7 +37,7 @@
       languagePrefixRe = /\blang(?:uage)?-([\w-]+)\b/i,
       fixMarkupRe      = /((^(<[^>]+>|\t|)+|(?:\n)))/gm;
 
-  // The object will be assigned by the build tool. It used to synchronize API
+  // The object will be assigned by the build tool. It used to synchronize api
   // of external language files with minified version of the highlight.js library.
   var API_REPLACES;
 

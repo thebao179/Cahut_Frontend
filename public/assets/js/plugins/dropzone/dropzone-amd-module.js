@@ -9842,16 +9842,16 @@ Dropzone.discover = function () {
 }; // Some browsers support drag and drog functionality, but not correctly.
 //
 // So I created a blocklist of userAgents. Yes, yes. Browser sniffing, I know.
-// But what to do when browsers *theoretically* support an API, but crash
+// But what to do when browsers *theoretically* support an api, but crash
 // when using it.
 //
 // This is a list of regular expressions tested against navigator.userAgent
 //
-// ** It should only be used on browser that *do* support the API, but
+// ** It should only be used on browser that *do* support the api, but
 // incorrectly **
 
 
-Dropzone.blockedBrowsers = [// The mac os and windows phone version of opera 12 seems to have a problem with the File drag'n'drop API.
+Dropzone.blockedBrowsers = [// The mac os and windows phone version of opera 12 seems to have a problem with the File drag'n'drop api.
 /opera.*(Macintosh|Windows Phone).*version\/12/i]; // Checks if the browser is supported
 
 Dropzone.isBrowserSupported = function () {
@@ -9865,7 +9865,7 @@ Dropzone.isBrowserSupported = function () {
         // Since this has been renamed, this makes sure we don't break older
         // configuration.
         Dropzone.blockedBrowsers = Dropzone.blacklistedBrowsers;
-      } // The browser supports the API, but may be blocked.
+      } // The browser supports the api, but may be blocked.
 
 
       var _iterator22 = dropzone_createForOfIteratorHelper(Dropzone.blockedBrowsers, true),

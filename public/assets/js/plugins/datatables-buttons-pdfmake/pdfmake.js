@@ -34228,7 +34228,7 @@ if (!set || !clear) {
     defer = function (id) {
       process.nextTick(runner(id));
     };
-  // Sphere (JS game engine) Dispatch API
+  // Sphere (JS game engine) Dispatch api
   } else if (Dispatch && Dispatch.now) {
     defer = function (id) {
       Dispatch.now(runner(id));
@@ -42924,7 +42924,7 @@ iconv.encodings = null;
 iconv.defaultCharUnicode = '�';
 iconv.defaultCharSingleByte = '?';
 
-// Public API.
+// Public api.
 iconv.encode = function encode(str, encoding, options) {
     str = "" + (str || ""); // Ensure string.
 
@@ -43042,9 +43042,9 @@ iconv.getDecoder = function getDecoder(encoding, options) {
     return decoder;
 }
 
-// Streaming API
-// NOTE: Streaming API naturally depends on 'stream' module from Node.js. Unfortunately in browser environments this module can add
-// up to 100Kb to the output bundle. To avoid unnecessary code bloat, we don't enable Streaming API in browser by default.
+// Streaming api
+// NOTE: Streaming api naturally depends on 'stream' module from Node.js. Unfortunately in browser environments this module can add
+// up to 100Kb to the output bundle. To avoid unnecessary code bloat, we don't enable Streaming api in browser by default.
 // If you would like to enable it explicitly, please add the following code to your app:
 // > iconv.enableStreamingAPI(require('stream'));
 iconv.enableStreamingAPI = function enableStreamingAPI(stream_module) {
@@ -43054,11 +43054,11 @@ iconv.enableStreamingAPI = function enableStreamingAPI(stream_module) {
     // Dependency-inject stream module to create IconvLite stream classes.
     var streams = __webpack_require__(8044)(stream_module);
 
-    // Not public API yet, but expose the stream classes.
+    // Not public api yet, but expose the stream classes.
     iconv.IconvLiteEncoderStream = streams.IconvLiteEncoderStream;
     iconv.IconvLiteDecoderStream = streams.IconvLiteDecoderStream;
 
-    // Streaming API.
+    // Streaming api.
     iconv.encodeStream = function encodeStream(encoding, options) {
         return new iconv.IconvLiteEncoderStream(iconv.getEncoder(encoding, options), options);
     }
@@ -43070,7 +43070,7 @@ iconv.enableStreamingAPI = function enableStreamingAPI(stream_module) {
     iconv.supportsStreams = true;
 }
 
-// Enable Streaming API automatically if 'stream' module is available and non-empty (the majority of environments).
+// Enable Streaming api automatically if 'stream' module is available and non-empty (the majority of environments).
 var stream_module;
 try {
     stream_module = __webpack_require__(5832);
@@ -43082,7 +43082,7 @@ if (stream_module && stream_module.Transform) {
 } else {
     // In rare cases where 'stream' module is not available by default, throw a helpful exception.
     iconv.encodeStream = iconv.decodeStream = function() {
-        throw new Error("iconv-lite Streaming API is not enabled. Use iconv.enableStreamingAPI(require('stream')); to enable it.");
+        throw new Error("iconv-lite Streaming api is not enabled. Use iconv.enableStreamingAPI(require('stream')); to enable it.");
     };
 }
 
@@ -53745,7 +53745,7 @@ function updateReadableListening(self) {
 function nReadingNextTick(self) {
   debug('readable nexttick read 0');
   self.read(0);
-} // pause() and resume() are remnants of the legacy readable stream API
+} // pause() and resume() are remnants of the legacy readable stream api
 // If the user uses them, then switch into old mode.
 
 
@@ -55034,7 +55034,7 @@ var ReadableStreamAsyncIteratorPrototype = Object.setPrototypeOf((_Object$setPro
 }), _defineProperty(_Object$setPrototypeO, "return", function _return() {
   var _this2 = this;
 
-  // destroy(err, cb) is a private API
+  // destroy(err, cb) is a private api
   // we can guarantee we have that here, because we control the
   // Readable class this is attached to
   return new Promise(function (resolve, reject) {
@@ -55124,7 +55124,7 @@ module.exports = createReadableStreamAsyncIterator;
 
 "use strict";
 /* provided dependency */ var process = __webpack_require__(4155);
- // undocumented cb() API, needed for core, not for public API
+ // undocumented cb() api, needed for core, not for public api
 
 function destroy(err, cb) {
   var _this = this;
@@ -69836,7 +69836,7 @@ var TTFFont = (_class$4 = /*#__PURE__*/function () {
     return font;
   };
 
-  // Standardized format plugin API
+  // Standardized format plugin api
   _proto43.getFont = function getFont(name) {
     return this.getVariation(name);
   };

@@ -95,7 +95,7 @@ var _saveAs = (function(view) {
 			}, 0);
 		}
 		, force_saveable_type = "application/octet-stream"
-		// the Blob API is fundamentally broken as there is no "downloadfinished" event to subscribe to
+		// the Blob api is fundamentally broken as there is no "downloadfinished" event to subscribe to
 		, arbitrary_revoke_timeout = 1000 * 40 // in ms
 		, revoke = function(file) {
 			var revoker = function() {
@@ -233,7 +233,7 @@ var _saveAs = (function(view) {
 ));
 
 
-// Expose file saver on the DataTables API. Can't attach to `DataTables.Buttons`
+// Expose file saver on the DataTables api. Can't attach to `DataTables.Buttons`
 // since this file can be loaded before Button's core!
 DataTable.fileSave = _saveAs;
 
@@ -277,7 +277,7 @@ var _newLine = function ( config )
  * Combine the data from the `buttons.exportData` method into a string that
  * will be used in the export file.
  *
- * @param	{DataTable.Api} dt		 DataTables API instance
+ * @param	{DataTable.Api} dt		 DataTables api instance
  * @param	{object}				config Button configuration
  * @return {object}							 The data to export
  */
@@ -768,7 +768,7 @@ var excelStrings = {
 // virtually no difference in size, since the above can be easily compressed
 
 // Pattern matching for special number formats. Perhaps this should be exposed
-// via an API in future?
+// via an api in future?
 // Ref: section 3.8.30 - built in formatters in open spreadsheet
 //   https://www.ecma-international.org/news/TC45_current_work/Office%20Open%20XML%20Part%204%20-%20Markup%20Language%20Reference.pdf
 var _excelSpecials = [

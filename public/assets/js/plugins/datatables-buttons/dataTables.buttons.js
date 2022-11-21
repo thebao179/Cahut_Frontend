@@ -1190,7 +1190,7 @@ $.extend( Buttons.prototype, {
 	/**
 	 * Display (and replace if there is an existing one) a popover attached to a button
 	 * @param {string|node} content Content to show
-	 * @param {DataTable.Api} hostButton DT API instance of the button
+	 * @param {DataTable.Api} hostButton DT api instance of the button
 	 * @param {object} inOpts Options (see object below for all options)
 	 */
 	_popover: function ( content, hostButton, inOpts, e ) {
@@ -1986,7 +1986,7 @@ $.extend( _dtButtons, {
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * DataTables API
+ * DataTables api
  *
  * For complete documentation, please refer to the docs/api directory or the
  * DataTables site
@@ -2167,7 +2167,7 @@ DataTable.Api.register( 'buttons().containers()', function () {
 } );
 
 DataTable.Api.register( 'buttons().container()', function () {
-	// API level of nesting is `buttons()` so we can zip into the containers method
+	// api level of nesting is `buttons()` so we can zip into the containers method
 	return this.containers().eq(0);
 } );
 
@@ -2477,7 +2477,7 @@ $.fn.DataTable.Buttons = Buttons;
 // DataTables creation - check if the buttons have been defined for this table,
 // they will have been if the `B` option was used in `dom`, otherwise we should
 // create the buttons instance here so they can be inserted into the document
-// using the API. Listen for `init` for compatibility with pre 1.10.10, but to
+// using the api. Listen for `init` for compatibility with pre 1.10.10, but to
 // be removed in future.
 $(document).on( 'init.dt plugin-init.dt', function (e, settings) {
 	if ( e.namespace !== 'dt' ) {

@@ -378,7 +378,7 @@ var ColorItem = function () {
 
 
     /**
-     * Applies a method of the QixColor API and returns a new Color object or
+     * Applies a method of the QixColor api and returns a new Color object or
      * the return value of the method call.
      *
      * If no argument is provided, the internal QixColor object is returned.
@@ -2662,7 +2662,7 @@ var plugin = 'colorpicker';
 
 _jquery2.default[plugin] = _Colorpicker2.default;
 
-// Colorpicker jQuery Plugin API
+// Colorpicker jQuery Plugin api
 _jquery2.default.fn[plugin] = function (option) {
   var fnArgs = Array.prototype.slice.call(arguments, 1),
       isSingleElement = this.length === 1,

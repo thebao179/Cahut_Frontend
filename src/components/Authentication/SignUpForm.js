@@ -5,19 +5,19 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 const SignUpSchema = yup.object().shape({
-    username: yup.string().required("*Username is a required field"),
+    username: yup.string().required("Username is a required field"),
     email: yup
         .string()
-        .email("*Email must be a valid email address")
-        .required("*Email is a required field"),
+        .email("Email must be a valid email address")
+        .required("Email is a required field"),
     password: yup
         .string()
-        .min(8, "*Password must be at least 8 characters")
-        .required("*Password is a required field"),
+        .min(8, "Password must be at least 8 characters")
+        .required("Password is a required field"),
     password2: yup
         .string()
-        .required("*Re-enter your password")
-        .oneOf([yup.ref("password"), null], "*Your password does not match")
+        .required("Re-enter your password")
+        .oneOf([yup.ref("password"), null], "Your password does not match")
 });
 
 function SignUpForm() {
@@ -54,7 +54,7 @@ function SignUpForm() {
                         <div className="mb-4">
                             <input
                                 type="text"
-                                className="form-control form-control-lg form-control-alt py-3"
+                                className={`form-control form-control-lg form-control-alt py-3 ${errors.username ? "is-invalid" : ""}`}
                                 placeholder="Username"
                                 {...register("username")}
                             />
@@ -67,7 +67,7 @@ function SignUpForm() {
                         <div className="mb-4">
                             <input
                                 type="email"
-                                className="form-control form-control-lg form-control-alt py-3"
+                                className={`form-control form-control-lg form-control-alt py-3 ${errors.email ? "is-invalid" : ""}`}
                                 placeholder="Email"
                                 {...register("email")}
                             />
@@ -80,7 +80,7 @@ function SignUpForm() {
                         <div className="mb-4">
                             <input
                                 type="password"
-                                className="form-control form-control-lg form-control-alt py-3"
+                                className={`form-control form-control-lg form-control-alt py-3 ${errors.password ? "is-invalid" : ""}`}
                                 placeholder="Password"
                                 {...register("password")}
                             />
@@ -93,7 +93,7 @@ function SignUpForm() {
                         <div className="mb-4">
                             <input
                                 type="password"
-                                className="form-control form-control-lg form-control-alt py-3"
+                                className={`form-control form-control-lg form-control-alt py-3 ${errors.password2 ? "is-invalid" : ""}`}
                                 placeholder="Confirm Password"
                                 {...register("password2")}
                             />

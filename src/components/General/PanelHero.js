@@ -1,7 +1,8 @@
 import React from "react";
 
 function PanelHero({ title, desc, photo }) {
-    const photoName = photo ? photo : title
+    const photoName = photo ? photo : title;
+
     return (
         <div className="bg-image" style={{backgroundImage: 'url("/assets/media/photos/' + photoName + '-photo@2x.jpg")'}}>
             <div className="bg-primary-dark-op">

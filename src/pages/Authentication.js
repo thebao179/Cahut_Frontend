@@ -41,7 +41,7 @@ function Authentication() {
                                 </a>
                             </div>
                             <div className="p-4 w-100 flex-grow-1 d-flex align-items-center">
-                                <SignUpForm />
+                                <SignInForm />
                             </div>
                             <div className="px-4 py-3 w-100 d-lg-none d-flex flex-column flex-sm-row justify-content-between fs-sm text-center text-sm-start">
                                 <p className="fw-medium text-black-50 py-2 mb-0">

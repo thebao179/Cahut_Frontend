@@ -1,9 +1,10 @@
 import React, {useState} from "react";
 import PanelHero from "../General/PanelHero";
-import GroupMember from "../Modals/GroupMember";
+import GroupDetail from "../Modals/GroupDetail";
 
 function GroupOwned() {
     const [groupId, setGroupId] = useState();
+
     return (
         <>
             <PanelHero title={'Owned groups'} />
@@ -29,7 +30,7 @@ function GroupOwned() {
                                             <i className="si si-settings"></i>
                                         </button>
                                         <button type="button" className="btn-block-option"
-                                                data-bs-toggle="modal" data-bs-target="#member-modal"
+                                                data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
                                                 onClick={() => {setGroupId(1)}}>
                                             <i className="si si-info"></i>
                                         </button>
@@ -58,8 +59,8 @@ function GroupOwned() {
                                             <i className="si si-settings"></i>
                                         </button>
                                         <button type="button" className="btn-block-option"
-                                                data-bs-toggle="modal" data-bs-target="#member-modal"
-                                                onClick={() => {setGroupId(1)}}>
+                                                data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
+                                                onClick={() => {setGroupId(2)}}>
                                             <i className="si si-info"></i>
                                         </button>
                                     </div>
@@ -69,7 +70,7 @@ function GroupOwned() {
                     </div>
                 </div>
             </div>
-            <GroupMember groupId={groupId} />
+            <GroupDetail groupId={groupId} />
         </>
     );
 }

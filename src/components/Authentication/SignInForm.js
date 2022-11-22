@@ -7,9 +7,9 @@ import * as yup from "yup";
 const SignInSchema = yup.object().shape({
     email: yup
         .string()
-        .email("*Email must be a valid email address")
-        .required("*Email is a required field"),
-    password: yup.string().required("*Password is a required field")
+        .email("Email must be a valid email address")
+        .required("Email is a required field"),
+    password: yup.string().required("Password is a required field")
 });
 
 function SignInForm() {
@@ -48,7 +48,7 @@ function SignInForm() {
                             <div className="mb-4">
                                 <input
                                     type="email"
-                                    className="form-control form-control-lg form-control-alt py-3"
+                                    className={`form-control form-control-lg form-control-alt py-3 ${errors.email ? "is-invalid" : ""}`}
                                     placeholder="Email"
                                     {...register("email")}
                                 />
@@ -61,7 +61,7 @@ function SignInForm() {
                             <div className="mb-4">
                                 <input
                                     type="password"
-                                    className="form-control form-control-lg form-control-alt py-3"
+                                    className={`form-control form-control-lg form-control-alt py-3 ${errors.password ? "is-invalid" : ""}`}
                                     placeholder="Password"
                                     {...register("password")}
                                 />

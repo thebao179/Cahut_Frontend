@@ -1,9 +1,12 @@
 import React from "react";
+import { Link, Outlet } from "react-router-dom";
+import Navbar from "../General/Navbar";
 import PanelHero from "../General/PanelHero";
 
 function Dashboard() {
     return (
         <>
+            <Navbar />
             <PanelHero title={'Dashboard'} desc={'Welcome to our app'} />
             <div className="content">
                 <div className="row">
@@ -24,10 +27,10 @@ function Dashboard() {
                                             </div>
                                         </div>
                                         <div className="bg-body-light rounded-bottom">
-                                            <a className="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between">
+                                            <Link to={'/groups/owned'} className="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between">
                                                 <span>View owned groups</span>
                                                 <i className="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"></i>
-                                            </a>
+                                            </Link>
                                         </div>
                                     </div>
                                 </p>
@@ -51,10 +54,10 @@ function Dashboard() {
                                             </div>
                                         </div>
                                         <div className="bg-body-light rounded-bottom">
-                                            <a className="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between">
+                                            <Link to={'/groups/joined'} className="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between">
                                                 <span>View joined groups</span>
                                                 <i className="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"></i>
-                                            </a>
+                                            </Link>
                                         </div>
                                     </div>
                                 </p>
@@ -62,6 +65,9 @@ function Dashboard() {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div id="detail">
+                <Outlet />
             </div>
         </>
     );

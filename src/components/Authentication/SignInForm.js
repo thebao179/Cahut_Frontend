@@ -3,6 +3,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { Link } from "react-router-dom";
 
 const SignInSchema = yup.object().shape({
     email: yup
@@ -22,7 +23,7 @@ function SignInForm() {
     });
 
     const OnSubmit = (data) => {
-        One.helpers('jq-notify', {type: 'success', icon: 'fa fa-check me-1', message: 'Login successfully'});
+        One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: 'Login successfully' });
     };
 
     return (
@@ -78,10 +79,12 @@ function SignInForm() {
                                     </a>
                                 </div>
                                 <div>
-                                    <button type="submit" className="btn btn-lg btn-alt-primary">
-                                        <i className="fa fa-fw fa-sign-in-alt me-1 opacity-50" />{" "}
-                                        Sign In
-                                    </button>
+                                    <Link to={'/dashboard'}>
+                                        <button type="submit" className="btn btn-lg btn-alt-primary">
+                                            <i className="fa fa-fw fa-sign-in-alt me-1 opacity-50" />{" "}
+                                            Sign In
+                                        </button>
+                                    </Link>
                                 </div>
                             </div>
                         </form>

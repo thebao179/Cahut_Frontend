@@ -3,11 +3,11 @@ import axiosClient from "./AxiosClient";
 const authenticationApi = {
   login: (username, password) => {
     const url = "/login";
-    return axiosClient.get(url, { username, password });
+    return axiosClient.post(url, { username, password });
   },
-  signup: (username, password) => {
+  signup: (email, username, password) => {
     const url = "/signup";
-    return axiosClient.get(url, { username, password });
+    return axiosClient.post(url, { email, username, password });
   }
 };
 

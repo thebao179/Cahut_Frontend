@@ -1,4 +1,6 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
+import { Link, Outlet } from "react-router-dom";
+import Navbar from "../General/Navbar";
 import PanelHero from "../General/PanelHero";
 import GroupDetail from "../Modals/GroupDetail";
 
@@ -7,6 +9,7 @@ function GroupJoined() {
 
     return (
         <>
+            <Navbar />
             <PanelHero title={'Joined groups'} />
             <div className="content content-boxed">
                 <div className="row items-push py-4">
@@ -30,8 +33,8 @@ function GroupJoined() {
                                             <i className="si si-settings"></i>
                                         </button>
                                         <button type="button" className="btn-block-option"
-                                                data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
-                                                onClick={() => {setGroupId(1)}}>
+                                            data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
+                                            onClick={() => { setGroupId(1) }}>
                                             <i className="si si-info"></i>
                                         </button>
                                     </div>
@@ -59,8 +62,8 @@ function GroupJoined() {
                                             <i className="si si-settings"></i>
                                         </button>
                                         <button type="button" className="btn-block-option"
-                                                data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
-                                                onClick={() => {setGroupId(1)}}>
+                                            data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
+                                            onClick={() => { setGroupId(1) }}>
                                             <i className="si si-info"></i>
                                         </button>
                                     </div>
@@ -71,6 +74,9 @@ function GroupJoined() {
                 </div>
             </div>
             <GroupDetail groupId={groupId} />
+            <div id="detail">
+                <Outlet />
+            </div>
         </>
     );
 }

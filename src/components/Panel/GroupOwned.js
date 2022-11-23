@@ -73,7 +73,7 @@ function GroupOwned() {
                     </div>
                 </div>
             </div>
-            <GroupDetail groupId={groupId} role={0} />
+            <GroupDetail groupId={groupId} role={1} />
             <div id="detail">
                 <Outlet />
             </div>

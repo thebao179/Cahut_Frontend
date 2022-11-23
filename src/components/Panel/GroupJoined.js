@@ -39,7 +39,7 @@ function GroupJoined() {
                                             </button>
                                             <button type="button" className="btn-block-option"
                                                     data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
-                                                    onClick={() => {setGroupId(1); setRole(1)}}>
+                                                    onClick={() => {setGroupId(1); setRole(2)}}>
                                                 <i className="si si-info"></i>
                                             </button>
                                         </div>
@@ -73,7 +73,7 @@ function GroupJoined() {
                                             </button>
                                             <button type="button" className="btn-block-option"
                                                     data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
-                                                    onClick={() => {setGroupId(2); setRole(2)}}>
+                                                    onClick={() => {setGroupId(2); setRole(3)}}>
                                                 <i className="si si-info"></i>
                                             </button>
                                         </div>

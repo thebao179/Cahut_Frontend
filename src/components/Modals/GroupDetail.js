@@ -85,7 +85,7 @@ function GroupDetail({ groupId, role }) {
                                         </button>
                                     </div>
                                 </div>
-                                {(role !== 2 && role !== 0) &&
+                                {(role !== 3 && role !== 0) &&
                                     <div className="mb-4">
                                         <label className="form-label modal-title text-info mb-1">Invite By Email</label>
                                         <select className="js-select2 form-select" id="group-select2"
@@ -129,7 +129,7 @@ function GroupDetail({ groupId, role }) {
                                             }
                                             </td>
                                             <td>
-                                            {(role !== 2 && role !== 0) &&
+                                            {(role !== 3 && role !== 0) &&
                                                 <button type="button" className="text-center btn btn-sm btn-danger" onClick={() => removeMember(0)}>
                                                     <i className="fa fa-fw fa-xmark"></i>
                                                 </button>
@@ -151,7 +151,7 @@ function GroupDetail({ groupId, role }) {
                                             }
                                             </td>
                                             <td>
-                                                {(role !== 2 && role !== 0) &&
+                                                {(role !== 3 && role !== 0) &&
                                                     <button type="button" className="text-center btn btn-sm btn-danger" onClick={() => removeMember(0)}>
                                                         <i className="fa fa-fw fa-xmark"></i>
                                                     </button>
@@ -173,7 +173,7 @@ function GroupDetail({ groupId, role }) {
                                             }
                                             </td>
                                             <td>
-                                                {(role !== 2 && role !== 0) &&
+                                                {(role !== 3 && role !== 0) &&
                                                     <button type="button" className="text-center btn btn-sm btn-danger" onClick={() => removeMember(0)}>
                                                         <i className="fa fa-fw fa-xmark"></i>
                                                     </button>

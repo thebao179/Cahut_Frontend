@@ -4,46 +4,37 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Authentication from "./pages/Authentication";
 import Panel from "./pages/Panel";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import GroupJoined from "./components/Panel/GroupJoined";
-import GroupOwned from "./components/Panel/GroupOwned";
-import Dashboard from "./components/Panel/Dashboard";
-import GroupDetail from "./components/Modals/GroupDetail";
+
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <Authentication />
+        element: <Authentication component={'signin'} />
+    },
+    {
+        path: "/signup",
+        element: <Authentication component={'signup'} />
     },
     {
         path: "/dashboard",
-        element: <Dashboard/>
+        element: <Panel component={'dashboard'} />
     },
     {
         path: "/groups",
-        //element: <GroupOwned/>,
         children: [{
             path: "joined",
-            element: <GroupJoined/>
+            element: <Panel component={'gjoined'}/>
         },
         {
             path: "owned",
-            element: <GroupOwned/>
-        }
-    ]
+            element: <Panel component={'gowned'}/>
+        }]
+    },
+    {
+        path: "/profile",
+        element: <Panel component={'profile'} />
     }
-    // {
-    //     path: "/ownedgroups",
-    //     element: <GroupOwned />,
-    // },
-    // {
-    //     path: "/joinedgroups",
-    //     element: <GroupJoined />,
-    // },
-    // {
-    //     path: "/groups",
-    //     element: <GroupDetail groupId={'1'}/>,
-    // },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

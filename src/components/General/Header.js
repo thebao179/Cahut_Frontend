@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
 function Header() {
     return (
@@ -17,10 +18,10 @@ function Header() {
                         </button>
                     </div>
                     <div className="d-inline-block ms-2">
-                        <button type="button" className="btn btn-sm btn-alt-danger d-flex align-items-center">
+                        <Link to={'/'} className="btn btn-sm btn-alt-danger d-flex align-items-center">
                             <span className="d-sm-inline-block ms-2">Log Out</span>
                             <i className="fa fa-fw fa-right-from-bracket d-sm-inline-block opacity-50 ms-1"></i>
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

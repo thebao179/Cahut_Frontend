@@ -4,7 +4,6 @@ import * as yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
 
-
 const GroupAddSchema = yup.object().shape({
     title: yup.string().required("Title is a required field"),
 });

@@ -8,7 +8,7 @@ import Navbar from "../components/General/Navbar";
 import GroupAdd from "../components/Modals/GroupAdd";
 import Profile from "../components/Panel/Profile";
 
-function Panel() {
+function Panel({ component }) {
     useEffect(() => {
         const script = document.createElement("script");
         script.src = "/assets/js/oneui.app.min.js";
@@ -20,8 +20,11 @@ function Panel() {
         <div id="page-container" className="page-header-dark main-content-boxed">
             <Header />
             <main id="main-container">
-                <Navbar />
-                <GroupJoined />
+                <Navbar component={component} />
+                {component === 'dashboard' && <Dashboard />}
+                {component === 'gjoined' && <GroupJoined />}
+                {component === 'gowned' && <GroupOwned />}
+                {component === 'profile' && <Profile />}
             </main>
             <GroupAdd />
             <Footer />

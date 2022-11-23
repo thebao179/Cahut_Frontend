@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
-import Navbar from "../General/Navbar";
 import PanelHero from "../General/PanelHero";
 import GroupDetail from "../Modals/GroupDetail";
 
@@ -10,7 +8,6 @@ function GroupJoined() {
 
     return (
         <>
-            <Navbar />
             <PanelHero title={'Joined groups'} photo={'gjoined'} />
             <div className="content content-boxed">
                 <div className="row items-push py-4">
@@ -85,9 +82,6 @@ function GroupJoined() {
                 </div>
             </div>
             <GroupDetail groupId={groupId} role={role} />
-            <div id="detail">
-                <Outlet />
-            </div>
         </>
     );
 }

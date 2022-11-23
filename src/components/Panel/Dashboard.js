@@ -1,19 +1,17 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
-import Navbar from "../General/Navbar";
 import PanelHero from "../General/PanelHero";
 
 function Dashboard() {
     return (
         <>
-            <Navbar />
             <PanelHero title={'Dashboard'} desc={'Welcome to our app'} />
             <div className="content">
                 <div className="row">
                     <div className="col-sm-4">
                         <div className="block block-rounded">
-                            <div className="block-content">
-                                <p className="text-center">
+                            <div className="block-content pb-4">
+                                <div className="text-center">
                                     <div className="block block-rounded d-flex flex-column h-100 mb-0">
                                         <div className="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
                                             <dl className="mb-0">
@@ -33,14 +31,14 @@ function Dashboard() {
                                             </Link>
                                         </div>
                                     </div>
-                                </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className="col-sm-4">
                         <div className="block block-rounded">
-                            <div className="block-content">
-                                <p className="text-center">
+                            <div className="block-content pb-4">
+                                <div className="text-center">
                                     <div className="block block-rounded d-flex flex-column h-100 mb-0">
                                         <div className="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
                                             <dl className="mb-0">
@@ -60,14 +58,11 @@ function Dashboard() {
                                             </Link>
                                         </div>
                                     </div>
-                                </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="detail">
-                <Outlet />
             </div>
         </>
     );

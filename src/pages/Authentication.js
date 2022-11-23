@@ -2,7 +2,7 @@ import React from "react";
 import SignInForm from "../components/Authentication/SignInForm";
 import SignUpForm from "../components/Authentication/SignUpForm";
 
-function Authentication() {
+function Authentication({ component }) {
     return (
         <div id="page-container">
             <main id="main-container">
@@ -41,7 +41,8 @@ function Authentication() {
                                 </a>
                             </div>
                             <div className="p-4 w-100 flex-grow-1 d-flex align-items-center">
-                                <SignInForm />
+                                {component === 'signin' && <SignInForm />}
+                                {component === 'signup' && <SignUpForm />}
                             </div>
                             <div className="px-4 py-3 w-100 d-lg-none d-flex flex-column flex-sm-row justify-content-between fs-sm text-center text-sm-start">
                                 <p className="fw-medium text-black-50 py-2 mb-0">

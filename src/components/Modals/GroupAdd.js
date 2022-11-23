@@ -19,7 +19,6 @@ function GroupAdd() {
     });
 
     const onSubmit = (data) => {
-        $('#group-add-modal .close').click();
         One.helpers('jq-notify', {type: 'success', icon: 'fa fa-check me-1', message: 'Created group successfully'});
     }
 

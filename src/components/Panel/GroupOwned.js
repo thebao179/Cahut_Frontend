@@ -3,16 +3,16 @@ import PanelHero from "../General/PanelHero";
 import GroupDetail from "../Modals/GroupDetail";
 
 function GroupOwned() {
-    const [groupId, setGroupId] = useState();
+    const [groupId, setGroupId] = useState(0);
 
     return (
         <>
-            <PanelHero title={'Owned groups'} />
+            <PanelHero title={'Owned groups'} photo={'gowned'} />
             <div className="content content-boxed">
                 <div className="row items-push py-4">
                     <div className="col-md-6 col-lg-4 col-xl-3">
                         <a className="block block-rounded block-link-pop h-100 mb-0">
-                            <div className="block-content block-content-full text-center bg-flat">
+                            <div className="block-content block-content-full text-center bg-city">
                                 <div className="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
                                     <i className="fa fa-users fa-2x text-white-75"></i>
                                 </div>
@@ -41,7 +41,7 @@ function GroupOwned() {
                     </div>
                     <div className="col-md-6 col-lg-4 col-xl-3">
                         <a className="block block-rounded block-link-pop h-100 mb-0">
-                            <div className="block-content block-content-full text-center bg-flat">
+                            <div className="block-content block-content-full text-center bg-city">
                                 <div className="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
                                     <i className="fa fa-users fa-2x text-white-75"></i>
                                 </div>
@@ -70,7 +70,7 @@ function GroupOwned() {
                     </div>
                 </div>
             </div>
-            <GroupDetail groupId={groupId} />
+            <GroupDetail groupId={groupId} role={0} />
         </>
     );
 }

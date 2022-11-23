@@ -6,6 +6,7 @@ import GroupJoined from "../components/Panel/GroupJoined";
 import Header from "../components/General/Header";
 import Navbar from "../components/General/Navbar";
 import GroupAdd from "../components/Modals/GroupAdd";
+import Profile from "../components/Panel/Profile";
 
 function Panel() {
     useEffect(() => {
@@ -20,7 +21,7 @@ function Panel() {
             <Header />
             <main id="main-container">
                 <Navbar />
-                <GroupOwned />
+                <GroupJoined />
             </main>
             <GroupAdd />
             <Footer />

@@ -9,13 +9,6 @@ import GroupAdd from "../components/Modals/GroupAdd";
 import Profile from "../components/Panel/Profile";
 
 function Panel({ component }) {
-    useEffect(() => {
-        const script = document.createElement("script");
-        script.src = "/assets/js/oneui.app.min.js";
-        script.async = true;
-        document.body.appendChild(script);
-    }, []);
-
     return (
         <div id="page-container" className="page-header-dark main-content-boxed">
             <Header />
@@ -28,6 +21,7 @@ function Panel({ component }) {
             </main>
             <GroupAdd />
             <Footer />
+            <script src={"/assets/js/oneui.app.min.js"}></script>
         </div>
     );
 }

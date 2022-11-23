@@ -11,11 +11,11 @@ function Header() {
                 </div>
                 <div className="d-flex align-items-center">
                     <div className="d-inline-block ms-2">
-                        <button type="button" className="btn btn-sm btn-alt-secondary d-flex align-items-center">
+                        <Link to={'/profile'} className="btn btn-sm btn-alt-secondary d-flex align-items-center">
                             <img className="rounded-circle" alt="" style={{width: 21 + 'px'}} src="/assets/media/avatars/avatar.jpg" />
                             <span className="d-sm-inline-block ms-2">Trong Le</span>
                             <i className="d-sm-inline-block opacity-50 ms-1"></i>
-                        </button>
+                        </Link>
                     </div>
                     <div className="d-inline-block ms-2">
                         <Link to={'/'} className="btn btn-sm btn-alt-danger d-flex align-items-center">

@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Authentication from "./pages/Authentication";
 import Panel from "./pages/Panel";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Activation from "./pages/Activation";
 
 const queryClient = new QueryClient();
 
@@ -34,7 +35,11 @@ const router = createBrowserRouter([
     {
         path: "/profile",
         element: <Panel component={'profile'} />
-    }
+    },
+    {
+        path: "/account/activate/:code",
+        element: <Activation />
+    },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

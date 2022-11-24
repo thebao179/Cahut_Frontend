@@ -9,3 +9,16 @@
     font-weight: bold;
     text-transform: uppercase;
 }
+
+.page-line {
+    margin: 12px 0 20px;
+    flex: 1 1 0;
+    border-top: 0px solid rgb(105,105,105);
+}
+
+.fa-colorful-google {
+    background: conic-gradient(from -45deg, #ea4335 110deg, #4285f4 90deg 180deg, #34a853 180deg 270deg, #fbbc05 270deg) 73% 55%/150% 150% no-repeat;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}

@@ -3,7 +3,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SignInSchema = yup.object().shape({
     email: yup
@@ -21,9 +21,11 @@ function SignInForm() {
     } = useForm({
         resolver: yupResolver(SignInSchema)
     });
+    const navigate = useNavigate();
 
     const OnSubmit = (data) => {
         One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: 'Login successfully' });
+        navigate('/dashboard')
     };
 
     return (
@@ -79,15 +81,23 @@ function SignInForm() {
                                     </a>
                                 </div>
                                 <div>
-                                    <Link to={'/dashboard'}>
-                                        <button type="submit" className="btn btn-lg btn-alt-primary">
-                                            <i className="fa fa-fw fa-sign-in-alt me-1 opacity-50" />{" "}
-                                            Sign In
-                                        </button>
-                                    </Link>
+                                    <button type="submit" className="btn btn-lg btn-alt-primary">
+                                        <i className="fa fa-fw fa-sign-in-alt me-1 opacity-50" />{" "}
+                                        Sign In
+                                    </button>
                                 </div>
                             </div>
                         </form>
+                        <div>
+                            <div className="d-flex">
+                                <hr className="page-line"/>
+                                <span className="text-uppercase fw-bold">Or</span>
+                                <hr className="page-line"/>
+                            </div>
+                            <button type="button" className="btn btn-lg rounded-0 btn-alt-secondary w-100 me-1 mb-3" style={{textTransform: "uppercase"}}>
+                                <i className="fa fa-brands fa-google fa-colorful-google me-1"></i> Continue with Google
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

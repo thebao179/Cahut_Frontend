@@ -3,7 +3,6 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Link } from "react-router-dom";
 
 const SignUpSchema = yup.object().shape({
     username: yup.string().required("Username is a required field"),
@@ -110,11 +109,9 @@ function SignUpForm() {
                             </a>
                         </div>
                         <div className="text-center">
-                            <Link to={'/dashboard'}>
-                                <button type="submit" className="btn btn-lg btn-alt-success">
-                                    <i className="fa fa-fw fa-plus me-1 opacity-50" /> Sign Up
-                                </button>
-                            </Link>
+                            <button type="submit" className="btn btn-lg btn-alt-success">
+                                <i className="fa fa-fw fa-plus me-1 opacity-50" /> Sign Up
+                            </button>
                         </div>
                     </form>
                 </div>

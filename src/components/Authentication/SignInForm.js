@@ -1,9 +1,10 @@
 /* eslint-disable */
-import React from "react";
+import React, {useEffect} from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
+import useFetch from "../../hooks/useFetch";
 
 const SignInSchema = yup.object().shape({
     email: yup
@@ -23,6 +24,21 @@ function SignInForm() {
     });
     const navigate = useNavigate();
 
+    const { handleGoogle, loading, error } = useFetch();
+    useEffect(() => {
+        if (window.google) {
+            google.accounts.id.initialize({
+                client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+                callback: handleGoogle,
+            });
+            google.accounts.id.renderButton(document.getElementById("google-signin"), {
+                theme: "dark",
+                text: "continue_with",
+                width: "300",
+            });
+        }
+    }, [handleGoogle]);
+    
     const OnSubmit = (data) => {
         One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: 'Login successfully' });
         navigate('/dashboard')
@@ -94,9 +110,8 @@ function SignInForm() {
                                 <span className="text-uppercase fw-bold">Or</span>
                                 <hr className="page-line"/>
                             </div>
-                            <button type="button" className="btn btn-lg rounded-0 btn-alt-secondary w-100 me-1 mb-3" style={{textTransform: "uppercase"}}>
-                                <i className="fa fa-brands fa-google fa-colorful-google me-1"></i> Continue with Google
-                            </button>
+                            <div id="google-signin" className="d-flex justify-content-center">
+                            </div>
                         </div>
                     </div>
                 </div>

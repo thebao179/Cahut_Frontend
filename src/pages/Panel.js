@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {useEffect} from "react";
 import Footer from "../components/General/Footer";
 import Dashboard from "../components/Panel/Dashboard";
@@ -9,6 +10,20 @@ import GroupAdd from "../components/Modals/GroupAdd";
 import Profile from "../components/Panel/Profile";
 
 function Panel({ component }) {
+    useEffect(() => {
+        document.querySelectorAll('[data-toggle="class-toggle"]:not(.js-class-toggle-enabled), .js-class-toggle:not(.js-class-toggle-enabled)').forEach((e => {
+            e.addEventListener("click", (() => {
+                e.classList.add("js-class-toggle-enabled");
+                let t = !!e.dataset.class && e.dataset.class.split(" ");
+                document.querySelectorAll(e.dataset.target).forEach((e => {
+                    t && t.forEach((t => {
+                        e.classList.toggle(t)
+                    }))
+                }))
+            }))
+        }))
+    }, []);
+
     return (
         <div id="page-container" className="page-header-dark main-content-boxed">
             <Header />
@@ -21,7 +36,6 @@ function Panel({ component }) {
             </main>
             <GroupAdd />
             <Footer />
-            <script src={"/assets/js/oneui.app.min.js"}></script>
         </div>
     );
 }

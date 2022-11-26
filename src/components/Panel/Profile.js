@@ -14,13 +14,16 @@ const InfoSchema = yup.object().shape({
 });
 
 const PasswordSchema = yup.object().shape({
+    cpassword: yup
+        .string()
+        .required("Current password is a required field"),
     password: yup
         .string()
-        .min(8, "Password must be at least 8 characters")
-        .required("Password is a required field"),
+        .min(8, "New password must be at least 8 characters")
+        .required("New password is a required field"),
     password2: yup
         .string()
-        .required("Re-enter your password")
+        .required("Re-enter your new password")
         .oneOf([yup.ref("password"), null], "Your password does not match")
 });
 
@@ -127,6 +130,16 @@ function Profile() {
                                     </p>
                                 </div>
                                 <div className="col-lg-8 col-xl-5">
+                                    <div className="mb-4">
+                                        <label className="form-label">Current Password</label>
+                                        <input type="password" className={`form-control ${pValidator.formState.errors.cpassword ? "is-invalid" : ""}`}
+                                               {...pValidator.register("cpassword")} />
+                                        {pValidator.formState.errors.cpassword && (
+                                            <p className="fs-sm fw-medium text-danger">
+                                                {pValidator.formState.errors.cpassword.message}
+                                            </p>
+                                        )}
+                                    </div>
                                     <div className="mb-4">
                                         <label className="form-label">New Password</label>
                                         <input type="password" className={`form-control ${pValidator.formState.errors.password ? "is-invalid" : ""}`}

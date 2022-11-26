@@ -11,7 +11,9 @@ const SignInSchema = yup.object().shape({
         .string()
         .email("Email must be a valid email address")
         .required("Email is a required field"),
-    password: yup.string().required("Password is a required field")
+    password: yup
+        .string()
+        .required("Password is a required field")
 });
 
 function SignInForm() {
@@ -38,7 +40,7 @@ function SignInForm() {
             });
         }
     }, [handleGoogle]);
-    
+
     const OnSubmit = (data) => {
         One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: 'Login successfully' });
         navigate('/dashboard')

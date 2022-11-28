@@ -10,16 +10,22 @@ import Activation from "../../pages/Activation";
 
 
 function App() {
-    const { token, setToken } = useToken();
-    if (!token) {
-        return <Authentication component={'signin'} setToken={setToken}/>
-    };
-
     const queryClient = new QueryClient();
+    const { token, setToken } = useToken();
 
+    const authenRouter = createBrowserRouter([
+        {
+            path: "*",
+            element: <Authentication component={'signin'} setToken={setToken} />
+        },
+        {
+            path: "/signup",
+            element: <Authentication component={'signup'} />
+        },
+    ])
     const router = createBrowserRouter([
         {
-            path: "/",
+            path: "/dashboard",
             element: <Panel component={'dashboard'} />
         },
         {
@@ -43,6 +49,14 @@ function App() {
         },
 
     ]);
+
+    if (!token) {
+        return (
+            <QueryClientProvider client={queryClient}>
+                <RouterProvider router={authenRouter} />
+            </QueryClientProvider>
+        );
+    };
 
     return (
         <QueryClientProvider client={queryClient}>

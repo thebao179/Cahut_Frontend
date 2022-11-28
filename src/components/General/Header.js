@@ -1,12 +1,14 @@
 
 import React from "react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import authenticationApi from "../../api/AuthenticationApi";
 
 function Header() {
+    const navigate = useNavigate();
     const handleLogout = async () => {
         await authenticationApi.logout();
         localStorage.removeItem('token');
+        navigate('/');
         window.location.reload();
         return;
       };

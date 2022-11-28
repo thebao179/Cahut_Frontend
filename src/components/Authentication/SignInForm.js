@@ -41,13 +41,14 @@ function SignInForm({setToken}) {
         }
     }, [handleGoogle]);
 
- 
+    const navigate = useNavigate();
 
     const OnSubmit = async (data) => {
         const res = await authenticationApi.login(data.email, data.password);
         if (res.status) {
             setToken(res.data.accessToken);
             One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: res.message });
+            navigate('/dashboard');
             return;
         }
         One.helpers('jq-notify', { type: 'danger', icon: 'si si-close fa-2x', message: res.message });

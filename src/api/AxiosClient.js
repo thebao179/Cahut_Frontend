@@ -1,15 +1,17 @@
 import axios from "axios";
 
+
 const axiosClient = axios.create({
-  baseURL: "https://api.imgflip.com"
-  // headers: {
-  //     'content-type': 'application/json',
-  // },
-  // paramsSerializer: params => queryString.stringify(params),
+  baseURL: "https://localhost:7080/",
 });
 
-axios.interceptors.request.use(
-  function (config) {
+axiosClient.interceptors.request.use(
+  async (config) => {
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization =  `Bearer ${token}`;
+    }
     return config;
   },
   function (error) {
@@ -18,10 +20,10 @@ axios.interceptors.request.use(
 );
 
 // Add a response interceptor
-axios.interceptors.response.use(
+axiosClient.interceptors.response.use(
   function (response) {
     if (response && response.data) {
-      return response;
+      return response.data;
     }
     return response;
   },

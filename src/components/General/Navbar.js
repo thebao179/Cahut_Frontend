@@ -1,5 +1,6 @@
 import React from "react";
 import {Link, useLocation} from "react-router-dom";
+import groupApi from "../../api/GroupApi";
 
 function Navbar({ component }) {
     return (
@@ -17,7 +18,7 @@ function Navbar({ component }) {
                     <div id="main-navigation" className="d-none d-lg-block mt-2 mt-lg-0">
                         <ul className="nav-main nav-main-dark nav-main-horizontal nav-main-hover">
                             <li className="nav-main-item">
-                                <Link to={'/dashboard'} className={`nav-main-link ${component === 'dashboard' && 'active'}`}>
+                                <Link to={'/'} className={`nav-main-link ${component === 'dashboard' && 'active'}`}>
                                     <i className="nav-main-link-icon si si-compass"></i>
                                     <span className="nav-main-link-name">Dashboard</span>
                                 </Link>

@@ -1,7 +1,16 @@
+
 import React from "react";
 import {Link} from "react-router-dom";
+import authenticationApi from "../../api/AuthenticationApi";
 
 function Header() {
+    const handleLogout = async () => {
+        await authenticationApi.logout();
+        localStorage.removeItem('token');
+        window.location.reload();
+        return;
+      };
+    
     return (
         <header id="page-header">
             <div className="content-header">
@@ -18,10 +27,10 @@ function Header() {
                         </Link>
                     </div>
                     <div className="d-inline-block ms-2">
-                        <Link to={'/'} className="btn btn-sm btn-alt-danger d-flex align-items-center">
+                        <button onClick={() => handleLogout()} className="btn btn-sm btn-alt-danger d-flex align-items-center" >
                             <span className="d-sm-inline-block ms-2">Log Out</span>
                             <i className="fa fa-fw fa-right-from-bracket d-sm-inline-block opacity-50 ms-1"></i>
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </div>

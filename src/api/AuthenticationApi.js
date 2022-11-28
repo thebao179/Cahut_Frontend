@@ -1,13 +1,17 @@
 import axiosClient from "./AxiosClient";
 
 const authenticationApi = {
-  login: (username, password) => {
-    const url = "/login";
-    return axiosClient.post(url, { username, password });
+  login: (Email, Password) => {
+    const url = "/auth/login";
+    return axiosClient.post(url, { Email, Password });
   },
   signup: (email, username, password) => {
-    const url = "/signup";
+    const url = "/auth/register";
     return axiosClient.post(url, { email, username, password });
+  },
+  logout: () => {
+    const url = "/auth/logout";
+    return axiosClient.get(url);
   }
 };
 

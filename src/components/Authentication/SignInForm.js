@@ -3,8 +3,9 @@ import React, {useEffect} from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
-import useFetch from "../../hooks/useFetch";
+import { Link, useNavigate } from "react-router-dom";
+import authenticationApi from "../../api/AuthenticationApi";
+import useFetch from "../../Hooks/useFetch";
 
 const SignInSchema = yup.object().shape({
     email: yup
@@ -16,7 +17,7 @@ const SignInSchema = yup.object().shape({
         .required("Password is a required field")
 });
 
-function SignInForm() {
+function SignInForm({setToken}) {
     const {
         register,
         handleSubmit,
@@ -24,7 +25,6 @@ function SignInForm() {
     } = useForm({
         resolver: yupResolver(SignInSchema)
     });
-    const navigate = useNavigate();
 
     const { handleGoogle, loading, error } = useFetch();
     useEffect(() => {
@@ -41,9 +41,16 @@ function SignInForm() {
         }
     }, [handleGoogle]);
 
-    const OnSubmit = (data) => {
-        One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: 'Login successfully' });
-        navigate('/dashboard')
+ 
+
+    const OnSubmit = async (data) => {
+        const res = await authenticationApi.login(data.email, data.password);
+        if (res.status) {
+            setToken(res.data.accessToken);
+            One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: res.message });
+            return;
+        }
+        One.helpers('jq-notify', { type: 'danger', icon: 'si si-close fa-2x', message: res.message });
     };
 
     return (

@@ -29,7 +29,9 @@ function SignUpForm() {
         resolver: yupResolver(SignUpSchema)
     });
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
+        console.log(data);
+        await authenticationApi.signup(data.email, data.username, data.password);
         One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: 'An activation email has been sent to your email' });
     }
 

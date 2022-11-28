@@ -5,9 +5,9 @@ const authenticationApi = {
     const url = "/auth/login";
     return axiosClient.post(url, { Email, Password });
   },
-  signup: (email, username, password) => {
+  signup: (Email, UserName, Password) => {
     const url = "/auth/register";
-    return axiosClient.post(url, { email, username, password });
+    return axiosClient.post(url, { Email, UserName, Password });
   },
   logout: () => {
     const url = "/auth/logout";

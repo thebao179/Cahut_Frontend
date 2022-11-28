@@ -3,6 +3,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import authenticationApi from "../../api/AuthenticationApi";
 
 const SignUpSchema = yup.object().shape({
     username: yup.string().required("Username is a required field"),
@@ -30,9 +31,10 @@ function SignUpForm() {
     });
 
     const onSubmit = async (data) => {
-        console.log(data);
-        await authenticationApi.signup(data.email, data.username, data.password);
-        One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: 'An activation email has been sent to your email' });
+        const result = await authenticationApi.signup(data.email, data.username, data.password);
+        One.helpers('jq-notify', { type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+                message: result.message });
     }
 
     return (

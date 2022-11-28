@@ -1,8 +1,18 @@
-import React from "react";
+import React, {useEffect} from "react";
 import SignInForm from "../components/Authentication/SignInForm";
 import SignUpForm from "../components/Authentication/SignUpForm";
+import {useNavigate} from "react-router-dom";
 
-function Authentication({ component, setToken }) {
+function Authentication({ component, setToken, usrToken }) {
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (usrToken) {
+            let path = localStorage.getItem('prevurl');
+            localStorage.removeItem('prevurl');
+            navigate(path ? path : '/dashboard');
+        }
+    }, [usrToken]);
+
     return (
         <div id="page-container">
             <main id="main-container">

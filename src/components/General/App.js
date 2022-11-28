@@ -1,69 +1,54 @@
-import useToken from "../../Hooks/useToken";
+import useToken from "../../hooks/useToken";
 import React from "react";
-import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
-
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Authentication from "../../pages/Authentication";
 import Panel from "../../pages/Panel";
 import Activation from "../../pages/Activation";
 
-
 function App() {
     const queryClient = new QueryClient();
     const { token, setToken } = useToken();
 
-    const authenRouter = createBrowserRouter([
+    const router = createBrowserRouter([
         {
             path: "*",
-            element: <Authentication component={'signin'} setToken={setToken} />
+            element: <Authentication component={'signin'} setToken={setToken} usrToken={token} />
         },
         {
             path: "/signup",
-            element: <Authentication component={'signup'} />
+            element: <Authentication component={'signup'} usrToken={token} />
         },
-    ])
-    const router = createBrowserRouter([
         {
             path: "/dashboard",
-            element: <Panel component={'dashboard'} />
+            element: <Panel component={'dashboard'} setToken={setToken} usrToken={token} />
         },
         {
             path: "/groups",
             children: [{
                 path: "joined",
-                element: <Panel component={'gjoined'} />
+                element: <Panel component={'gjoined'} setToken={setToken} usrToken={token} />
             },
             {
                 path: "owned",
-                element: <Panel component={'gowned'} />
+                element: <Panel component={'gowned'} setToken={setToken} usrToken={token} />
             }]
         },
         {
             path: "/profile",
-            element: <Panel component={'profile'} />
+            element: <Panel component={'profile'} setToken={setToken} usrToken={token} />
         },
         {
             path: "/account/activate/:code",
             element: <Activation />
         },
-
     ]);
-
-    if (!token) {
-        return (
-            <QueryClientProvider client={queryClient}>
-                <RouterProvider router={authenRouter} />
-            </QueryClientProvider>
-        );
-    };
 
     return (
         <QueryClientProvider client={queryClient}>
             <RouterProvider router={router} />
         </QueryClientProvider>
     );
-
 }
 
 export default App;

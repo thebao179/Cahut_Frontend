@@ -3,15 +3,12 @@ import React from "react";
 import {Link, useNavigate} from "react-router-dom";
 import authenticationApi from "../../api/AuthenticationApi";
 
-function Header() {
-    const navigate = useNavigate();
+function Header({setToken}) {
     const handleLogout = async () => {
         await authenticationApi.logout();
         localStorage.removeItem('token');
-        navigate('/');
-        window.location.reload();
-        return;
-      };
+        setToken('');
+    };
     
     return (
         <header id="page-header">

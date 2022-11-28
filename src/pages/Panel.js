@@ -8,9 +8,17 @@ import Header from "../components/General/Header";
 import Navbar from "../components/General/Navbar";
 import GroupAdd from "../components/Modals/GroupAdd";
 import Profile from "../components/Panel/Profile";
+import {useLocation, useNavigate} from "react-router-dom";
 
-function Panel({ component }) {
+function Panel({ component, usrToken, setToken }) {
+    const navigate = useNavigate();
+    const location = useLocation();
+
     useEffect(() => {
+        if (!usrToken) {
+            navigate('/');
+            localStorage.setItem('prevurl', location.pathname);
+        }
         document.querySelectorAll('[data-toggle="class-toggle"]:not(.js-class-toggle-enabled), .js-class-toggle:not(.js-class-toggle-enabled)').forEach((e => {
             e.addEventListener("click", (() => {
                 e.classList.add("js-class-toggle-enabled");
@@ -22,11 +30,11 @@ function Panel({ component }) {
                 }))
             }))
         }))
-    }, []);
+    }, [usrToken]);
 
     return (
         <div id="page-container" className="page-header-dark main-content-boxed">
-            <Header />
+            <Header setToken={setToken} />
             <main id="main-container">
                 <Navbar component={component} />
                 {component === 'dashboard' && <Dashboard />}

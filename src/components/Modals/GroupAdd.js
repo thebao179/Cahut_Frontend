@@ -20,13 +20,10 @@ function GroupAdd() {
 
 
     const onSubmit = async (data) => {
-        const res = await groupApi.createGroup(data.title);
-        console.log(res);
-        if (res.status) {
-            One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: 'Create group successfully' });
-            return;
-        }
-        One.helpers('jq-notify', { type: 'danger', icon: 'fa fa-check me-1', message: 'Failed to create group' });
+        const result = await groupApi.createGroup(data.title);
+        One.helpers('jq-notify', { type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message });
     }
 
     return (

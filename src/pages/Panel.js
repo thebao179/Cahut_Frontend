@@ -37,10 +37,10 @@ function Panel({ component, usrToken, setToken }) {
             <Header setToken={setToken} />
             <main id="main-container">
                 <Navbar component={component} />
-                {component === 'dashboard' && <Dashboard />}
-                {component === 'gjoined' && <GroupJoined />}
-                {component === 'gowned' && <GroupOwned />}
-                {component === 'profile' && <Profile />}
+                {component === 'dashboard' && <Dashboard token={usrToken} />}
+                {component === 'gjoined' && <GroupJoined token={usrToken} />}
+                {component === 'gowned' && <GroupOwned token={usrToken} />}
+                {component === 'profile' && <Profile token={usrToken} />}
             </main>
             <GroupAdd />
             <Footer />

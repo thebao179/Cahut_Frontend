@@ -28,7 +28,7 @@ const PasswordSchema = yup.object().shape({
         .oneOf([yup.ref("password"), null], "Your password does not match")
 });
 
-function Profile() {
+function Profile({token}) {
     const {
         register,
         handleSubmit,
@@ -44,22 +44,31 @@ function Profile() {
     useEffect(() => {
         async function fetchData() {
             const data = await userApi.getUserInfo();
+            console.log(data)
             setEmail(data.data.email);
             setUsername(data.data.userName);
             setPhoneNumber(data.data.phone);
         }
-        fetchData();
+        if (token) fetchData();
     }, []);
-    const onSubmit = (data) => {
-        One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: 'Profile updated' });
+    const onSubmit = async (data) => {
+        const result = await userApi.editUserInfo(username, phone)
+        One.helpers('jq-notify', { type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message });
     }
 
     const pValidator = useForm({
         resolver: yupResolver(PasswordSchema)
     });
 
-    const onSubmit2 = (data) => {
-        One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: 'Change password successfully' });
+    const onSubmit2 = async (data) => {
+        const result = await userApi.changePassword(data.cpassword, data.password2)
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message
+        });
     }
 
     return (
@@ -91,7 +100,7 @@ function Profile() {
                                     <div className="mb-4">
                                         <label className="form-label">Email Address</label>
                                         <input type="email" className={`form-control ${errors.email ? "is-invalid" : ""}`}
-                                            value={email} disabled={true}
+                                            defaultValue={email} disabled={true}
                                             {...register("email")} />
                                         {errors.email && (
                                             <p className="fs-sm fw-medium text-danger">
@@ -113,7 +122,7 @@ function Profile() {
                                     <div className="mb-4">
                                         <label className="form-label">Phone</label>
                                         <input type="text" className={`form-control ${errors.phone ? "is-invalid" : ""}`}
-                                            placeholder="Enter Your Phone Number"
+                                            placeholder="Enter Your Phone Number" defaultValue={phone}
                                             {...register("phone")} />
                                         {errors.phone && (
                                             <p className="fs-sm fw-medium text-danger">

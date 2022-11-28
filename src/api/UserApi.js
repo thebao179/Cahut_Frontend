@@ -6,9 +6,9 @@ const userApi = {
 
         return axiosClient.get(url);
     },
-    editUserInfo: (username, phone, email) => {
+    editUserInfo: (username, phone) => {
         const url = "/user/info/update";
-        return axiosClient.post(url, {userName: username, Phone: phone, Email: email});
+        return axiosClient.post(url, {UserName: username, Phone: phone});
     },
     changePassword: (currPassword, password) => {
         const url = "/auth/changepassword";

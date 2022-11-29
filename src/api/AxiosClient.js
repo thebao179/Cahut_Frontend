@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const axiosClient = axios.create({
-  baseURL: "http://cahutbackend.somee.com/",
+  baseURL: "https://localhost:7080/",
 });
 
 axiosClient.interceptors.request.use(

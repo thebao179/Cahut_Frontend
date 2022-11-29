@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
 import groupApi from "../../api/GroupApi";
-import GroupMembers from "./GroupMembers";
+
 
 function validateEmail(email) {
     var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -15,7 +15,6 @@ function GroupDetail({ groupId, role }) {
         { username: 'Trong Le', email: 'user3@gmail.com', role: 3 },
     ]);
 
-
     const copyInv = () => {
         const copyText = document.getElementById('group-link');
         copyText.select();
@@ -28,10 +27,24 @@ function GroupDetail({ groupId, role }) {
         One.helpers('jq-notify', { type: 'info', icon: 'fa fa-info-circle me-1', message: 'Sending emails' });
     }
 
-    const handleRemoveClick = (groupName, email) => {
-        console.log(groupName);
-        console.log(email);
+    const handleRemoveClick = async (groupName, email) => {
+        const tempData = data;
+        var index = tempData.indexOf(email);
+        if (index !== -1) {
+            tempData.splice(index, 1);
+        }
+        setData(tempData);
+        const res = await groupApi.kickMember(groupName, email);
+        console.log(res);
     }
+
+    const handleRoleChange = async (e)=>{
+        const role = e.target.value;
+        const email = e.target.id;
+        const res = await groupApi.setRoleMember(groupId, role, email);
+        console.log(res);
+    }
+
 
     return (
         <>
@@ -80,7 +93,36 @@ function GroupDetail({ groupId, role }) {
                                 }
                                 <div className="mb-4" id="member-table">
                                     <label className="modal-title text-info mb-1">Members</label>
-                                    <GroupMembers groupName = {groupId} data={data} role={role} handleRemoveBtnClick={handleRemoveClick}/>
+                                    <table className="table table-bordered table-striped table-vcenter" id="group-members">
+                                        <thead>
+                                            <tr>
+                                                <th>Username</th>
+                                                <th className="d-none d-sm-table-cell" style={{ width: "30%" }}>Email</th>
+                                                <th className="d-none d-sm-table-cell" style={{ width: "20%" }}>Role</th>
+                                                <th data-orderable="false" style={{ width: "10%" }}></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {data.map(e =>
+                                                <tr>
+                                                    <td className="fw-semibold fs-sm">{e.username}</td>
+                                                    <td className="d-none d-sm-table-cell fs-sm">{e.email}</td>
+                                                    <td className="d-none d-sm-table-cell">
+                                                        {role === 3 ? <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-warning-light text-warning">Owner</span> :
+                                                            <select className="form-select" id = {e.email} onChange={handleRoleChange}>
+                                                                <option value="coowner">Co-Owner</option>
+                                                                <option value="member">Member</option>
+                                                            </select>}
+                                                    </td>
+                                                    <td>
+                                                        {(role !== 3 && role !== 0) ? <button type="button" className="text-center btn btn-sm btn-danger removeBtn" onClick={() => handleRemoveClick(groupId, e.email)}>
+                                                            <i className="fa fa-fw fa-xmark"></i>
+                                                        </button> : ''}
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                             <div className="block-content block-content-full text-end bg-body">

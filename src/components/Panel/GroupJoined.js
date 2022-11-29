@@ -4,14 +4,13 @@ import GroupDetail from "../Modals/GroupDetail";
 import groupApi from "../../api/GroupApi";
 
 function GroupJoined({token}) {
-    const [groupId, setGroupId] = useState(0);
+    const [groupId, setGroupId] = useState();
     const [role, setRole] = useState(0);
     const [groups, setGroups] = useState();
 
     useEffect(() => {
         async function fetchData() {
             const data = await groupApi.getJoinedGroups();
-            console.log(data.data);
             const temp = data.data.map(group =>
                 <div className="col-md-6 col-lg-4 col-xl-3">
                     <a className="block block-rounded block-link-pop h-100 mb-0">

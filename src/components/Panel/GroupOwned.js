@@ -4,7 +4,7 @@ import GroupDetail from "../Modals/GroupDetail";
 import groupApi from "../../api/GroupApi";
 
 function GroupOwned({token}) {
-    const [groupId, setGroupId] = useState(0);
+    const [groupId, setGroupId] = useState();
     const [groups, setGroups] = useState();
 
     useEffect(() => {
@@ -45,7 +45,6 @@ function GroupOwned({token}) {
         }
         if (token) fetchData();
     }, []);
-
     return (
         <>
             <PanelHero title={'Owned groups'} photo={'gowned'} />

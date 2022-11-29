@@ -1,10 +1,10 @@
-import useToken from "../../hooks/useToken";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Authentication from "../../pages/Authentication";
 import Panel from "../../pages/Panel";
 import Activation from "../../pages/Activation";
+import useToken from '../../Hooks/useToken'
 
 function App() {
     const queryClient = new QueryClient();

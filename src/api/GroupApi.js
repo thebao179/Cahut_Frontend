@@ -48,6 +48,10 @@ const groupApi = {
     kickMember: (groupName, email) => {
         const url = "/group/manage/kick/" + groupName + "/" +  email;
         return axiosClient.get(url);
+    },
+    getGroupNumber: () => {
+        const url = "/group/get/numofgroup";
+        return axiosClient.get(url);
     }
 }
 

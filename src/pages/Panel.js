@@ -34,7 +34,7 @@ function Panel({ component, usrToken, setToken }) {
 
     return (
         <div id="page-container" className="page-header-dark main-content-boxed">
-            <Header setToken={setToken} />
+            <Header setToken={setToken} token={usrToken}/>
             <main id="main-container">
                 <Navbar component={component} />
                 {component === 'dashboard' && <Dashboard token={usrToken} />}

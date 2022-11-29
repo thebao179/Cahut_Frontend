@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import authenticationApi from "../../api/AuthenticationApi";
-import useFetch from '../../Hooks/useFetch'
+import useFetch from '../../hooks/useFetch'
 
 const SignInSchema = yup.object().shape({
     email: yup
@@ -26,7 +26,7 @@ function SignInForm({setToken}) {
         resolver: yupResolver(SignInSchema)
     });
 
-    const { handleGoogle, loading, error } = useFetch();
+    const { handleGoogle, loading, error } = useFetch(setToken);
     useEffect(() => {
         if (window.google) {
             google.accounts.id.initialize({

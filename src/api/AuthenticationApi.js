@@ -12,6 +12,14 @@ const authenticationApi = {
   logout: () => {
     const url = "/auth/logout";
     return axiosClient.get(url);
+  },
+  googleLogin: (GoogleCredential) => {
+    const url = "/auth/googlelogin";
+    return axiosClient.post(url, { GoogleCredential })
+  },
+  activateAccount: (UserId) => {
+    const url = "auth/activate/account/" + UserId;
+    return axiosClient.get(url);
   }
 };
 

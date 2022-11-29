@@ -44,7 +44,6 @@ function Profile({token}) {
     useEffect(() => {
         async function fetchData() {
             const data = await userApi.getUserInfo();
-            console.log(data)
             setEmail(data.data.email);
             setUsername(data.data.userName);
             setPhoneNumber(data.data.phone);

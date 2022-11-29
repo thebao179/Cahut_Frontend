@@ -1,15 +1,19 @@
-
-import React from "react";
+import jwt from 'jwt-decode'
+import React, {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import authenticationApi from "../../api/AuthenticationApi";
 
-function Header({setToken}) {
+function Header({setToken, token}) {
+    const [user, setUser] = useState({});
     const handleLogout = async () => {
         await authenticationApi.logout();
         localStorage.removeItem('token');
         setToken('');
     };
-    
+    useEffect(() => {
+        if (token) setUser(jwt(token));
+    }, []);
+
     return (
         <header id="page-header">
             <div className="content-header">
@@ -21,7 +25,7 @@ function Header({setToken}) {
                     <div className="d-inline-block ms-2">
                         <Link to={'/profile'} className="btn btn-sm btn-alt-secondary d-flex align-items-center">
                             <img className="rounded-circle" alt="" style={{width: 21 + 'px'}} src="/assets/media/avatars/avatar.jpg" />
-                            <span className="d-sm-inline-block ms-2">Trong Le</span>
+                            <span className="d-sm-inline-block ms-2">{user.unique_name}</span>
                             <i className="d-sm-inline-block opacity-50 ms-1"></i>
                         </Link>
                     </div>

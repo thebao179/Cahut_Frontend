@@ -34,8 +34,15 @@ function GroupDetail({ groupId, role }) {
             tempData.splice(index, 1);
         }
         setData(tempData);
-        console.log(data);
-        //const res = await groupApi.kickMember(groupName, email);
+        const res = await groupApi.kickMember(groupName, email);
+        console.log(res);
+    }
+
+    const handleRoleChange = async (e)=>{
+        const role = e.target.value;
+        const email = e.target.id;
+        const res = await groupApi.setRoleMember(groupId, role, email);
+        console.log(res);
     }
 
 
@@ -102,9 +109,9 @@ function GroupDetail({ groupId, role }) {
                                                     <td className="d-none d-sm-table-cell fs-sm">{e.email}</td>
                                                     <td className="d-none d-sm-table-cell">
                                                         {role === 3 ? <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-warning-light text-warning">Owner</span> :
-                                                            <select className="form-select">
-                                                                <option value="1">Co-Owner</option>
-                                                                <option value="2">Member</option>
+                                                            <select className="form-select" id = {e.email} onChange={handleRoleChange}>
+                                                                <option value="coowner">Co-Owner</option>
+                                                                <option value="member">Member</option>
                                                             </select>}
                                                     </td>
                                                     <td>

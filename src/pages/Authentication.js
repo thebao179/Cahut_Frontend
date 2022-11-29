@@ -3,7 +3,7 @@ import SignInForm from "../components/Authentication/SignInForm";
 import SignUpForm from "../components/Authentication/SignUpForm";
 import {useNavigate} from "react-router-dom";
 
-function Authentication({ component, setToken, usrToken }) {
+function Authentication({component, setToken, usrToken}) {
     const navigate = useNavigate();
     useEffect(() => {
         if (usrToken) {
@@ -24,7 +24,7 @@ function Authentication({ component, setToken, usrToken }) {
                                     <a className="link-fx fw-semibold fs-2 text-white">
                                         Realtime Learning Platform
                                     </a>
-                                    <p className="text-white-75 me-xl-8 mt-2" />
+                                    <p className="text-white-75 me-xl-8 mt-2"/>
                                 </div>
                             </div>
                             <div className="p-4 p-xl-5 d-xl-flex justify-content-between align-items-center fs-sm">
@@ -51,10 +51,11 @@ function Authentication({ component, setToken, usrToken }) {
                                 </a>
                             </div>
                             <div className="p-4 w-100 flex-grow-1 d-flex align-items-center">
-                                {component === 'signin' && <SignInForm setToken={setToken} />}
-                                {component === 'signup' && <SignUpForm />}
+                                {component === 'signin' && <SignInForm setToken={setToken}/>}
+                                {component === 'signup' && <SignUpForm/>}
                             </div>
-                            <div className="px-4 py-3 w-100 d-lg-none d-flex flex-column flex-sm-row justify-content-between fs-sm text-center text-sm-start">
+                            <div
+                                className="px-4 py-3 w-100 d-lg-none d-flex flex-column flex-sm-row justify-content-between fs-sm text-center text-sm-start">
                                 <p className="fw-medium text-black-50 py-2 mb-0">
                                     <strong>HCMUS</strong> ©
                                     <span data-toggle="year-copy" className="js-year-copy-enabled">

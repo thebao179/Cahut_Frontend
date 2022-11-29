@@ -1,8 +1,7 @@
 import React from "react";
-import {Link, useLocation} from "react-router-dom";
-import groupApi from "../../api/GroupApi";
+import {Link} from "react-router-dom";
 
-function Navbar({ component }) {
+function Navbar({component}) {
     return (
         <div className="bg-primary-darker">
             <div className="bg-black-10">
@@ -18,32 +17,37 @@ function Navbar({ component }) {
                     <div id="main-navigation" className="d-none d-lg-block mt-2 mt-lg-0">
                         <ul className="nav-main nav-main-dark nav-main-horizontal nav-main-hover">
                             <li className="nav-main-item">
-                                <Link to={'/dashboard'} className={`nav-main-link ${component === 'dashboard' && 'active'}`}>
+                                <Link to={'/dashboard'}
+                                      className={`nav-main-link ${component === 'dashboard' && 'active'}`}>
                                     <i className="nav-main-link-icon si si-compass"></i>
                                     <span className="nav-main-link-name">Dashboard</span>
                                 </Link>
                             </li>
                             <li className="nav-main-item">
-                                <a className={`nav-main-link nav-main-link-submenu ${(component === 'gowned' || component === 'gjoined') && 'active'}`} data-toggle="submenu"
-                                    aria-haspopup="true" aria-expanded="true">
+                                <a className={`nav-main-link nav-main-link-submenu ${(component === 'gowned' || component === 'gjoined') && 'active'}`}
+                                   data-toggle="submenu"
+                                   aria-haspopup="true" aria-expanded="true">
                                     <i className="nav-main-link-icon si si-users"></i>
                                     <span className="nav-main-link-name">Groups</span>
                                 </a>
                                 <ul className="nav-main-submenu">
                                     <li className="nav-main-item">
-                                        <Link to={'/groups/owned'} className={`nav-main-link ${component === 'gowned' && 'active'}`}>
+                                        <Link to={'/groups/owned'}
+                                              className={`nav-main-link ${component === 'gowned' && 'active'}`}>
                                             <span className="nav-main-link-name">Group Owned</span>
                                         </Link>
                                     </li>
                                     <li className="nav-main-item">
-                                        <Link to={'/groups/joined'} className={`nav-main-link ${component === 'gjoined' && 'active'}`}>
+                                        <Link to={'/groups/joined'}
+                                              className={`nav-main-link ${component === 'gjoined' && 'active'}`}>
                                             <span className="nav-main-link-name">Group Joined</span>
                                         </Link>
                                     </li>
                                 </ul>
                             </li>
                             <li className="nav-main-item">
-                                <Link to={'/profile'} className={`nav-main-link ${component === 'profile' && 'active'}`}>
+                                <Link to={'/profile'}
+                                      className={`nav-main-link ${component === 'profile' && 'active'}`}>
                                     <i className="nav-main-link-icon si si-settings"></i>
                                     <span className="nav-main-link-name">Profile</span>
                                 </Link>
@@ -51,7 +55,8 @@ function Navbar({ component }) {
                             <li className="nav-main-heading">Shortcuts</li>
                             <li className="nav-main-item ms-lg-auto">
                                 <a className="nav-main-link">
-                                    <button type="button" className="btn btn-alt-info" data-bs-toggle="modal" data-bs-target="#group-add-modal">
+                                    <button type="button" className="btn btn-alt-info" data-bs-toggle="modal"
+                                            data-bs-target="#group-add-modal">
                                         <i className="fa fa-fw fa-plus me-1"></i> Create group
                                     </button>
                                 </a>

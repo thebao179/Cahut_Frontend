@@ -1,9 +1,9 @@
 /* eslint-disable */
 import React, {useEffect} from "react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import authenticationApi from "../../api/AuthenticationApi";
 import useFetch from '../../hooks/useFetch'
 
@@ -21,12 +21,12 @@ function SignInForm({setToken}) {
     const {
         register,
         handleSubmit,
-        formState: { errors }
+        formState: {errors}
     } = useForm({
         resolver: yupResolver(SignInSchema)
     });
 
-    const { handleGoogle, loading, error } = useFetch(setToken);
+    const {handleGoogle, loading, error} = useFetch(setToken);
     useEffect(() => {
         if (window.google) {
             google.accounts.id.initialize({
@@ -46,13 +46,13 @@ function SignInForm({setToken}) {
     const OnSubmit = async (data) => {
         const res = await authenticationApi.login(data.email, data.password);
         if (res.status) {
-            One.helpers('jq-notify', { type: 'success', icon: 'fa fa-check me-1', message: res.message });
+            One.helpers('jq-notify', {type: 'success', icon: 'fa fa-check me-1', message: res.message});
             setTimeout(function () {
                 setToken(res.data.accessToken);
             }, 1500);
             return;
         }
-        One.helpers('jq-notify', { type: 'danger', icon: 'fa fa-times me-1', message: res.message });
+        One.helpers('jq-notify', {type: 'danger', icon: 'fa fa-times me-1', message: res.message});
     };
 
     return (
@@ -60,7 +60,7 @@ function SignInForm({setToken}) {
             <div className="w-100">
                 <div className="text-center mb-5">
                     <p className="mb-3">
-                        <i className="fa fa-2x fa-circle-notch text-primary-light" />
+                        <i className="fa fa-2x fa-circle-notch text-primary-light"/>
                     </p>
                     <h1 className="fw-bold mb-2">Sign In</h1>
                     <p className="fw-medium text-muted">
@@ -109,7 +109,7 @@ function SignInForm({setToken}) {
                                 </div>
                                 <div>
                                     <button type="submit" className="btn btn-lg btn-alt-primary">
-                                        <i className="fa fa-fw fa-sign-in-alt me-1 opacity-50" />{" "}
+                                        <i className="fa fa-fw fa-sign-in-alt me-1 opacity-50"/>{" "}
                                         Sign In
                                     </button>
                                 </div>

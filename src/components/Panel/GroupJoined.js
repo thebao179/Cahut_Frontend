@@ -2,17 +2,19 @@ import React, {useEffect, useState} from "react";
 import PanelHero from "../General/PanelHero";
 import GroupDetail from "../Modals/GroupDetail";
 import groupApi from "../../api/GroupApi";
+import jwt from 'jwt-decode'
 
 function GroupJoined({token}) {
     const [groupId, setGroupId] = useState();
     const [role, setRole] = useState(0);
     const [groups, setGroups] = useState();
+    const [self, setSelf] = useState();
 
     useEffect(() => {
         async function fetchData() {
             const data = await groupApi.getJoinedGroups();
             const temp = data.data.map(group =>
-                <div className="col-md-6 col-lg-4 col-xl-3">
+                <div key={group.groupName} className="col-md-6 col-lg-4 col-xl-3">
                     <a className="block block-rounded block-link-pop h-100 mb-0">
                         <div className="block-content block-content-full text-center bg-amethyst">
                             <div className="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
@@ -29,7 +31,7 @@ function GroupJoined({token}) {
                             <div className="fs-sm text-end">
                                 <div className="block-options d-flex" style={{paddingLeft: 0}}>
                                     <div className="col-sm-6 text-start">
-                                        <p className="group-role text-warning pt-1">{group.role}</p>
+                                        <p className={`group-role ${group.role === 'Co-owner' ? 'text-warning' : 'text-success'} pt-1`}>{group.role}</p>
                                     </div>
                                     <div className="col-sm-6">
                                         <button type="button" className="btn-block-option">
@@ -37,7 +39,10 @@ function GroupJoined({token}) {
                                         </button>
                                         <button type="button" className="btn-block-option"
                                                 data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
-                                                onClick={() => {setGroupId(group.groupName); setRole(group.role)}}>
+                                                onClick={() => {
+                                                    setGroupId(group.groupName);
+                                                    setRole(group.role)
+                                                }}>
                                             <i className="si si-info"></i>
                                         </button>
                                     </div>
@@ -49,18 +54,22 @@ function GroupJoined({token}) {
             );
             setGroups(temp);
         }
-        if (token) fetchData();
+
+        if (token) {
+            fetchData();
+            setSelf(jwt(token).email);
+        }
     }, []);
 
     return (
         <>
-            <PanelHero title={'Joined groups'} photo={'gjoined'} />
+            <PanelHero title={'Joined groups'} photo={'gjoined'}/>
             <div className="content content-boxed">
                 <div className="row items-push py-4">
                     {groups}
                 </div>
             </div>
-            <GroupDetail groupId={groupId} role={role} />
+            <GroupDetail groupId={groupId} role={role} self={self}/>
         </>
     );
 }

@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React from "react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import authenticationApi from "../../api/AuthenticationApi";
 
@@ -25,23 +25,25 @@ function SignUpForm() {
     const {
         register,
         handleSubmit,
-        formState: { errors }
+        formState: {errors}
     } = useForm({
         resolver: yupResolver(SignUpSchema)
     });
 
     const onSubmit = async (data) => {
         const result = await authenticationApi.signup(data.email, data.username, data.password);
-        One.helpers('jq-notify', { type: `${result.status === true ? 'success' : 'danger'}`,
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
             icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
-                message: result.message });
+            message: result.message
+        });
     }
 
     return (
         <div className="w-100">
             <div className="text-center mb-5">
                 <p className="mb-3">
-                    <i className="fa fa-2x fa-circle-notch text-primary-light" />
+                    <i className="fa fa-2x fa-circle-notch text-primary-light"/>
                 </p>
                 <h1 className="fw-bold mb-2">Create Account</h1>
                 <p className="fw-medium text-muted">
@@ -114,7 +116,7 @@ function SignUpForm() {
                         </div>
                         <div className="text-center">
                             <button type="submit" className="btn btn-lg btn-alt-success">
-                                <i className="fa fa-fw fa-plus me-1 opacity-50" /> Sign Up
+                                <i className="fa fa-fw fa-plus me-1 opacity-50"/> Sign Up
                             </button>
                         </div>
                     </form>

@@ -1,8 +1,8 @@
 /* eslint-disable */
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import * as yup from "yup";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
 import userApi from "../../api/UserApi";
 
 const phoneRegExp = /^((\+)33|0)[1-9](\d{2}){4}$/;
@@ -11,7 +11,7 @@ const InfoSchema = yup.object().shape({
     username: yup.string().required("Username is a required field"),
     phone: yup
         .string()
-        .matches(phoneRegExp, { message: "Phone number is not valid", excludeEmptyString: true })
+        .matches(phoneRegExp, {message: "Phone number is not valid", excludeEmptyString: true})
 });
 
 const PasswordSchema = yup.object().shape({
@@ -32,7 +32,7 @@ function Profile({token}) {
     const {
         register,
         handleSubmit,
-        formState: { errors }
+        formState: {errors}
     } = useForm({
         resolver: yupResolver(InfoSchema)
     });
@@ -48,13 +48,16 @@ function Profile({token}) {
             setUsername(data.data.userName);
             setPhoneNumber(data.data.phone);
         }
+
         if (token) fetchData();
     }, []);
     const onSubmit = async (data) => {
         const result = await userApi.editUserInfo(username, phone)
-        One.helpers('jq-notify', { type: `${result.status === true ? 'success' : 'danger'}`,
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
             icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
-            message: result.message });
+            message: result.message
+        });
     }
 
     const pValidator = useForm({
@@ -72,11 +75,11 @@ function Profile({token}) {
 
     return (
         <>
-            <div className="bg-image" style={{ backgroundImage: 'url("/assets/media/photos/profile-photo.jpg")' }}>
+            <div className="bg-image" style={{backgroundImage: 'url("/assets/media/photos/profile-photo.jpg")'}}>
                 <div className="bg-primary-dark-op">
                     <div className="content content-full text-center">
                         <div className="my-3">
-                            <img className="img-avatar img-avatar-thumb" src="/assets/media/avatars/avatar.jpg" alt="" />
+                            <img className="img-avatar img-avatar-thumb" src="/assets/media/avatars/avatar.jpg" alt=""/>
                         </div>
                         <h1 className="h2 text-white mb-0">{username}</h1>
                     </div>
@@ -98,9 +101,10 @@ function Profile({token}) {
                                 <div className="col-lg-8 col-xl-5">
                                     <div className="mb-4">
                                         <label className="form-label">Email Address</label>
-                                        <input type="email" className={`form-control ${errors.email ? "is-invalid" : ""}`}
-                                            defaultValue={email} disabled={true}
-                                            {...register("email")} />
+                                        <input type="email"
+                                               className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                                               defaultValue={email} disabled={true}
+                                               {...register("email")} />
                                         {errors.email && (
                                             <p className="fs-sm fw-medium text-danger">
                                                 {errors.email.message}
@@ -109,9 +113,10 @@ function Profile({token}) {
                                     </div>
                                     <div className="mb-4">
                                         <label className="form-label">Username</label>
-                                        <input type="text" className={`form-control ${errors.username ? "is-invalid" : ""}`}
-                                            placeholder="Enter Your Username" defaultValue={username}
-                                            {...register("username")} />
+                                        <input type="text"
+                                               className={`form-control ${errors.username ? "is-invalid" : ""}`}
+                                               placeholder="Enter Your Username" defaultValue={username}
+                                               {...register("username")} />
                                         {errors.username && (
                                             <p className="fs-sm fw-medium text-danger">
                                                 {errors.username.message}
@@ -120,9 +125,10 @@ function Profile({token}) {
                                     </div>
                                     <div className="mb-4">
                                         <label className="form-label">Phone</label>
-                                        <input type="text" className={`form-control ${errors.phone ? "is-invalid" : ""}`}
-                                            placeholder="Enter Your Phone Number" defaultValue={phone}
-                                            {...register("phone")} />
+                                        <input type="text"
+                                               className={`form-control ${errors.phone ? "is-invalid" : ""}`}
+                                               placeholder="Enter Your Phone Number" defaultValue={phone}
+                                               {...register("phone")} />
                                         {errors.phone && (
                                             <p className="fs-sm fw-medium text-danger">
                                                 {errors.phone.message}
@@ -154,7 +160,8 @@ function Profile({token}) {
                                 <div className="col-lg-8 col-xl-5">
                                     <div className="mb-4">
                                         <label className="form-label">Current Password</label>
-                                        <input type="password" className={`form-control ${pValidator.formState.errors.cpassword ? "is-invalid" : ""}`}
+                                        <input type="password"
+                                               className={`form-control ${pValidator.formState.errors.cpassword ? "is-invalid" : ""}`}
                                                {...pValidator.register("cpassword")} />
                                         {pValidator.formState.errors.cpassword && (
                                             <p className="fs-sm fw-medium text-danger">
@@ -164,8 +171,9 @@ function Profile({token}) {
                                     </div>
                                     <div className="mb-4">
                                         <label className="form-label">New Password</label>
-                                        <input type="password" className={`form-control ${pValidator.formState.errors.password ? "is-invalid" : ""}`}
-                                            {...pValidator.register("password")} />
+                                        <input type="password"
+                                               className={`form-control ${pValidator.formState.errors.password ? "is-invalid" : ""}`}
+                                               {...pValidator.register("password")} />
                                         {pValidator.formState.errors.password && (
                                             <p className="fs-sm fw-medium text-danger">
                                                 {pValidator.formState.errors.password.message}
@@ -174,8 +182,9 @@ function Profile({token}) {
                                     </div>
                                     <div className="mb-4">
                                         <label className="form-label">Confirm New Password</label>
-                                        <input type="password" className={`form-control ${pValidator.formState.errors.password2 ? "is-invalid" : ""}`}
-                                            {...pValidator.register("password2")} />
+                                        <input type="password"
+                                               className={`form-control ${pValidator.formState.errors.password2 ? "is-invalid" : ""}`}
+                                               {...pValidator.register("password2")} />
                                         {pValidator.formState.errors.password2 && (
                                             <p className="fs-sm fw-medium text-danger">
                                                 {pValidator.formState.errors.password2.message}

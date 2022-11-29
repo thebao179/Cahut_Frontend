@@ -10,7 +10,7 @@ import GroupAdd from "../components/Modals/GroupAdd";
 import Profile from "../components/Panel/Profile";
 import {useLocation, useNavigate} from "react-router-dom";
 
-function Panel({ component, usrToken, setToken }) {
+function Panel({component, usrToken, setToken}) {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -36,14 +36,14 @@ function Panel({ component, usrToken, setToken }) {
         <div id="page-container" className="page-header-dark main-content-boxed">
             <Header setToken={setToken} token={usrToken}/>
             <main id="main-container">
-                <Navbar component={component} />
-                {component === 'dashboard' && <Dashboard token={usrToken} />}
-                {component === 'gjoined' && <GroupJoined token={usrToken} />}
-                {component === 'gowned' && <GroupOwned token={usrToken} />}
-                {component === 'profile' && <Profile token={usrToken} />}
+                <Navbar component={component}/>
+                {component === 'dashboard' && <Dashboard token={usrToken}/>}
+                {component === 'gjoined' && <GroupJoined token={usrToken}/>}
+                {component === 'gowned' && <GroupOwned token={usrToken}/>}
+                {component === 'profile' && <Profile token={usrToken}/>}
             </main>
-            <GroupAdd />
-            <Footer />
+            <GroupAdd/>
+            <Footer/>
         </div>
     );
 }

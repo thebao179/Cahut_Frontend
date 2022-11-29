@@ -1,55 +1,112 @@
 /* eslint-disable */
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import groupApi from "../../api/GroupApi";
 
-
 function validateEmail(email) {
-    var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
 
-function GroupDetail({ groupId, role }) {
-    const [data, setData] = useState([
-        { username: 'Amber Harvey', email: 'user1@gmail.com', role: 2 },
-        { username: 'Peter Parker', email: 'user2@gmail.com', role: 1 },
-        { username: 'Trong Le', email: 'user3@gmail.com', role: 3 },
-    ]);
+function GroupDetail({groupId, role, self}) {
+    const [data, setData] = useState([]);
+    const [invitation, setInvitation] = useState();
+
+    useEffect(() => {
+        async function fetchData() {
+            const groupInv = await groupApi.getInvitationLink(groupId);
+            const groupMems = await groupApi.getGroupMembers(groupId);
+            setData(groupMems.data);
+            setInvitation(groupInv.data);
+        }
+
+        if (data.length !== 0) {
+            $('#group-members').DataTable({
+                pageLength: 10,
+                lengthMenu: !1,
+                searching: !1,
+                autoWidth: !1,
+                dom: "<'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+                destroy: true,
+            });
+        } else if (groupId) {
+            fetchData();
+            $('#group-select2').select2({
+                placeholder: 'Enter To Add',
+                tags: true,
+                multiple: true,
+                createTag: function (term, data) {
+                    const value = term.term;
+                    if (validateEmail(value)) {
+                        return {
+                            id: value,
+                            text: value
+                        };
+                    }
+                    return null;
+                },
+                maximumSelectionLength: 1, // Temporary
+            });
+        }
+    }, [groupId, data]);
 
     const copyInv = () => {
         const copyText = document.getElementById('group-link');
         copyText.select();
         copyText.setSelectionRange(0, 99999);
         navigator.clipboard.writeText(copyText.value);
-        One.helpers('jq-notify', { type: 'info', icon: 'fa fa-info-circle me-1', message: 'Copied to clipboard' });
     };
 
     const sendInv = () => {
-        One.helpers('jq-notify', { type: 'info', icon: 'fa fa-info-circle me-1', message: 'Sending emails' });
+        const value = $('#group-select2').val();
+        if (value.length) {
+            groupApi.inviteMembers(groupId, value[0]).then(result => {
+                One.helpers('jq-notify', {
+                    type: `${result.status === true ? 'success' : 'danger'}`,
+                    icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+                    message: result.message
+                });
+            });
+            One.helpers('jq-notify', {type: 'info', icon: 'fa fa-info-circle me-1', message: 'Sending'});
+        }
     }
 
     const handleRemoveClick = async (groupName, email) => {
         const tempData = data;
-        var index = tempData.indexOf(email);
+        const index = tempData.indexOf(email);
         if (index !== -1) {
             tempData.splice(index, 1);
         }
         setData(tempData);
-        const res = await groupApi.kickMember(groupName, email);
-        console.log(res);
+        const result = await groupApi.kickMember(groupName, email);
+
+        if (result.status)
+            $('#group-members').DataTable()
+                .row(`${"#row_" + email}`)
+                .remove()
+                .draw();
+
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message
+        });
     }
 
-    const handleRoleChange = async (e)=>{
+    const handleRoleChange = async (e) => {
         const role = e.target.value;
         const email = e.target.id;
-        const res = await groupApi.setRoleMember(groupId, role, email);
-        console.log(res);
+        const result = await groupApi.setRoleMember(groupId, role, email);
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message
+        });
     }
-
 
     return (
         <>
             <div className="modal fade" id="grpdetail-modal" role="dialog"
-                aria-labelledby="grpdetail-modal" aria-hidden="true">
+                 aria-labelledby="grpdetail-modal" aria-hidden="true">
                 <div className="modal-dialog modal-lg modal-dialog-popin" role="document">
                     <div className="modal-content">
                         <div className="block block-rounded block-transparent mb-0">
@@ -57,7 +114,7 @@ function GroupDetail({ groupId, role }) {
                                 <h3 className="block-title">Group Detail</h3>
                                 <div className="block-options">
                                     <button type="button" className="btn-block-option" data-bs-dismiss="modal"
-                                        aria-label="Close">
+                                            aria-label="Close">
                                         <i className="fa fa-fw fa-times"></i>
                                     </button>
                                 </div>
@@ -67,24 +124,26 @@ function GroupDetail({ groupId, role }) {
                                     <label className="form-label modal-title text-info mb-1">Group Invitation</label>
                                     <div className="input-group">
                                         <input className="form-control" id="group-link"
-                                            value={'https://www.google.com.vn'} disabled={true} />
+                                               defaultValue={invitation} disabled={true}/>
                                         <button type="button" className="btn btn-secondary"
-                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Copy to clipboard"
-                                            onClick={copyInv}>
+                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="Copy to clipboard"
+                                                onClick={copyInv}>
                                             <i className="far fa-copy"></i>
                                         </button>
                                     </div>
                                 </div>
-                                {(role !== 3 && role !== 0) &&
+                                {(role === 'Owner' || role === 'Co-Owner') &&
                                     <div className="mb-4">
                                         <label className="form-label modal-title text-info mb-1">Invite By Email</label>
                                         <select className="js-select2 form-select" id="group-select2"
-                                            name="" style={{ width: '100%' }}
-                                            data-container="#grpdetail-modal">
+                                                name="" style={{width: '100%'}}
+                                                data-container="#grpdetail-modal">
                                         </select>
                                         <div className="row justify-content-end">
                                             <div className="col-md-3 text-end">
-                                                <button type="button" className="btn btn-alt-primary mt-3" onClick={sendInv}>
+                                                <button type="button" className="btn btn-alt-primary mt-3"
+                                                        onClick={sendInv}>
                                                     <i className="fa fa-fw fa-paper-plane me-1"></i> Send
                                                 </button>
                                             </div>
@@ -93,34 +152,44 @@ function GroupDetail({ groupId, role }) {
                                 }
                                 <div className="mb-4" id="member-table">
                                     <label className="modal-title text-info mb-1">Members</label>
-                                    <table className="table table-bordered table-striped table-vcenter" id="group-members">
+                                    <table className="table table-bordered table-striped table-vcenter"
+                                           id="group-members">
                                         <thead>
-                                            <tr>
-                                                <th>Username</th>
-                                                <th className="d-none d-sm-table-cell" style={{ width: "30%" }}>Email</th>
-                                                <th className="d-none d-sm-table-cell" style={{ width: "20%" }}>Role</th>
-                                                <th data-orderable="false" style={{ width: "10%" }}></th>
-                                            </tr>
+                                        <tr>
+                                            <th>Username</th>
+                                            <th className="d-none d-sm-table-cell" style={{width: "30%"}}>Email</th>
+                                            <th className="d-none d-sm-table-cell" style={{width: "20%"}}>Role</th>
+                                            <th data-orderable="false" style={{width: "10%"}}></th>
+                                        </tr>
                                         </thead>
                                         <tbody>
-                                            {data.map(e =>
-                                                <tr>
-                                                    <td className="fw-semibold fs-sm">{e.username}</td>
-                                                    <td className="d-none d-sm-table-cell fs-sm">{e.email}</td>
-                                                    <td className="d-none d-sm-table-cell">
-                                                        {role === 3 ? <span class="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-warning-light text-warning">Owner</span> :
-                                                            <select className="form-select" id = {e.email} onChange={handleRoleChange}>
-                                                                <option value="coowner">Co-Owner</option>
-                                                                <option value="member">Member</option>
-                                                            </select>}
-                                                    </td>
-                                                    <td>
-                                                        {(role !== 3 && role !== 0) ? <button type="button" className="text-center btn btn-sm btn-danger removeBtn" onClick={() => handleRemoveClick(groupId, e.email)}>
+                                        {data.map(e =>
+                                            <tr key={e.email} id={`row_${e.email}`}>
+                                                <td className="fw-semibold fs-sm">{e.memberName}</td>
+                                                <td className="d-none d-sm-table-cell fs-sm">{e.email}</td>
+                                                <td className="d-none d-sm-table-cell">
+                                                    {e.role === 'Owner' || role !== 'Owner' ? <span
+                                                            className={`fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill ${e.role === 'Owner' ? 'bg-danger-light text-danger' : e.role === 'Co-owner' ? 'bg-warning-light text-warning' : 'bg-success-light text-success'}`}>{e.role}</span> :
+                                                        <select className="form-select" id={e.email}
+                                                                onChange={handleRoleChange}>
+                                                            <option value="Co-owner"
+                                                                    selected={e.role === 'Co-owner'}>Co-Owner
+                                                            </option>
+                                                            <option value="Member"
+                                                                    selected={e.role === 'Member'}>Member
+                                                            </option>
+                                                        </select>}
+                                                </td>
+                                                <td>
+                                                    {e.role !== 'Owner' && (role === 'Owner' || role === 'Co-owner') && self !== e.email ?
+                                                        <button type="button"
+                                                                className="text-center btn btn-sm btn-danger removeBtn"
+                                                                onClick={() => handleRemoveClick(groupId, e.email)}>
                                                             <i className="fa fa-fw fa-xmark"></i>
                                                         </button> : ''}
-                                                    </td>
-                                                </tr>
-                                            )}
+                                                </td>
+                                            </tr>
+                                        )}
                                         </tbody>
                                     </table>
                                 </div>

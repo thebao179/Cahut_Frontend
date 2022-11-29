@@ -1,6 +1,6 @@
 import jwt from 'jwt-decode'
 import React, {useEffect, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import authenticationApi from "../../api/AuthenticationApi";
 
 function Header({setToken, token}) {
@@ -24,13 +24,15 @@ function Header({setToken, token}) {
                 <div className="d-flex align-items-center">
                     <div className="d-inline-block ms-2">
                         <Link to={'/profile'} className="btn btn-sm btn-alt-secondary d-flex align-items-center">
-                            <img className="rounded-circle" alt="" style={{width: 21 + 'px'}} src="/assets/media/avatars/avatar.jpg" />
+                            <img className="rounded-circle" alt="" style={{width: 21 + 'px'}}
+                                 src="/assets/media/avatars/avatar.jpg"/>
                             <span className="d-sm-inline-block ms-2">{user.unique_name}</span>
                             <i className="d-sm-inline-block opacity-50 ms-1"></i>
                         </Link>
                     </div>
                     <div className="d-inline-block ms-2">
-                        <button onClick={() => handleLogout()} className="btn btn-sm btn-alt-danger d-flex align-items-center" >
+                        <button onClick={() => handleLogout()}
+                                className="btn btn-sm btn-alt-danger d-flex align-items-center">
                             <span className="d-sm-inline-block ms-2">Log Out</span>
                             <i className="fa fa-fw fa-right-from-bracket d-sm-inline-block opacity-50 ms-1"></i>
                         </button>

@@ -45,7 +45,7 @@ function GroupOwned({token}) {
         }
         if (token) fetchData();
     }, []);
-    return (
+     return (
         <>
             <PanelHero title={'Owned groups'} photo={'gowned'} />
             <div className="content content-boxed">

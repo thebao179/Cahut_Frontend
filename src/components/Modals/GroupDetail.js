@@ -44,7 +44,7 @@ function GroupDetail({groupId, role, self}) {
                     }
                     return null;
                 },
-                maximumSelectionLength: 1, // Temporary
+                //maximumSelectionLength: 1, // Temporary
             });
         }
     }, [groupId, data]);
@@ -59,7 +59,7 @@ function GroupDetail({groupId, role, self}) {
     const sendInv = () => {
         const value = $('#group-select2').val();
         if (value.length) {
-            groupApi.inviteMembers(groupId, value[0]).then(result => {
+            groupApi.inviteMembers(groupId, value).then(result => {
                 One.helpers('jq-notify', {
                     type: `${result.status === true ? 'success' : 'danger'}`,
                     icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,

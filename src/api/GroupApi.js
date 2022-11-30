@@ -27,8 +27,14 @@ const groupApi = {
         return axiosClient.get(url);
     },
     inviteMembers: (groupName, email) => {
-        const url = "/group/invite/" + groupName + "/" + email;
-        return axiosClient.post(url);
+        const config = {
+            params: {
+                groupName: groupName,
+                emailArray: email,
+            },
+        }
+        const url = "/group/invitemany";
+        return axiosClient.post(url, {groupName: groupName, emailArray: email});
     },
     setRoleMember: (groupName, role, email) => {
         const url = "/group/set/role/" + groupName + "/" + email + "/" + role;

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import PanelHero from "../General/PanelHero";
 import GroupDetail from "../Modals/GroupDetail";
 import groupApi from "../../api/GroupApi";
-import jwt from "jwt-decode";
+import jwt from 'jwt-decode'
 
 function GroupOwned({token}) {
     const [groupId, setGroupId] = useState();

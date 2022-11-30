@@ -1,15 +1,16 @@
 /* eslint-disable */
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import groupApi from "../../api/GroupApi";
 
 function validateEmail(email) {
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
+    const str = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return str.test(email);
 }
 
 function GroupDetail({groupId, role, self}) {
     const [data, setData] = useState([]);
     const [invitation, setInvitation] = useState();
+    let idChanged = useRef(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -18,17 +19,22 @@ function GroupDetail({groupId, role, self}) {
             setData(groupMems.data);
             setInvitation(groupInv.data);
         }
-
-        if (data.length !== 0) {
-            $('#group-members').DataTable({
-                pageLength: 10,
-                lengthMenu: !1,
-                searching: !1,
-                autoWidth: !1,
-                dom: "<'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
-                destroy: true,
-            });
-        } else if (groupId) {
+        if (data.length !== 0 && idChanged.current) {
+            const dataTable = $('#group-members');
+            if (DataTable.isDataTable('#group-members'))
+                dataTable.DataTable().clear();
+            else {
+                dataTable.DataTable({
+                    pageLength: 10,
+                    lengthMenu: !1,
+                    searching: !1,
+                    autoWidth: !1,
+                    dom: "<'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+                    destroy: true,
+                });
+            }
+            idChanged.current = false;
+        } else if (groupId && !idChanged.current) {
             fetchData();
             $('#group-select2').select2({
                 placeholder: 'Enter To Add',
@@ -45,6 +51,7 @@ function GroupDetail({groupId, role, self}) {
                     return null;
                 },
             });
+            idChanged.current = true;
         }
     }, [groupId, data]);
 

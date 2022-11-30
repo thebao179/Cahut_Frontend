@@ -44,7 +44,6 @@ function GroupDetail({groupId, role, self}) {
                     }
                     return null;
                 },
-                //maximumSelectionLength: 1, // Temporary
             });
         }
     }, [groupId, data]);

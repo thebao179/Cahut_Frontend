@@ -52,7 +52,7 @@ function Profile({token}) {
         if (token) fetchData();
     }, []);
     const onSubmit = async (data) => {
-        const result = await userApi.editUserInfo(username, email, phone)
+        const result = await userApi.editUserInfo(data.username, data.phone)
         One.helpers('jq-notify', {
             type: `${result.status === true ? 'success' : 'danger'}`,
             icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,

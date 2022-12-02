@@ -2,9 +2,9 @@ import React, {useEffect, useState} from "react";
 import PanelHero from "../General/PanelHero";
 import GroupDetail from "../Modals/GroupDetail";
 import groupApi from "../../api/GroupApi";
-import jwt from 'jwt-decode'
+import jwt from 'jwt-decode';
 
-function GroupJoined({token}) {
+function GroupJoined({token, grpCreate}) {
     const [groupId, setGroupId] = useState();
     const [role, setRole] = useState(0);
     const [groups, setGroups] = useState();
@@ -59,7 +59,7 @@ function GroupJoined({token}) {
             fetchData();
             setSelf(jwt(token).email);
         }
-    }, []);
+    }, [grpCreate]);
 
     return (
         <>

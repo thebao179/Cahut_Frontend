@@ -2,9 +2,9 @@ import React, {useEffect, useState} from "react";
 import PanelHero from "../General/PanelHero";
 import GroupDetail from "../Modals/GroupDetail";
 import groupApi from "../../api/GroupApi";
-import jwt from 'jwt-decode'
+import jwt from 'jwt-decode';
 
-function GroupOwned({token}) {
+function GroupOwned({token, grpCreate}) {
     const [groupId, setGroupId] = useState();
     const [groups, setGroups] = useState();
     const [self, setSelf] = useState();
@@ -52,7 +52,7 @@ function GroupOwned({token}) {
             fetchData();
             setSelf(jwt(token).email);
         }
-    }, []);
+    }, [grpCreate]);
     return (
         <>
             <PanelHero title={'Owned groups'} photo={'gowned'}/>

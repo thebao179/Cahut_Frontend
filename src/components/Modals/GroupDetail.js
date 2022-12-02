@@ -20,11 +20,8 @@ function GroupDetail({groupId, role, self}) {
             setInvitation(groupInv.data);
         }
         if (data.length !== 0 && idChanged.current) {
-            const dataTable = $('#group-members');
-            if (DataTable.isDataTable('#group-members'))
-                dataTable.DataTable().clear();
-            else {
-                dataTable.DataTable({
+            if (!DataTable.isDataTable('#group-members'))
+                $('#group-members').DataTable({
                     pageLength: 10,
                     lengthMenu: !1,
                     searching: !1,
@@ -32,7 +29,6 @@ function GroupDetail({groupId, role, self}) {
                     dom: "<'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
                     destroy: true,
                 });
-            }
             idChanged.current = false;
         } else if (groupId && !idChanged.current) {
             fetchData();
@@ -85,11 +81,7 @@ function GroupDetail({groupId, role, self}) {
         setData(tempData);
         const result = await groupApi.kickMember(groupName, email);
 
-        if (result.status)
-            $('#group-members').DataTable()
-                .row(`${"#row_" + email}`)
-                .remove()
-                .draw();
+        if (result.status) setData([]);
 
         One.helpers('jq-notify', {
             type: `${result.status === true ? 'success' : 'danger'}`,
@@ -139,7 +131,7 @@ function GroupDetail({groupId, role, self}) {
                                         </button>
                                     </div>
                                 </div>
-                                {(role === 'Owner' || role === 'Co-Owner') &&
+                                {(role === 'Owner' || role === 'Co-owner') &&
                                     <div className="mb-4">
                                         <label className="form-label modal-title text-info mb-1">Invite By Email</label>
                                         <select className="js-select2 form-select" id="group-select2"

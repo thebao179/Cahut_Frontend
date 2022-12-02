@@ -28,7 +28,7 @@ const PasswordSchema = yup.object().shape({
         .oneOf([yup.ref("password"), null], "Your password does not match")
 });
 
-function Profile({token}) {
+function Profile({token, setProfileUpd, profileUpd}) {
     const {
         register,
         handleSubmit,
@@ -58,6 +58,10 @@ function Profile({token}) {
             icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
             message: result.message
         });
+        if (result.status) {
+            setUsername(data.username);
+            setProfileUpd(profileUpd + 1);
+        }
     }
 
     const pValidator = useForm({

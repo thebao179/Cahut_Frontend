@@ -9,7 +9,7 @@ const GroupAddSchema = yup.object().shape({
     title: yup.string().required("Title is a required field"),
 });
 
-function GroupAdd() {
+function GroupAdd({grpCreate, setGrpCreate}) {
     const {
         register,
         handleSubmit,
@@ -26,6 +26,7 @@ function GroupAdd() {
             icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
             message: result.message
         });
+        if (result.status) setGrpCreate(grpCreate + 1);
     }
 
     return (

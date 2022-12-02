@@ -1,9 +1,9 @@
-import jwt from 'jwt-decode'
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import authenticationApi from "../../api/AuthenticationApi";
+import userApi from "../../api/UserApi";
 
-function Header({setToken, token}) {
+function Header({setToken, token, profileUpd}) {
     const [user, setUser] = useState({});
     const handleLogout = async () => {
         await authenticationApi.logout();
@@ -11,8 +11,12 @@ function Header({setToken, token}) {
         setToken('');
     };
     useEffect(() => {
-        if (token) setUser(jwt(token));
-    }, []);
+        async function fetchData() {
+            const data = await userApi.getUserInfo();
+            setUser(data.data);
+        }
+        if (token) fetchData();
+    }, [profileUpd]);
 
     return (
         <header id="page-header">
@@ -26,7 +30,7 @@ function Header({setToken, token}) {
                         <Link to={'/profile'} className="btn btn-sm btn-alt-secondary d-flex align-items-center">
                             <img className="rounded-circle" alt="" style={{width: 21 + 'px'}}
                                  src="/assets/media/avatars/avatar.jpg"/>
-                            <span className="d-sm-inline-block ms-2">{user.unique_name}</span>
+                            <span className="d-sm-inline-block ms-2">{user.userName}</span>
                             <i className="d-sm-inline-block opacity-50 ms-1"></i>
                         </Link>
                     </div>

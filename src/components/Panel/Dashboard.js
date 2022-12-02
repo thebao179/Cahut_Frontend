@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import PanelHero from "../General/PanelHero";
 import groupApi from "../../api/GroupApi";
 
-function Dashboard({token}) {
+function Dashboard({token, grpCreate}) {
     const [data, setData] = useState({});
 
     useEffect(() => {
@@ -13,7 +13,7 @@ function Dashboard({token}) {
         }
 
         if (token) fetchData();
-    }, []);
+    }, [grpCreate]);
 
     return (
         <>

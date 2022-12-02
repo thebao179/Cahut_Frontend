@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Footer from "../components/General/Footer";
 import Dashboard from "../components/Panel/Dashboard";
 import GroupOwned from "../components/Panel/GroupOwned";
@@ -9,10 +9,22 @@ import Navbar from "../components/General/Navbar";
 import GroupAdd from "../components/Modals/GroupAdd";
 import Profile from "../components/Panel/Profile";
 import {useLocation, useNavigate} from "react-router-dom";
+import jwt from "jwt-decode";
 
 function Panel({component, usrToken, setToken}) {
     const navigate = useNavigate();
     const location = useLocation();
+    const [profileUpd, setProfileUpd] = useState(0);
+    const [grpCreate, setGrpCreate] = useState(0);
+
+    if (usrToken) {
+        const payload = jwt(usrToken);
+        const currentDate = new Date();
+        if (payload.exp * 1000 < currentDate.getTime()) {
+            localStorage.removeItem('token');
+            navigate('/');
+        }
+    }
 
     useEffect(() => {
         if (!usrToken) {
@@ -34,15 +46,15 @@ function Panel({component, usrToken, setToken}) {
 
     return (
         <div id="page-container" className="page-header-dark main-content-boxed">
-            <Header setToken={setToken} token={usrToken}/>
+            <Header setToken={setToken} token={usrToken} profileUpd={profileUpd} />
             <main id="main-container">
                 <Navbar component={component}/>
-                {component === 'dashboard' && <Dashboard token={usrToken}/>}
-                {component === 'gjoined' && <GroupJoined token={usrToken}/>}
-                {component === 'gowned' && <GroupOwned token={usrToken}/>}
-                {component === 'profile' && <Profile token={usrToken}/>}
+                {component === 'dashboard' && <Dashboard token={usrToken} grpCreate={grpCreate}/>}
+                {component === 'gjoined' && <GroupJoined token={usrToken} grpCreate={grpCreate}/>}
+                {component === 'gowned' && <GroupOwned token={usrToken} grpCreate={grpCreate}/>}
+                {component === 'profile' && <Profile token={usrToken} profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
             </main>
-            <GroupAdd/>
+            <GroupAdd grpCreate={grpCreate} setGrpCreate={setGrpCreate}/>
             <Footer/>
         </div>
     );

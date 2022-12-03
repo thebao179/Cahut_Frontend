@@ -6,6 +6,8 @@ import Panel from "../../pages/Panel";
 import Activation from "../../pages/Activation";
 import useToken from '../../hooks/useToken';
 import GroupJoin from "../../pages/GroupJoin";
+import PresentationDetail from "../../pages/PresentationDetail";
+import PresentationView from "../../pages/PresentationView";
 
 function App() {
     const queryClient = new QueryClient();
@@ -46,6 +48,18 @@ function App() {
         {
             path: "/group/join/:code",
             element: <GroupJoin/>
+        },
+        {
+            path: "/presentations",
+            element: <Panel/>
+        },
+        {
+            path: "/presentation/edit/:id",
+            element: <PresentationDetail/>
+        },
+        {
+            path: "/presentation/view/:id",
+            element: <PresentationView/>
         },
     ]);
 

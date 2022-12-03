@@ -57,7 +57,11 @@ function Navbar({component}) {
                                 <a className="nav-main-link">
                                     <button type="button" className="btn btn-alt-info" data-bs-toggle="modal"
                                             data-bs-target="#group-add-modal">
-                                        <i className="fa fa-fw fa-plus me-1"></i> Create group
+                                        <i className="fa fa-fw fa-plus me-1"></i> Group
+                                    </button>
+                                    <button type="button" className="btn btn-alt-warning ms-sm-3" data-bs-toggle="modal"
+                                            data-bs-target="#presentation-add-modal">
+                                        <i className="fa fa-fw fa-plus me-1"></i> Presentation
                                     </button>
                                 </a>
                             </li>

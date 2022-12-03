@@ -10,13 +10,15 @@ import GroupAdd from "../components/Modals/GroupAdd";
 import Profile from "../components/Panel/Profile";
 import {useLocation, useNavigate} from "react-router-dom";
 import jwt from "jwt-decode";
+import Presentations from "../components/Panel/Presentation";
 
 function Panel({component, usrToken, setToken}) {
     const navigate = useNavigate();
     const location = useLocation();
     const [profileUpd, setProfileUpd] = useState(0);
     const [grpCreate, setGrpCreate] = useState(0);
-
+    const [presentationsCreated, setPresentationsCreated] = useState(0);
+    const [isAdding, setIsAdding] = useState(true);
     if (usrToken) {
         const payload = jwt(usrToken);
         const currentDate = new Date();
@@ -43,7 +45,23 @@ function Panel({component, usrToken, setToken}) {
             }))
         }))
     }, [usrToken]);
-
+    if(isAdding){
+        return (
+            <div id="page-container" className="page-header-dark main-content-boxed">
+                <Header setToken={setToken} token={usrToken} profileUpd={profileUpd} />
+                <main id="main-container">
+                    <Navbar component={component}/>
+                    {component === 'dashboard' && <Dashboard token={usrToken} grpCreate={grpCreate}/>}
+                    {component === 'gjoined' && <GroupJoined token={usrToken} grpCreate={grpCreate}/>}
+                    {component === 'gowned' && <GroupOwned token={usrToken} grpCreate={grpCreate}/>}
+                    {component === 'profile' && <Profile token={usrToken} profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
+                    {component === 'presentations' && <Presentations token={usrToken} presentationsCreate={presentationsCreated}/> }
+                </main>
+                <GroupAdd grpCreate={grpCreate} setGrpCreate={setGrpCreate} setIsAdd={setIsAdding}/>
+                <Footer/>
+            </div>
+        );
+    }
     return (
         <div id="page-container" className="page-header-dark main-content-boxed">
             <Header setToken={setToken} token={usrToken} profileUpd={profileUpd} />
@@ -54,7 +72,6 @@ function Panel({component, usrToken, setToken}) {
                 {component === 'gowned' && <GroupOwned token={usrToken} grpCreate={grpCreate}/>}
                 {component === 'profile' && <Profile token={usrToken} profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
             </main>
-            <GroupAdd grpCreate={grpCreate} setGrpCreate={setGrpCreate}/>
             <Footer/>
         </div>
     );

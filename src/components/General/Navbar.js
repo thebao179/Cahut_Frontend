@@ -24,12 +24,12 @@ function Navbar({component}) {
                                 </Link>
                             </li>
                             <li className="nav-main-item">
-                                <a className={`nav-main-link nav-main-link-submenu ${(component === 'gowned' || component === 'gjoined') && 'active'}`}
+                                <Link to={'/groups/owned'} className={`nav-main-link nav-main-link-submenu ${(component === 'gowned' || component === 'gjoined') && 'active'}`}
                                    data-toggle="submenu"
                                    aria-haspopup="true" aria-expanded="true">
                                     <i className="nav-main-link-icon si si-users"></i>
                                     <span className="nav-main-link-name">Groups</span>
-                                </a>
+                                </Link>
                                 <ul className="nav-main-submenu">
                                     <li className="nav-main-item">
                                         <Link to={'/groups/owned'}
@@ -44,6 +44,13 @@ function Navbar({component}) {
                                         </Link>
                                     </li>
                                 </ul>
+                            </li>
+                            <li className="nav-main-item">
+                                <Link to={'/presentations'}
+                                      className={`nav-main-link ${component === 'profile' && 'active'}`}>
+                                    <i className="nav-main-link-icon fab fa-2x fa-slideshare"></i>
+                                    <span className="nav-main-link-name">Presentations</span>
+                                </Link>
                             </li>
                             <li className="nav-main-item">
                                 <Link to={'/profile'}

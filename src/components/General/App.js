@@ -4,7 +4,7 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import Authentication from "../../pages/Authentication";
 import Panel from "../../pages/Panel";
 import Activation from "../../pages/Activation";
-import useToken from '../../hooks/useToken';
+import useToken from '../../Hooks/useToken';
 import GroupJoin from "../../pages/GroupJoin";
 import PresentationDetail from "../../pages/PresentationDetail";
 import PresentationView from "../../pages/PresentationView";
@@ -51,7 +51,7 @@ function App() {
         },
         {
             path: "/presentations",
-            element: <Panel/>
+            element: <Panel component={'presentations'} setToken={setToken} usrToken={token}/>
         },
         {
             path: "/presentation/edit/:id",

@@ -32,7 +32,7 @@ function Presentations({ token, presentationsCreate }) {
             const temp = data.data.map(presentation =>
                 <div key={presentation.groupName} className="col-md-6 col-lg-4 col-xl-3">
                     <a className="block block-rounded block-link-pop h-100 mb-0">
-                        <div className="block-content block-content-full text-center bg-city">
+                        <div className="block-content block-content-full text-center bg-warning">
                             <div className="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
                                 <i className="fa fa-desktop fa-2x text-white-75"></i>
                             </div>
@@ -47,7 +47,7 @@ function Presentations({ token, presentationsCreate }) {
                             <div className="fs-sm text-end">
                                 <div className="block-options">
                                     <button type="button" className="btn-block-option" onClick={() => deletePresentation(0)}>
-                                        <i className="si si-trash"></i>
+                                        <i className="si si-trash text-danger fw-bold"></i>
                                     </button>
                                 </div>
                             </div>
@@ -62,7 +62,7 @@ function Presentations({ token, presentationsCreate }) {
     }, [presentationsCreate]);
     return (
         <>
-            <PanelHero title={'Presentations'} photo={'presentations'} />
+            <PanelHero title={'Presentations'} photo={'presentation'} />
             <div className="content content-boxed">
                 <div className="row items-push py-4">
                     {presentations}

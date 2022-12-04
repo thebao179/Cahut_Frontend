@@ -35,7 +35,7 @@ function GroupJoined({token, grpCreate}) {
                                     </div>
                                     <div className="col-sm-6">
                                         <button type="button" className="btn-block-option">
-                                            <i className="si si-settings"></i>
+                                            <i className="si si-settings text-black fw-bold"></i>
                                         </button>
                                         <button type="button" className="btn-block-option"
                                                 data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
@@ -43,7 +43,7 @@ function GroupJoined({token, grpCreate}) {
                                                     setGroupId(group.groupName);
                                                     setRole(group.role)
                                                 }}>
-                                            <i className="si si-info"></i>
+                                            <i className="si si-info text-info fw-bold"></i>
                                         </button>
                                     </div>
                                 </div>

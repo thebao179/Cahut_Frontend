@@ -30,14 +30,14 @@ function GroupOwned({token, grpCreate}) {
                             <div className="fs-sm text-end">
                                 <div className="block-options">
                                     <button type="button" className="btn-block-option">
-                                        <i className="si si-settings"></i>
+                                        <i className="si si-settings fw-bold text-black"></i>
                                     </button>
                                     <button type="button" className="btn-block-option"
                                             data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
                                             onClick={() => {
                                                 setGroupId(group.groupName)
                                             }}>
-                                        <i className="si si-info"></i>
+                                        <i className="si si-info text-info fw-bold"></i>
                                     </button>
                                 </div>
                             </div>

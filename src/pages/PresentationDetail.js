@@ -118,7 +118,7 @@ function PresentationDetail({usrToken}) {
             </header>
             {/*Body*/}
             <main id="main-container" className="position-relative"
-                  style={{flexDirection: "row", flex: "1 1 auto", height: "90vh", borderTop: '1px solid #0000001a'}}>
+                  style={{flexDirection: "row", flex: "1 1 auto", height: "calc(100vh - 64px)", borderTop: '1px solid #0000001a'}}>
                 <div className="h-100 flex-wrap position-relative bg-white"
                      style={{width: '230px', overflowY: "auto"}}>
                     <ol className="slide-preview pe-0 ps-0">

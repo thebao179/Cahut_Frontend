@@ -4,10 +4,11 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import Authentication from "../../pages/Authentication";
 import Panel from "../../pages/Panel";
 import Activation from "../../pages/Activation";
-import useToken from '../../Hooks/useToken';
+import useToken from '../../hooks/useToken';
 import GroupJoin from "../../pages/GroupJoin";
 import PresentationDetail from "../../pages/PresentationDetail";
 import PresentationView from "../../pages/PresentationView";
+import SlideDetail from "../../pages/SlideDetail";
 
 function App() {
     const queryClient = new QueryClient();
@@ -55,11 +56,15 @@ function App() {
         },
         {
             path: "/presentation/edit/:id",
-            element: <PresentationDetail/>
+            element: <PresentationDetail usrToken={token}/>
         },
         {
             path: "/presentation/view/:id",
             element: <PresentationView/>
+        },
+        {
+            path: "/presentation/present/:id",
+            element: <SlideDetail usrToken={token}/>
         },
     ]);
 

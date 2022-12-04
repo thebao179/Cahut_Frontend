@@ -18,7 +18,6 @@ function GroupAdd({grpCreate, setGrpCreate}) {
         resolver: yupResolver(GroupAddSchema)
     });
 
-
     const onSubmit = async (data) => {
         const result = await groupApi.createGroup(data.title);
         One.helpers('jq-notify', {
@@ -26,7 +25,10 @@ function GroupAdd({grpCreate, setGrpCreate}) {
             icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
             message: result.message
         });
-        if (result.status) setGrpCreate(grpCreate + 1);
+        if (result.status) {
+            $('#group-add-modal').find('input').val('');
+            setGrpCreate(grpCreate + 1);
+        }
     }
 
     return (
@@ -49,7 +51,6 @@ function GroupAdd({grpCreate, setGrpCreate}) {
                                 <div className="mb-4">
                                     <label className="form-label modal-title text-danger mb-1">Title</label>
                                     <input type="text" className={`form-control ${errors.title ? "is-invalid" : ""}`}
-                                           name="example-text-input"
                                            placeholder="Your Group Name"
                                            {...register("title")} />
                                 </div>

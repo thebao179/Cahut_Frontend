@@ -11,6 +11,7 @@ import Profile from "../components/Panel/Profile";
 import {useLocation, useNavigate} from "react-router-dom";
 import jwt from "jwt-decode";
 import Presentations from "../components/Panel/Presentation";
+import PresentationAdd from "../components/Modals/PresentationAdd";
 
 function Panel({component, usrToken, setToken}) {
     const navigate = useNavigate();
@@ -45,7 +46,7 @@ function Panel({component, usrToken, setToken}) {
             }))
         }))
     }, [usrToken]);
-    if(isAdding){
+    if (isAdding) {
         return (
             <div id="page-container" className="page-header-dark main-content-boxed">
                 <Header setToken={setToken} token={usrToken} profileUpd={profileUpd} />
@@ -58,6 +59,7 @@ function Panel({component, usrToken, setToken}) {
                     {component === 'presentations' && <Presentations token={usrToken} presentationsCreate={presentationsCreated}/> }
                 </main>
                 <GroupAdd grpCreate={grpCreate} setGrpCreate={setGrpCreate} setIsAdd={setIsAdding}/>
+                <PresentationAdd preCreate={presentationsCreated} setPreCreate={setPresentationsCreated} setIsAdd={setIsAdding}/>
                 <Footer/>
             </div>
         );

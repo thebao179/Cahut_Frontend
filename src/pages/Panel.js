@@ -73,6 +73,7 @@ function Panel({component, usrToken, setToken}) {
                 {component === 'gjoined' && <GroupJoined token={usrToken} grpCreate={grpCreate}/>}
                 {component === 'gowned' && <GroupOwned token={usrToken} grpCreate={grpCreate}/>}
                 {component === 'profile' && <Profile token={usrToken} profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
+                {component === 'presentations' && <Presentations token={usrToken} presentationsCreate={presentationsCreated}/> }
             </main>
             <Footer/>
         </div>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
-function PresentationView() {
+function PresentationViewAnonymous({ slideId }) {
     const question = {
         questionId: '10',
         questionType: "multiple choices",
@@ -92,4 +92,4 @@ function PresentationView() {
     );
 }
 
-export default PresentationView;
+export default PresentationViewAnonymous;

@@ -1,41 +1,93 @@
 /* eslint-disable */
 import React, {useEffect, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {BarChart, Bar, LabelList, ResponsiveContainer} from "recharts";
+import presentationApi from "../api/PresentationApi";
+import jwt from "jwt-decode";
+import slideApi from "../api/SlideApi";
+import questionApi from "../api/QuestionApi";
+import answerApi from "../api/AnswerApi";
 
-function PresentationDetail({usrToken}) {
-    // const navigate = useNavigate();
-    // useEffect(() => {
-    //     if (!usrToken) {
-    //         navigate('/');
-    //         localStorage.setItem('prevurl', location.pathname);
-    //     }
-    // }, []);
+function PresentationDetail({usrToken, setToken}) {
+    const navigate = useNavigate();
+    const params = useParams();
+    const location = useLocation();
     const [nameInvalid, setNameInvalid] = useState(false);
     const [questionInvalid, setQuestionInvalid] = useState(false);
-    const [data, setData] = useState([
-        {name: "Page A", uv: 4000},
-        {name: "Page B", uv: 3000},
-        {name: "Page C", uv: 2000},
-    ]);
+    const [optAdded, setOptAdded] = useState([]);
+    const [refresh, setRefresh] = useState(0);
+    const [slideList, setSlideList] = useState([]);
+    const [currSlide, setCurrSlide] = useState();
+    const [question, setQuestion] = useState();
+    const [answers, setAnswers] = useState([]);
+
+    useEffect(() => {
+        if (!usrToken) {
+            localStorage.setItem('prevurl', location.pathname);
+            setToken('');
+        }
+        else if (usrToken) {
+            const payload = jwt(usrToken);
+            const currentDate = new Date();
+            console.log(payload.exp * 1000 - currentDate.getTime())
+            if (payload.exp * 1000 < currentDate.getTime()) {
+                localStorage.removeItem('token');
+                setToken('');
+            }
+        }
+        async function fetchData() {
+            if (refresh === 0) {
+                //Get presentation name
+            }
+            const slides = await slideApi.getSlide(params.id);
+            setSlideList(slides.data);
+            if (currSlide) {
+                const question = await questionApi.getQuestion(currSlide);
+                setQuestion(question.data);
+                if (question.data) {
+                    const answers = await answerApi.getAnswers(question.data.questionId);
+                    setAnswers(answers.data);
+                }
+                else setAnswers([]);
+            }
+        }
+        if (usrToken) fetchData();
+    }, [refresh, currSlide]);
 
     const addOption = () => {
-        $('#slide-options').append(
-            '<div class="d-flex mb-3">\n' +
-            '<input type="text" class="form-control me-3" placeholder="Your Answer"/>\n' +
-            '<button type="button" class="text-center btn btn-sm btn-danger" onclick="removeOption(this)">\n' +
-            '<i class="fa fa-fw fa-xmark"></i>\n' +
-            '</button>\n' +
-            '</div>\n'
-        );
+        setOptAdded(optAdded.concat(
+            <div key={Math.random().toString(36).slice(2, 7)} className="d-flex mb-3">
+                <input type="text" className="form-control me-3" data-id="null" placeholder="Your Answer"/>
+                <button type="button" className="text-center btn btn-sm btn-danger" onClick={removeOptionAdded}>
+                    <i className="fa fa-fw fa-xmark"></i>
+                </button>
+            </div>
+        ));
     }
 
-    const removeOption = (e) => {
+    const removeOption = async (e, answerId) => {
+        const result = await answerApi.deleteAnswer(answerId);
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message
+        });
+        if (result.status) setRefresh(refresh + 1);
+    }
+
+    const removeOptionAdded = (e) => {
         $(e.target).closest('div.d-flex.mb-3').remove();
     }
 
-    const addSlide = () => {
-
+    const addSlide = async () => {
+        //Presentation ID
+        const result = await slideApi.createSlide('sadadasdasdaasdsad');
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message
+        });
+        if (result.status) setRefresh(refresh + 1);
     }
 
     const removeSlide = () => {
@@ -47,14 +99,20 @@ function PresentationDetail({usrToken}) {
             confirmButtonColor: '#4c78dd',
             cancelButtonColor: '#dc2626',
             confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-
+                const result = await slideApi.deleteSlide(currSlide);
+                One.helpers('jq-notify', {
+                    type: `${result.status === true ? 'success' : 'danger'}`,
+                    icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+                    message: result.message
+                });
+                if (result.status) setRefresh(refresh + 1);
             }
         })
     }
 
-    const saveSlide = () => {
+    const saveSlide = async () => {
         let count = 0;
         $('#slide-options').find('input').each(function (k, v) {
             const value = $(v).val();
@@ -63,33 +121,55 @@ function PresentationDetail({usrToken}) {
                 count++;
             }
         });
-        const question = $('#slide-properties').find('input[name=question]').val();
-        if (!question) setQuestionInvalid(true);
+        const questionEdited = $('#slide-properties').find('input[name=question]').val();
+        if (!questionEdited) setQuestionInvalid(true);
         else if (count === 0) {
-            //Update
-            setData([
-                {name: "Page A", uv: 4000},
-                {name: "Page B", uv: 3000}
-            ]);
+            const ques = {
+                questionId: question ? question.questionId : "null",
+                slideId: currSlide,
+                type: 'Multiple choice',
+                isEdited: question ? question.content !== questionEdited : "true",
+                content: questionEdited,
+            }
+            let ans = [];
+            $('#slide-options').find('input').each(function (k, v) {
+                const value = $(v).val();
+                $(v).removeClass('is-invalid');
+                ans.push({
+                    answerId: $(v).attr("data-id"),
+                    content: value,
+                    isEdited: ($(v).attr("data-id") === "null" || value !== answers[k].content).toString(),
+                });
+            });
+            const result = await slideApi.updateSlide(ques, ans);
+            One.helpers('jq-notify', {
+                type: `${result.status === true ? 'success' : 'danger'}`,
+                icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+                message: result.message
+            });
+            if (result.status) {
+                setOptAdded([]);
+                setRefresh(refresh + 1);
+            }
             setQuestionInvalid(false);
         }
     }
 
-    const presentSlide = () => {
-
-    }
-
-    const changePName = (e) => {
+    const changePName = async (e) => {
         if (!e.target.value) setNameInvalid(true);
         else {
-            //Update
+            // const result = await presentationApi.updatePresentation(e.target.getAttribute('data-old'), e.target.value);
+            // One.helpers('jq-notify', {
+            //     type: `${result.status === true ? 'success' : 'danger'}`,
+            //     icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            //     message: result.message
+            // });
             setNameInvalid(false);
         }
     }
 
     return (
         <div id="page-container" className="h-100">
-            {/*Header*/}
             <header id="page-header">
                 <div className="content-header">
                     <div className="d-flex align-items-center">
@@ -99,7 +179,7 @@ function PresentationDetail({usrToken}) {
                             </Link>
                         </div>
                         <div className="me-sm-3">
-                            <input type="text" className={`form-control ${nameInvalid ? 'is-invalid' : ''}`} defaultValue="Presentation" onChange={changePName}/>
+                            <input type="text" className={`form-control ${nameInvalid ? 'is-invalid' : ''}`} defaultValue={'PresentationName'} onBlur={changePName}/>
                         </div>
                         <div className="d-inline-block ms-2">
                             <button type="button" className="btn btn-alt-success" onClick={addSlide}>
@@ -109,133 +189,104 @@ function PresentationDetail({usrToken}) {
                     </div>
                     <div className="d-flex align-items-center">
                         <div className="d-inline-block ms-2">
-                            <button type="button" className="btn btn-info" onClick={presentSlide}>
-                                <i className="fa fa-fw fa-display me-1"></i> Present
-                            </button>
+                            { currSlide &&
+                                <a href={'/presentation/present/' + currSlide} target={'_blank'}>
+                                    <button type="button" className="btn btn-info">
+                                        <i className="fa fa-fw fa-display me-1"></i> Present
+                                    </button>
+                                </a>
+                            }
                         </div>
                     </div>
                 </div>
             </header>
-            {/*Body*/}
             <main id="main-container" className="position-relative"
                   style={{flexDirection: "row", flex: "1 1 auto", height: "calc(100vh - 64px)", borderTop: '1px solid #0000001a'}}>
                 <div className="h-100 flex-wrap position-relative bg-white"
                      style={{width: '230px', overflowY: "auto"}}>
                     <ol className="slide-preview pe-0 ps-0">
-                        <Link to={'/'} style={{color: "black"}}>
-                            <li className="d-flex pt-3 pb-3 bg-info-light" style={{paddingLeft: '10px', paddingRight: '10px'}}>
-                                <span className="pe-3 fw-bold">1</span>
-                                <div className="text-center"
-                                    style={{borderStyle: "solid", borderWidth: "1px", height: '100px', flex: "1 1 auto"}}>
-                                    <div className="mt-4"><i className="fa fa-chart-simple"></i></div>
-                                    <span className="fw-bold">Multiple Choice</span>
-                                </div>
-                            </li>
-                        </Link>
-                        <Link to={'/'} style={{color: "black"}}>
-                            <li className="d-flex pt-3 pb-3" style={{paddingLeft: '10px', paddingRight: '10px'}}>
-                                <span className="pe-3 fw-bold">2</span>
-                                <div className="text-center"
-                                     style={{borderStyle: "solid", borderWidth: "1px", height: '100px', flex: "1 1 auto"}}>
-                                    <div className="mt-4"><i className="fa fa-chart-simple"></i></div>
-                                    <span className="fw-bold">Multiple Choice</span>
-                                </div>
-                            </li>
-                        </Link>
-                        <Link to={'/'} style={{color: "black"}}>
-                            <li className="d-flex pt-3 pb-3" style={{paddingLeft: '10px', paddingRight: '10px'}}>
-                                <span className="pe-3 fw-bold">3</span>
-                                <div className="text-center"
-                                     style={{borderStyle: "solid", borderWidth: "1px", height: '100px', flex: "1 1 auto"}}>
-                                    <div className="mt-4"><i className="fa fa-chart-simple"></i></div>
-                                    <span className="fw-bold">Multiple Choice</span>
-                                </div>
-                            </li>
-                        </Link>
-                        <Link to={'/'} style={{color: "black"}}>
-                            <li className="d-flex pt-3 pb-3" style={{paddingLeft: '10px', paddingRight: '10px'}}>
-                                <span className="pe-3 fw-bold">4</span>
-                                <div className="text-center"
-                                     style={{borderStyle: "solid", borderWidth: "1px", height: '100px', flex: "1 1 auto"}}>
-                                    <div className="mt-4"><i className="fa fa-chart-simple"></i></div>
-                                    <span className="fw-bold">Multiple Choice</span>
-                                </div>
-                            </li>
-                        </Link>
-                        <Link to={'/'} style={{color: "black"}}>
-                            <li className="d-flex pt-3 pb-3" style={{paddingLeft: '10px', paddingRight: '10px'}}>
-                                <span className="pe-3 fw-bold">5</span>
-                                <div className="text-center"
-                                     style={{borderStyle: "solid", borderWidth: "1px", height: '100px', flex: "1 1 auto"}}>
-                                    <div className="mt-4"><i className="fa fa-chart-simple"></i></div>
-                                    <span className="fw-bold">Multiple Choice</span>
-                                </div>
-                            </li>
-                        </Link>
+                        {slideList.map((data, index) =>
+                            <a href={'#'} key={data.slideId} onClick={() => setCurrSlide(data.slideId)} style={{color: "black"}}>
+                                <li className={`d-flex pt-3 pb-3 ${currSlide === data.slideId ? 'bg-info-light' : ''}`} style={{paddingLeft: '10px', paddingRight: '10px'}}>
+                                    <span className="pe-3 fw-bold">{index + 1}</span>
+                                    <div className="text-center"
+                                        style={{borderStyle: "solid", borderWidth: "1px", height: '100px', flex: "1 1 auto"}}>
+                                        <div className="mt-4"><i className="fa fa-chart-simple"></i></div>
+                                        <span className="fw-bold">Multiple Choice</span>
+                                    </div>
+                                </li>
+                            </a>
+                        )}
                     </ol>
                 </div>
                 <div className="h-100 position-relative"
                      style={{width: "auto", flex: "1 1 auto"}}>
                     <div className="p-4" style={{height: 'fit-content'}}>
-                        <div className="bg-white p-4 h-100">
-                            <div className="d-flex pt-2 justify-content-center">
-                                <p>Go to <span style={{fontWeight: 'bold'}}>1312312</span> to play</p>
+                        { currSlide &&
+                            <div className="bg-white p-4 h-100">
+                                <div className="d-flex pt-2 justify-content-center">
+                                    <p>Go to <span style={{fontWeight: 'bold'}}>{process.env.REACT_APP_CLIENT + 'present/view/' + currSlide}</span> to play</p>
+                                </div>
+                                <div className="d-flex ps-4" style={{lineHeight: 1}}>
+                                    <p style={{fontSize: '30px', fontWeight: 'bold'}}>Multiple Choice</p>
+                                </div>
+                                <div className="d-flex justify-content-center" style={{height: '300px', width: '100%'}}>
+                                    <ResponsiveContainer width="90%" height="100%">
+                                        <BarChart width={150} height={40} data={answers}
+                                                  margin={{top: 20, bottom: 20}}>
+                                            <Bar dataKey="numSelected"
+                                                 fill="#4c78dd">
+                                                <LabelList dataKey="content"
+                                                           position="bottom"
+                                                           style={{fontWeight: "bold"}}/>
+                                                <LabelList dataKey="numSelected" position="top"/>
+                                            </Bar>
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
                             </div>
-                            <div className="d-flex ps-4" style={{lineHeight: 1}}>
-                                <p style={{fontSize: '30px', fontWeight: 'bold'}}>Multiple Choice</p>
-                            </div>
-                            <div className="d-flex justify-content-center" style={{height: '300px', width: '100%'}}>
-                                <ResponsiveContainer width="90%" height="100%">
-                                    <BarChart width={150} height={40} data={data}
-                                              margin={{top: 20, bottom: 20}}>
-                                        <Bar dataKey="uv"
-                                             fill="#4c78dd">
-                                            <LabelList dataKey="name"
-                                                       position="bottom"
-                                                       style={{fontWeight: "bold"}}/>
-                                            <LabelList dataKey="uv" position="top" />
-                                        </Bar>
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </div>
+                        }
                     </div>
                 </div>
                 <div className="h-100 position-relative bg-white"
                      style={{width: '460px', overflow: "auto"}}>
-                    <div className="p-4" id="slide-properties">
-                        <div className="d-flex justify-content-between mb-4">
-                            <button type="button" className="btn btn-danger" onClick={removeSlide}>
-                                <i className="fa fa-fw fa-times me-1"></i> Delete
-                            </button>
-                            <button type="button" className="btn btn-primary" onClick={saveSlide}>
-                                <i className="fa fa-fw fa-upload me-1"></i> Save
-                            </button>
-                        </div>
-                        <div className="mb-4">
-                            <label className="form-label" style={{fontWeight: 'bold'}}>Your Question</label>
-                            <input type="text" name="question" className={`form-control ${questionInvalid ? 'is-invalid' : ''}`} defaultValue="Multiple Choice"/>
-                        </div>
-                        <div className="mb-4" id="slide-options">
-                            <label className="form-label" style={{fontWeight: 'bold'}}>Options</label>
-                            <div className="d-flex mb-3">
-                                <input type="text" className="form-control me-3" placeholder="Your Answer" defaultValue="Answer A"/>
-                                <button type="button" className="text-center btn btn-sm btn-danger" onClick={removeOption}>
-                                    <i className="fa fa-fw fa-xmark"></i>
+                    { currSlide &&
+                        <div className="p-4" id="slide-properties">
+                            <div className="d-flex justify-content-between mb-4">
+                                <button type="button" className="btn btn-danger" onClick={removeSlide}>
+                                    <i className="fa fa-fw fa-times me-1"></i> Delete Slide
+                                </button>
+                                <button type="button" className="btn btn-primary" onClick={saveSlide}>
+                                    <i className="fa fa-fw fa-upload me-1"></i> Save Changes
                                 </button>
                             </div>
-                            <div className="d-flex mb-3">
-                                <input type="text" className="form-control me-3" placeholder="Your Answer" defaultValue="Answer B"/>
-                                <button type="button" className="text-center btn btn-sm btn-danger" onClick={removeOption}>
-                                    <i className="fa fa-fw fa-xmark"></i>
+                            <div className="mb-4">
+                                <label className="form-label" style={{fontWeight: 'bold'}}>Your Question</label>
+                                <input type="text" name="question"
+                                       className={`form-control ${questionInvalid ? 'is-invalid' : ''}`}
+                                       defaultValue={question ? question.content : ''} placeholder={'Type Your Question'}/>
+                            </div>
+                            <div className="mb-4" id="slide-options">
+                                <label className="form-label" style={{fontWeight: 'bold'}}>Options</label>
+                                { answers.map((data) =>
+                                    <div key={data.answerId} className="d-flex mb-3">
+                                        <input type="text" className="form-control me-3" data-id={data.answerId} placeholder="Your Answer"
+                                               defaultValue={data.content}/>
+                                        <button type="button" className="text-center btn btn-sm btn-danger"
+                                                onClick={(e) => removeOption(e, data.answerId)}>
+                                            <i className="fa fa-fw fa-xmark"></i>
+                                        </button>
+                                    </div>
+                                )}
+                                {optAdded}
+                            </div>
+                            <div className="d-flex">
+                                <button type="button" className="btn btn-alt-secondary w-100" onClick={addOption}>
+                                    <i className="fa fa-fw fa-plus me-1"></i>Add option
                                 </button>
                             </div>
                         </div>
-                        <div className="d-flex">
-                            <button type="button" className="btn btn-alt-secondary w-100" onClick={addOption}>
-                                <i className="fa fa-fw fa-plus me-1"></i>Add option</button>
-                        </div>
-                    </div>
+                    }
                 </div>
             </main>
         </div>

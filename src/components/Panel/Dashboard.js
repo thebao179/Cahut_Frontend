@@ -96,7 +96,7 @@ function Dashboard({token, grpCreate}) {
                                             </div>
                                         </div>
                                         <div className="bg-body-light rounded-bottom">
-                                            <Link to={'/groups/joined'}
+                                            <Link to={'/presentations'}
                                                   className="block-content block-content-full block-content-sm fs-sm fw-medium d-flex align-items-center justify-content-between">
                                                 <span>View presentations</span>
                                                 <i className="fa fa-arrow-alt-circle-right ms-1 opacity-25 fs-base"></i>

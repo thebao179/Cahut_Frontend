@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Authentication from "../../pages/Authentication";
 import Panel from "../../pages/Panel";
 import Activation from "../../pages/Activation";
-import useToken from "../../Hooks/useToken";
+import useToken from "../../hooks/useToken";
 import GroupJoin from "../../pages/GroupJoin";
 import PresentationDetail from "../../pages/PresentationDetail";
 import PresentationView from "../../pages/PresentationView";
@@ -17,8 +17,8 @@ function App() {
 
     const router = createBrowserRouter([
         {
-            path: "*",
-            element: <Authentication component={'signin'} setToken={setToken} usrToken={token} />
+            path: "/",
+            element: <Authentication component={'signin'} setToken={setToken} usrToken={token}/>
         },
         {
             path: "/signup",
@@ -57,7 +57,7 @@ function App() {
         },
         {
             path: "/presentation/edit/:id",
-            element: <PresentationDetail usrToken={token} />
+            element: <PresentationDetail usrToken={token} setToken={setToken}/>
         },
         {
             path: "/presentation/view/:id",
@@ -65,15 +65,11 @@ function App() {
         },
         {
             path: "/presentation/present/:id",
-            element: <SlideDetail usrToken={token} />
+            element: <SlideDetail usrToken={token} setToken={setToken}/>
         },
         {
             path: "/slide/:slideId",
             element: <PresentationViewAnonymous slideId={'1'} />
-        },
-        {
-            path: "/presentation/present/:id",
-            element: <SlideDetail usrToken={token}/>
         },
     ]);
 

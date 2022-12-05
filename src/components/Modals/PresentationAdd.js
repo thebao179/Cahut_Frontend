@@ -3,6 +3,7 @@ import React from "react";
 import * as yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
+import presentationApi from "../../api/PresentationApi";
 
 const PresentationAddSchema = yup.object().shape({
     title: yup.string().required("Title is a required field"),
@@ -18,10 +19,7 @@ function PresentationAdd({preCreate, setPreCreate}) {
     });
 
     const onSubmit = async (data) => {
-        const result = {
-            status: true,
-            message: 'Created presentation successfully'
-        }
+        const result = await presentationApi.createPresentation(data.title);
         One.helpers('jq-notify', {
             type: `${result.status === true ? 'success' : 'danger'}`,
             icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,

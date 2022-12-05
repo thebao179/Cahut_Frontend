@@ -1,42 +1,37 @@
-import axios from "axios";
-import { Retryer } from "react-query/types/core/retryer";
 import axiosClient from "./AxiosClient";
 
-const SlideApi = {
-    createSlide: () => {
+const slideApi = {
+    createSlide: (presentationName) => {
+        const config = {
+            params: {
+                presentationName: presentationName,
+            },
+        }
         const url = "/slide/create";
-        return axiosClient.post(url);
+        return axiosClient.post(url, null, config);
     },
-    deleteSlide: () => {
-        const url = "slide/delete";
-        return axiosClient.post(url);
+    getSlide: (presentationId) => {
+        const config = {
+            params: {
+                presentationId: presentationId,
+            },
+        }
+        const url = "/slide/get";
+        return axiosClient.get(url, config);
     },
-    addQuestion: () => {
-        const url = "/slide/add/question";
-        return axiosClient.post(url);
+    deleteSlide: (slideId) => {
+        const config = {
+            params: {
+                slideId: slideId,
+            },
+        }
+        const url = "/slide/delete";
+        return axiosClient.get(url, config);
     },
-    addAnswer: () => {
-        const url = "/slide/add/answer";
-        return axiosClient.post(url);
-    },
-    getSlideQuestion: () => {
-        const url = "/slide/get/question";
-        return axiosClient.get(url);
-    },
-    updateQuestion: () => {
-        const url = "/slide/update/question";
-        return axiosClient.post(url);
-    },
-    updateAnswer: () => {
-        const url = "/slide/update/answer";
-        return axiosClient.post(url);
-    },
-    deleteAnswer: () => {
-        const url = "/slide/delete/answer";
-        return axiosClient.post(url);
-    },
-    getSlideAnswer: () => {
-        const url = "/slide/get/answer";
-        return axiosClient.get(url);
+    updateSlide: (question, answers) => {
+        const url = "/slide/update";
+        return axiosClient.post(url, {question: question, answers: answers});
     }
 }
+
+export default slideApi;

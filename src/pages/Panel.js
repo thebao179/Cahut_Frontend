@@ -20,19 +20,19 @@ function Panel({component, usrToken, setToken}) {
     const [grpCreate, setGrpCreate] = useState(0);
     const [presentationsCreated, setPresentationsCreated] = useState(0);
     const [isAdding, setIsAdding] = useState(true);
-    if (usrToken) {
-        const payload = jwt(usrToken);
-        const currentDate = new Date();
-        if (payload.exp * 1000 < currentDate.getTime()) {
-            localStorage.removeItem('token');
-            navigate('/');
-        }
-    }
 
     useEffect(() => {
         if (!usrToken) {
-            navigate('/');
             localStorage.setItem('prevurl', location.pathname);
+            navigate('/');
+        }
+        else if (usrToken) {
+            const payload = jwt(usrToken);
+            const currentDate = new Date();
+            if (payload.exp * 1000 < currentDate.getTime()) {
+                localStorage.removeItem('token');
+                navigate('/');
+            }
         }
         document.querySelectorAll('[data-toggle="class-toggle"]:not(.js-class-toggle-enabled), .js-class-toggle:not(.js-class-toggle-enabled)').forEach((e => {
             e.addEventListener("click", (() => {
@@ -46,6 +46,7 @@ function Panel({component, usrToken, setToken}) {
             }))
         }))
     }, [usrToken]);
+
     if (isAdding) {
         return (
             <div id="page-container" className="page-header-dark main-content-boxed">

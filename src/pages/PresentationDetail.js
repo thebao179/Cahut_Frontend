@@ -24,12 +24,11 @@ function PresentationDetail({usrToken, setToken}) {
     useEffect(() => {
         if (!usrToken) {
             localStorage.setItem('prevurl', location.pathname);
-            setToken('');
+            navigate('/');
         }
         else if (usrToken) {
             const payload = jwt(usrToken);
             const currentDate = new Date();
-            console.log(payload.exp * 1000 - currentDate.getTime())
             if (payload.exp * 1000 < currentDate.getTime()) {
                 localStorage.removeItem('token');
                 setToken('');
@@ -52,7 +51,7 @@ function PresentationDetail({usrToken, setToken}) {
             }
         }
         if (usrToken) fetchData();
-    }, [refresh, currSlide]);
+    }, [refresh, currSlide, usrToken]);
 
     const addOption = () => {
         setOptAdded(optAdded.concat(

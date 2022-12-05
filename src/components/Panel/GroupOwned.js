@@ -30,7 +30,7 @@ function GroupOwned({token, grpCreate}) {
                             <div className="fs-sm text-end">
                                 <div className="block-options">
                                     <button type="button" className="btn-block-option">
-                                        <i className="si si-settings fw-bold text-black"></i>
+                                        <i className="si si-settings fw-bold text-primary"></i>
                                     </button>
                                     <button type="button" className="btn-block-option"
                                             data-bs-toggle="modal" data-bs-target="#grpdetail-modal"

@@ -13,7 +13,7 @@ function SlideDetail({usrToken, setToken}) {
     const [refresh, setRefresh] = useState(0);
 
     useEffect(() => {
-        if (!usrToken) setToken('');
+        if (!usrToken) navigate('/');
         else if (usrToken) {
             const payload = jwt(usrToken);
             const currentDate = new Date();
@@ -31,7 +31,7 @@ function SlideDetail({usrToken, setToken}) {
             } else setAnswers([]);
         }
         if (usrToken) fetchData();
-    }, [refresh]);
+    }, [refresh, usrToken]);
 
     return (
         <div id="page-container">

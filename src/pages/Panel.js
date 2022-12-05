@@ -31,7 +31,7 @@ function Panel({component, usrToken, setToken}) {
             const currentDate = new Date();
             if (payload.exp * 1000 < currentDate.getTime()) {
                 localStorage.removeItem('token');
-                navigate('/');
+                setToken('');
             }
         }
         document.querySelectorAll('[data-toggle="class-toggle"]:not(.js-class-toggle-enabled), .js-class-toggle:not(.js-class-toggle-enabled)').forEach((e => {

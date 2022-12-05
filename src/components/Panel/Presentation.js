@@ -14,15 +14,17 @@ function Presentations({ token, presentationsCreate }) {
             const result = await presentationApi.getPresentation();
             const data = result.data.map(presentation =>
                 <div key={presentation.presentationId} className="col-md-6 col-lg-4 col-xl-3">
-                    <Link to={'/presentation/edit/' + presentation.presentationId} className="block block-rounded block-link-pop h-100 mb-0">
-                        <div className="block-content block-content-full text-center bg-warning">
-                            <div className="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
-                                <i className="fa fa-desktop fa-2x text-white-75"></i>
+                    <Link to={''} className="block block-rounded block-link-pop h-100 mb-0">
+                        <Link to={'/presentation/edit/' + presentation.presentationId}>
+                            <div className="block-content block-content-full text-center bg-warning">
+                                <div className="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
+                                    <i className="fa fa-desktop fa-2x text-white-75"></i>
+                                </div>
+                                <div className="fs-sm text-white-75">
+                                    {/*{presentation.numOfMems} Slides*/}
+                                </div>
                             </div>
-                            <div className="fs-sm text-white-75">
-                                {/*{presentation.numOfMems} Slides*/}
-                            </div>
-                        </div>
+                        </Link>
                         <div className="block-content block-content-full">
                             <h4 className="h5 mb-1">
                                 {presentation.presentationName}

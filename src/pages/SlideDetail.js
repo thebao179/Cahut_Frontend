@@ -1,20 +1,33 @@
 import { Bar, BarChart, LabelList, ResponsiveContainer } from "recharts";
 import React, { useEffect, useState } from "react";
-import { useNavigate , useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import jwt from "jwt-decode";
 import questionApi from "../api/QuestionApi";
 import answerApi from "../api/AnswerApi";
+import { ConsoleLogger } from "@microsoft/signalr/dist/esm/Utils";
 
 
 
-function SlideDetail({usrToken, setToken}) {
+function SlideDetail({ usrToken, setToken }) {
+    const param = useParams();
     const navigate = useNavigate();
     const params = useParams();
     const [question, setQuestion] = useState();
     const [answers, setAnswers] = useState([]);
     const [refresh, setRefresh] = useState(0);
+    const [messages, setMessages] = useState([]);
+    const [connection, setConnection] = useState();
+
+    const fetchData =  async () => {
+        const question = await questionApi.getQuestion(params.id);
+        setQuestion(question.data);
+        if (question.data) {
+            const answers = await answerApi.getAnswers(question.data.questionId);
+            setAnswers(answers.data);
+        } else setAnswers([]);
+    }
 
     useEffect(() => {
         if (!usrToken) navigate('/');
@@ -26,83 +39,58 @@ function SlideDetail({usrToken, setToken}) {
                 setToken('');
             }
         }
-        async function fetchData() {
-            const question = await questionApi.getQuestion(params.id);
-            setQuestion(question.data);
-            if (question.data) {
-                const answers = await answerApi.getAnswers(question.data.questionId);
-                setAnswers(answers.data);
-            } else setAnswers([]);
-        }
         if (usrToken) fetchData();
     }, [refresh, usrToken]);
 
-    // const navigate = useNavigate();
-    // useEffect(() => {
-    //     if (!usrToken) {
-    //         navigate('/');
-    //     }
-    // }, []);
-    const [messages, setMessages] = useState([]);
-    const [connection, setConnection] = useState ();
-    // useSignalREffect(
-    //     "ReceiveMessage",
-    //     (message) => {
-    //         setMessages([...messages, message]);
-    //     },
-    //     [messages],
-    // );
+
+
+
     useEffect(() => {
         const connect = new HubConnectionBuilder()
-          .withUrl("https://localhost:7080/slideHub")
-          .withAutomaticReconnect()
-          .build();
-    
+            .withUrl("https://localhost:7080/slideHub")
+            .withAutomaticReconnect()
+            .build();
+
         setConnection(connect);
-      }, []);
+    }, []);
 
     useEffect(() => {
         if (connection) {
             connection
                 .start()
                 .then(() => {
-                    connection.on("ReceiveMessage", (message) => {
+                    connection.on(params.id, (message) => {
                         console.log(message);
-                        // notification.open({
-                        //     message: "New Notification",
-                        //     description: message,
-                        // });
+                        if (message === "updateResult") {
+                            fetchData();
+                        }
                     });
                 })
                 .catch((error) => console.log(error));
         }
     }, [connection])
 
-    const sendMessage = async () => {
-        if (connection) await connection.send("SendResult", "client", "hello");
-        setMessages("");
-      };
-
+    console.log(refresh);
 
     return (
         <div id="page-container">
             <div className="p-4" style={{ height: 'fit-content' }}>
                 <div className="bg-white p-4 h-100">
                     <div className="d-flex pt-2 justify-content-center">
-                        <p>Go to <span style={{fontWeight: 'bold'}}>{process.env.REACT_APP_CLIENT + 'present/view/' + params.id}</span> to play</p>
+                        <p>Go to <span style={{ fontWeight: 'bold' }}>{process.env.REACT_APP_CLIENT + 'presentation/view/' + params.id}</span> to play</p>
                     </div>
-                    <div className="d-flex ps-4" style={{lineHeight: 1}}>
-                        <p style={{fontSize: '30px', fontWeight: 'bold'}}>{question ? question.content : ''}</p>
+                    <div className="d-flex ps-4" style={{ lineHeight: 1 }}>
+                        <p style={{ fontSize: '30px', fontWeight: 'bold' }}>{question ? question.content : ''}</p>
                     </div>
                     <div className="d-flex justify-content-center" style={{ height: '500px', width: '100%' }}>
                         <ResponsiveContainer width="90%" height="100%">
                             <BarChart width={150} height={40} data={answers}
-                                      margin={{top: 20, bottom: 20}}>
+                                margin={{ top: 20, bottom: 20 }}>
                                 <Bar dataKey="numSelected"
-                                     fill="#4c78dd">
+                                    fill="#4c78dd">
                                     <LabelList dataKey="content"
-                                               position="bottom"
-                                               style={{fontWeight: "bold"}}/>
+                                        position="bottom"
+                                        style={{ fontWeight: "bold" }} />
                                     <LabelList dataKey="numSelected" position="top" />
                                 </Bar>
                             </BarChart>

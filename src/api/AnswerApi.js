@@ -19,6 +19,15 @@ const answerApi = {
         const url = "/slide/delete/answer";
         return axiosClient.get(url, config);
     },
+    submitAnswer: (answerId) => {
+        const config = {
+            params: {
+                answerId: answerId,
+            }
+        }
+        const url = "/slide/submitanswer";
+        return axiosClient.post(url, null, config);
+    }
 }
 
 export default answerApi;

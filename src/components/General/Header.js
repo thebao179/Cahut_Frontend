@@ -15,6 +15,7 @@ function Header({setToken, token, profileUpd}) {
             const data = await userApi.getUserInfo();
             setUser(data.data);
         }
+
         if (token) fetchData();
     }, [profileUpd]);
 

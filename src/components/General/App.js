@@ -1,6 +1,6 @@
 import React from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {QueryClient, QueryClientProvider} from "react-query";
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import Authentication from "../../pages/Authentication";
 import Panel from "../../pages/Panel";
 import Activation from "../../pages/Activation";
@@ -9,11 +9,10 @@ import GroupJoin from "../../pages/GroupJoin";
 import PresentationDetail from "../../pages/PresentationDetail";
 import PresentationView from "../../pages/PresentationView";
 import SlideDetail from "../../pages/SlideDetail";
-import PresentationViewAnonymous from "../../pages/PresentationViewAnonymous";
 
 function App() {
     const queryClient = new QueryClient();
-    const { token, setToken } = useToken();
+    const {token, setToken} = useToken();
 
     const router = createBrowserRouter([
         {
@@ -22,38 +21,38 @@ function App() {
         },
         {
             path: "/signup",
-            element: <Authentication component={'signup'} usrToken={token} />
+            element: <Authentication component={'signup'} usrToken={token}/>
         },
         {
             path: "/dashboard",
-            element: <Panel component={'dashboard'} setToken={setToken} usrToken={token} />
+            element: <Panel component={'dashboard'} setToken={setToken} usrToken={token}/>
         },
         {
             path: "/groups",
             children: [{
                 path: "joined",
-                element: <Panel component={'gjoined'} setToken={setToken} usrToken={token} />
+                element: <Panel component={'gjoined'} setToken={setToken} usrToken={token}/>
             },
-            {
-                path: "owned",
-                element: <Panel component={'gowned'} setToken={setToken} usrToken={token} />
-            }]
+                {
+                    path: "owned",
+                    element: <Panel component={'gowned'} setToken={setToken} usrToken={token}/>
+                }]
         },
         {
             path: "/profile",
-            element: <Panel component={'profile'} setToken={setToken} usrToken={token} />
+            element: <Panel component={'profile'} setToken={setToken} usrToken={token}/>
         },
         {
             path: "/account/activate/:code",
-            element: <Activation />
+            element: <Activation/>
         },
         {
             path: "/group/join/:code",
-            element: <GroupJoin />
+            element: <GroupJoin/>
         },
         {
             path: "/presentations",
-            element: <Panel component={'presentations'} setToken={setToken} usrToken={token} />
+            element: <Panel component={'presentations'} setToken={setToken} usrToken={token}/>
         },
         {
             path: "/presentation/edit/:id",
@@ -61,22 +60,18 @@ function App() {
         },
         {
             path: "/presentation/view/:id",
-            element: <PresentationView />
+            element: <PresentationView/>
         },
         {
             path: "/presentation/present/:id",
             element: <SlideDetail usrToken={token} setToken={setToken}/>
-        },
-        {
-            path: "/slide/:slideId",
-            element: <PresentationViewAnonymous slideId={'1'} />
         },
     ]);
 
     return (
 
         <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
+            <RouterProvider router={router}/>
         </QueryClientProvider>
 
     );

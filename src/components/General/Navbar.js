@@ -24,9 +24,10 @@ function Navbar({component}) {
                                 </Link>
                             </li>
                             <li className="nav-main-item">
-                                <Link to={'/groups/owned'} className={`nav-main-link nav-main-link-submenu ${(component === 'gowned' || component === 'gjoined') && 'active'}`}
-                                   data-toggle="submenu"
-                                   aria-haspopup="true" aria-expanded="true">
+                                <Link to={'/groups/owned'}
+                                      className={`nav-main-link nav-main-link-submenu ${(component === 'gowned' || component === 'gjoined') && 'active'}`}
+                                      data-toggle="submenu"
+                                      aria-haspopup="true" aria-expanded="true">
                                     <i className="nav-main-link-icon si si-users"></i>
                                     <span className="nav-main-link-name">Groups</span>
                                 </Link>

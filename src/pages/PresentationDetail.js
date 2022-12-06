@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, {useEffect, useState} from "react";
 import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
-import {BarChart, Bar, LabelList, ResponsiveContainer} from "recharts";
+import {Bar, BarChart, LabelList, ResponsiveContainer} from "recharts";
 import presentationApi from "../api/PresentationApi";
 import jwt from "jwt-decode";
 import slideApi from "../api/SlideApi";
@@ -25,8 +25,7 @@ function PresentationDetail({usrToken, setToken}) {
         if (!usrToken) {
             localStorage.setItem('prevurl', location.pathname);
             navigate('/');
-        }
-        else if (usrToken) {
+        } else if (usrToken) {
             const payload = jwt(usrToken);
             const currentDate = new Date();
             if (payload.exp * 1000 < currentDate.getTime()) {
@@ -34,6 +33,7 @@ function PresentationDetail({usrToken, setToken}) {
                 setToken('');
             }
         }
+
         async function fetchData() {
             if (refresh === 0) {
                 const result = await presentationApi.getPresentationName(params.id);
@@ -48,10 +48,10 @@ function PresentationDetail({usrToken, setToken}) {
                 if (question.data) {
                     const answers = await answerApi.getAnswers(question.data.questionId);
                     setAnswers(answers.data);
-                }
-                else setAnswers([]);
+                } else setAnswers([]);
             }
         }
+
         if (usrToken) fetchData();
     }, [refresh, currSlide, usrToken]);
 
@@ -180,7 +180,8 @@ function PresentationDetail({usrToken, setToken}) {
                             </Link>
                         </div>
                         <div className="me-sm-3">
-                            <input type="text" className={`form-control ${nameInvalid ? 'is-invalid' : ''}`} defaultValue={presName} onBlur={changePName}/>
+                            <input type="text" className={`form-control ${nameInvalid ? 'is-invalid' : ''}`}
+                                   defaultValue={presName} onBlur={changePName}/>
                         </div>
                         <div className="d-inline-block ms-2">
                             <button type="button" className="btn btn-alt-success" onClick={addSlide}>
@@ -190,7 +191,7 @@ function PresentationDetail({usrToken, setToken}) {
                     </div>
                     <div className="d-flex align-items-center">
                         <div className="d-inline-block ms-2">
-                            { currSlide &&
+                            {currSlide &&
                                 <a href={'/presentation/present/' + currSlide} target={'_blank'}>
                                     <button type="button" className="btn btn-info">
                                         <i className="fa fa-fw fa-display me-1"></i> Present
@@ -202,16 +203,28 @@ function PresentationDetail({usrToken, setToken}) {
                 </div>
             </header>
             <main id="main-container" className="position-relative"
-                  style={{flexDirection: "row", flex: "1 1 auto", height: "calc(100vh - 64px)", borderTop: '1px solid #0000001a'}}>
+                  style={{
+                      flexDirection: "row",
+                      flex: "1 1 auto",
+                      height: "calc(100vh - 64px)",
+                      borderTop: '1px solid #0000001a'
+                  }}>
                 <div className="h-100 flex-wrap position-relative bg-white"
                      style={{width: '230px', overflowY: "auto"}}>
                     <ol className="slide-preview pe-0 ps-0">
                         {slideList.map((data, index) =>
-                            <a href={'#'} key={data.slideId} onClick={() => setCurrSlide(data.slideId)} style={{color: "black"}}>
-                                <li className={`d-flex pt-3 pb-3 ${currSlide === data.slideId ? 'bg-info-light' : ''}`} style={{paddingLeft: '10px', paddingRight: '10px'}}>
+                            <a href={'#'} key={data.slideId} onClick={() => setCurrSlide(data.slideId)}
+                               style={{color: "black"}}>
+                                <li className={`d-flex pt-3 pb-3 ${currSlide === data.slideId ? 'bg-info-light' : ''}`}
+                                    style={{paddingLeft: '10px', paddingRight: '10px'}}>
                                     <span className="pe-3 fw-bold">{index + 1}</span>
                                     <div className="text-center"
-                                        style={{borderStyle: "solid", borderWidth: "1px", height: '100px', flex: "1 1 auto"}}>
+                                         style={{
+                                             borderStyle: "solid",
+                                             borderWidth: "1px",
+                                             height: '100px',
+                                             flex: "1 1 auto"
+                                         }}>
                                         <div className="mt-4"><i className="fa fa-chart-simple"></i></div>
                                         <span className="fw-bold">Multiple Choice</span>
                                     </div>
@@ -223,13 +236,18 @@ function PresentationDetail({usrToken, setToken}) {
                 <div className="h-100 position-relative"
                      style={{width: "auto", flex: "1 1 auto"}}>
                     <div className="p-4" style={{height: 'fit-content'}}>
-                        { currSlide &&
+                        {currSlide &&
                             <div className="bg-white p-4 h-100">
                                 <div className="d-flex pt-2 justify-content-center">
-                                    <p>Go to <span style={{fontWeight: 'bold'}}>{process.env.REACT_APP_CLIENT + 'view/' + currSlide}</span> to play</p>
+                                    <p>Go to <span
+                                        style={{fontWeight: 'bold'}}>{process.env.REACT_APP_CLIENT + 'view/' + currSlide}</span> to
+                                        play</p>
                                 </div>
                                 <div className="d-flex ps-4" style={{lineHeight: 1}}>
-                                    <p style={{fontSize: '30px', fontWeight: 'bold'}}>{question ? question.content : 'Multiple Choice'}</p>
+                                    <p style={{
+                                        fontSize: '30px',
+                                        fontWeight: 'bold'
+                                    }}>{question ? question.content : 'Multiple Choice'}</p>
                                 </div>
                                 <div className="d-flex justify-content-center" style={{height: '300px', width: '100%'}}>
                                     <ResponsiveContainer width="90%" height="100%">
@@ -251,7 +269,7 @@ function PresentationDetail({usrToken, setToken}) {
                 </div>
                 <div className="h-100 position-relative bg-white"
                      style={{width: '460px', overflow: "auto"}}>
-                    { currSlide &&
+                    {currSlide &&
                         <div className="p-4" id="slide-properties">
                             <div className="d-flex justify-content-between mb-4">
                                 <button type="button" className="btn btn-danger" onClick={removeSlide}>
@@ -265,13 +283,15 @@ function PresentationDetail({usrToken, setToken}) {
                                 <label className="form-label" style={{fontWeight: 'bold'}}>Your Question</label>
                                 <input type="text" name="question"
                                        className={`form-control ${questionInvalid ? 'is-invalid' : ''}`}
-                                       defaultValue={question ? question.content : ''} placeholder={'Type Your Question'}/>
+                                       defaultValue={question ? question.content : ''}
+                                       placeholder={'Type Your Question'}/>
                             </div>
                             <div className="mb-4" id="slide-options">
                                 <label className="form-label" style={{fontWeight: 'bold'}}>Options</label>
-                                { answers.map((data) =>
+                                {answers.map((data) =>
                                     <div key={data.answerId} className="d-flex mb-3">
-                                        <input type="text" className="form-control me-3" data-id={data.answerId} placeholder="Your Answer"
+                                        <input type="text" className="form-control me-3" data-id={data.answerId}
+                                               placeholder="Your Answer"
                                                defaultValue={data.content}/>
                                         <button type="button" className="text-center btn btn-sm btn-danger"
                                                 onClick={(e) => removeOption(e, data.answerId)}>

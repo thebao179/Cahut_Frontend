@@ -24,8 +24,7 @@ function Panel({component, usrToken, setToken}) {
         if (!usrToken) {
             localStorage.setItem('prevurl', location.pathname);
             navigate('/');
-        }
-        else if (usrToken) {
+        } else if (usrToken) {
             const payload = jwt(usrToken);
             const currentDate = new Date();
             if (payload.exp * 1000 < currentDate.getTime()) {
@@ -47,14 +46,17 @@ function Panel({component, usrToken, setToken}) {
     }, [usrToken]);
     return (
         <div id="page-container" className="page-header-dark main-content-boxed">
-            <Header setToken={setToken} token={usrToken} profileUpd={profileUpd} />
+            <Header setToken={setToken} token={usrToken} profileUpd={profileUpd}/>
             <main id="main-container">
                 <Navbar component={component}/>
-                {component === 'dashboard' && <Dashboard token={usrToken} grpCreate={grpCreate} presentationsCreate={presentationsCreated}/>}
+                {component === 'dashboard' &&
+                    <Dashboard token={usrToken} grpCreate={grpCreate} presentationsCreate={presentationsCreated}/>}
                 {component === 'gjoined' && <GroupJoined token={usrToken} grpCreate={grpCreate}/>}
                 {component === 'gowned' && <GroupOwned token={usrToken} grpCreate={grpCreate}/>}
-                {component === 'profile' && <Profile token={usrToken} profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
-                {component === 'presentations' && <Presentations token={usrToken} presentationsCreate={presentationsCreated}/> }
+                {component === 'profile' &&
+                    <Profile token={usrToken} profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
+                {component === 'presentations' &&
+                    <Presentations token={usrToken} presentationsCreate={presentationsCreated}/>}
             </main>
             <GroupAdd grpCreate={grpCreate} setGrpCreate={setGrpCreate}/>
             <PresentationAdd preCreate={presentationsCreated} setPreCreate={setPresentationsCreated}/>

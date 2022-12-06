@@ -1,11 +1,10 @@
 /* eslint-disable */
-import React from "react";
-import { useState, useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import PanelHero from "../General/PanelHero";
 import presentationApi from "../../api/PresentationApi";
 import {Link} from "react-router-dom";
 
-function Presentations({ token, presentationsCreate }) {
+function Presentations({token, presentationsCreate}) {
     const [presentations, setPresentations] = useState();
     const [refresh, setRefresh] = useState(0);
 
@@ -31,7 +30,8 @@ function Presentations({ token, presentationsCreate }) {
                             </h4>
                             <div className="fs-sm text-end">
                                 <div className="block-options">
-                                    <button type="button" className="btn-block-option" onClick={() => deletePresentation(presentation.presentationName)}>
+                                    <button type="button" className="btn-block-option"
+                                            onClick={() => deletePresentation(presentation.presentationName)}>
                                         <i className="si si-trash text-danger fw-bold"></i>
                                     </button>
                                 </div>
@@ -70,7 +70,7 @@ function Presentations({ token, presentationsCreate }) {
 
     return (
         <>
-            <PanelHero title={'Presentations'} photo={'presentation'} />
+            <PanelHero title={'Presentations'} photo={'presentation'}/>
             <div className="content content-boxed">
                 <div className="row items-push py-4">
                     {presentations}

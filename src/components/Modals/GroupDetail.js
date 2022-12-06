@@ -19,6 +19,7 @@ function GroupDetail({groupId, role, self}) {
             setData(groupMems.data);
             setInvitation(groupInv.data);
         }
+
         if (data.length !== 0 && idChanged.current) {
             if (!DataTable.isDataTable('#group-members'))
                 $('#group-members').DataTable({

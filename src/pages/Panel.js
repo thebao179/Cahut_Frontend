@@ -46,25 +46,6 @@ function Panel({component, usrToken, setToken}) {
             }))
         }))
     }, [usrToken]);
-
-    if (isAdding) {
-        return (
-            <div id="page-container" className="page-header-dark main-content-boxed">
-                <Header setToken={setToken} token={usrToken} profileUpd={profileUpd} />
-                <main id="main-container">
-                    <Navbar component={component}/>
-                    {component === 'dashboard' && <Dashboard token={usrToken} grpCreate={grpCreate}/>}
-                    {component === 'gjoined' && <GroupJoined token={usrToken} grpCreate={grpCreate}/>}
-                    {component === 'gowned' && <GroupOwned token={usrToken} grpCreate={grpCreate}/>}
-                    {component === 'profile' && <Profile token={usrToken} profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
-                    {component === 'presentations' && <Presentations token={usrToken} presentationsCreate={presentationsCreated}/> }
-                </main>
-                <GroupAdd grpCreate={grpCreate} setGrpCreate={setGrpCreate} setIsAdd={setIsAdding}/>
-                <PresentationAdd preCreate={presentationsCreated} setPreCreate={setPresentationsCreated} setIsAdd={setIsAdding}/>
-                <Footer/>
-            </div>
-        );
-    }
     return (
         <div id="page-container" className="page-header-dark main-content-boxed">
             <Header setToken={setToken} token={usrToken} profileUpd={profileUpd} />
@@ -75,6 +56,8 @@ function Panel({component, usrToken, setToken}) {
                 {component === 'gowned' && <GroupOwned token={usrToken} grpCreate={grpCreate}/>}
                 {component === 'profile' && <Profile token={usrToken} profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
                 {component === 'presentations' && <Presentations token={usrToken} presentationsCreate={presentationsCreated}/> }
+                <GroupAdd grpCreate={grpCreate} setGrpCreate={setGrpCreate}/>
+                <PresentationAdd preCreate={presentationsCreated} setPreCreate={setPresentationsCreated}/>
             </main>
             <Footer/>
         </div>

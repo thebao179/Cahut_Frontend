@@ -1,23 +1,14 @@
 import axiosClient from "./AxiosClient";
 
 const slideApi = {
-    createSlide: (presentationName) => {
-        const config = {
-            params: {
-                presentationName: presentationName,
-            },
-        }
-        const url = "/slide/create";
-        return axiosClient.post(url, null, config);
-    },
-    getSlide: (presentationId) => {
+    createSlide: (presentationId) => {
         const config = {
             params: {
                 presentationId: presentationId,
             },
         }
-        const url = "/slide/get";
-        return axiosClient.get(url, config);
+        const url = "/slide/create/";
+        return axiosClient.post(url, null, config);
     },
     deleteSlide: (slideId) => {
         const config = {

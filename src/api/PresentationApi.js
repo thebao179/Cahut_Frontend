@@ -26,6 +26,15 @@ const presentationApi = {
     updatePresentation: (presentationId, presentationName) => {
         const url = "/presentation/update";
         return axiosClient.post(url);
+    },
+    getSlides: (presentationId) => {
+        const config = {
+            params: {
+                presentationId: presentationId,
+            },
+        }
+        const url = "/presentation/getslides";
+        return axiosClient.get(url, config);
     }
 }
 

@@ -38,7 +38,7 @@ function PresentationDetail({usrToken, setToken}) {
             if (refresh === 0) {
                 //Get presentation name
             }
-            const slides = await slideApi.getSlide(params.id);
+            const slides = await presentationApi.getSlides(params.id);
             setSlideList(slides.data);
             if (currSlide) {
                 const question = await questionApi.getQuestion(currSlide);
@@ -80,7 +80,7 @@ function PresentationDetail({usrToken, setToken}) {
 
     const addSlide = async () => {
         //Presentation ID
-        const result = await slideApi.createSlide('sadadasdasdaasdsad');
+        const result = await slideApi.createSlide(params.id);
         One.helpers('jq-notify', {
             type: `${result.status === true ? 'success' : 'danger'}`,
             icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,

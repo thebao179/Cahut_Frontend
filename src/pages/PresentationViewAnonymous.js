@@ -1,8 +1,9 @@
+/* eslint-disable */
 import React, { useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 
-function PresentationViewAnonymous({ slideId }) {
+function PresentationView() {
     const question = {
         questionId: '10',
         questionType: "multiple choices",
@@ -18,8 +19,12 @@ function PresentationViewAnonymous({ slideId }) {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const { register, handleSubmit } = useForm();
     const onSubmit = data => {
-        console.log(data)
-        setIsSubmitted(true);
+        console.log(data);
+        if(data.answer){
+            setIsSubmitted(true);
+            return;
+        }
+        One.helpers('jq-notify', {type: 'danger', icon: 'fa fa-times me-1', message: 'Please submit your answer'});
     };
 
     const questionVote = () => {
@@ -61,35 +66,33 @@ function PresentationViewAnonymous({ slideId }) {
     }
 
     return (
-        <Container>
-            <div className="block-content text-center">
-                <h1>Cahut</h1>
-                <h1>Multiple choices</h1>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="space-y-2">
-                        <div className="form-check">
-                            <label className="form-check-label" htmlFor="example-checkbox-default1">
+        <Container className="w-50 p-3">
+            <div className="block-content text-center col-lg-4">
+                <h1 className="display-1">Cahut</h1>
+                <h2 className="d-flex justify-content-start">How many states are there in USA</h2>
+                <form onSubmit={handleSubmit(onSubmit)} >
+                    <div className="space-y-2 mb-4 ">
+                        <div className="form-check border border-3 rounded" style={{display: "flex", alignItems: "left"}} id = {'A'}>
+                            <label className="form-check-label " htmlFor="example-checkbox-default1" style={{margin: "10px"}}>
                                 <input className="form-check-input" type="radio" value={'A'} name="example-checkbox-default" {...register("answer")} />
-                                Option 1</label>
+                                50</label>
                         </div>
-                        <div className="form-check">
-
-                            <label className="form-check-label" htmlFor="example-checkbox-default2">
+                        <div className="form-check border rounded border-3" style={{display: "flex", alignItems: "left"}} id = {'B'}>
+                            <label className="form-check-label" htmlFor="example-checkbox-default2" style={{margin: "10px"}}>
                                 <input className="form-check-input" type="radio" value={'B'} name="example-checkbox-default" {...register("answer")} />
-                                Option 2</label>
+                                51</label>
                         </div>
-                        <div className="form-check">
-                            <label className="form-check-label" htmlFor="example-checkbox-default3">
+                        <div className="form-check border rounded border-3" style={{display: "flex", alignItems: "left"}}>
+                            <label className="form-check-label" htmlFor="example-checkbox-default3" style={{margin: "10px"}} id = {'C'}>
                                 <input className="form-check-input" type="radio" value={'C'} name="example-checkbox-default" {...register("answer")} />
-                                Option 3</label>
+                                52</label>
                         </div>
                     </div>
-                    <button type="submit" className="btn btn-primary">Submit</button>
+                    <button type="submit" style={{display: "block", width: "100%" }} className="btn btn-primary">Submit</button>
                 </form>
             </div>
-
         </Container>
     );
 }
 
-export default PresentationViewAnonymous;
+export default PresentationView;

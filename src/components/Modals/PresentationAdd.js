@@ -59,7 +59,7 @@ function PresentationAdd({preCreate, setPreCreate}) {
                                 <button type="button" className="btn btn-sm btn-alt-secondary me-1 close"
                                         data-bs-dismiss="modal">Close
                                 </button>
-                                <button type="submit" className="btn btn-sm btn-primary">Confirm
+                                <button type="submit" className="btn btn-sm btn-primary" data-bs-dismiss="modal">Confirm
                                 </button>
                             </div>
                         </div>

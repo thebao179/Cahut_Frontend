@@ -25,7 +25,7 @@ const presentationApi = {
     },
     updatePresentation: (presentationId, presentationName) => {
         const url = "/presentation/update";
-        return axiosClient.post(url);
+        return axiosClient.post(url, {presentationId: presentationId, newName: presentationName});
     },
     getSlides: (presentationId) => {
         const config = {
@@ -35,7 +35,16 @@ const presentationApi = {
         }
         const url = "/presentation/getslides";
         return axiosClient.get(url, config);
-    }
+    },
+    getPresentationName: (presentationId) => {
+        const config = {
+            params: {
+                presentationId: presentationId,
+            },
+        }
+        const url = "/presentation/name";
+        return axiosClient.get(url, config);
+    },
 }
 
 export default presentationApi;

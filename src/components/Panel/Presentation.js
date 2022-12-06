@@ -21,7 +21,7 @@ function Presentations({ token, presentationsCreate }) {
                                     <i className="fa fa-desktop fa-2x text-white-75"></i>
                                 </div>
                                 <div className="fs-sm text-white-75">
-                                    {/*{presentation.numOfMems} Slides*/}
+                                    {presentation.numOfSlides} Slides
                                 </div>
                             </div>
                         </Link>

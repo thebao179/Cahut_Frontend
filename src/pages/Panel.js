@@ -19,7 +19,6 @@ function Panel({component, usrToken, setToken}) {
     const [profileUpd, setProfileUpd] = useState(0);
     const [grpCreate, setGrpCreate] = useState(0);
     const [presentationsCreated, setPresentationsCreated] = useState(0);
-    const [isAdding, setIsAdding] = useState(true);
 
     useEffect(() => {
         if (!usrToken) {
@@ -51,14 +50,14 @@ function Panel({component, usrToken, setToken}) {
             <Header setToken={setToken} token={usrToken} profileUpd={profileUpd} />
             <main id="main-container">
                 <Navbar component={component}/>
-                {component === 'dashboard' && <Dashboard token={usrToken} grpCreate={grpCreate}/>}
+                {component === 'dashboard' && <Dashboard token={usrToken} grpCreate={grpCreate} presentationsCreate={presentationsCreated}/>}
                 {component === 'gjoined' && <GroupJoined token={usrToken} grpCreate={grpCreate}/>}
                 {component === 'gowned' && <GroupOwned token={usrToken} grpCreate={grpCreate}/>}
                 {component === 'profile' && <Profile token={usrToken} profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
                 {component === 'presentations' && <Presentations token={usrToken} presentationsCreate={presentationsCreated}/> }
-                <GroupAdd grpCreate={grpCreate} setGrpCreate={setGrpCreate}/>
-                <PresentationAdd preCreate={presentationsCreated} setPreCreate={setPresentationsCreated}/>
             </main>
+            <GroupAdd grpCreate={grpCreate} setGrpCreate={setGrpCreate}/>
+            <PresentationAdd preCreate={presentationsCreated} setPreCreate={setPresentationsCreated}/>
             <Footer/>
         </div>
     );

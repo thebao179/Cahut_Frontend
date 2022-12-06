@@ -3,17 +3,17 @@ import {Link} from "react-router-dom";
 import PanelHero from "../General/PanelHero";
 import groupApi from "../../api/GroupApi";
 
-function Dashboard({token, grpCreate}) {
+function Dashboard({token, grpCreate, presentationsCreate}) {
     const [data, setData] = useState({});
 
     useEffect(() => {
         async function fetchData() {
             const result = await groupApi.getGroupNumber();
-            setData(result.data)
+            setData(result.data);
         }
 
         if (token) fetchData();
-    }, [grpCreate]);
+    }, [grpCreate, presentationsCreate]);
 
     return (
         <>
@@ -86,7 +86,7 @@ function Dashboard({token, grpCreate}) {
                                         <div
                                             className="block-content block-content-full flex-grow-1 d-flex justify-content-between align-items-center">
                                             <dl className="mb-0">
-                                                <dt className="fs-3 fw-bold">0</dt>
+                                                <dt className="fs-3 fw-bold">{data.presentationNumber}</dt>
                                                 <dd className="fs-sm fw-medium fs-sm fw-medium text-muted mb-0">
                                                     Presentations
                                                 </dd>

@@ -14,12 +14,12 @@ function PresentationDetail({usrToken, setToken}) {
     const location = useLocation();
     const [nameInvalid, setNameInvalid] = useState(false);
     const [questionInvalid, setQuestionInvalid] = useState(false);
-    const [optAdded, setOptAdded] = useState([]);
     const [refresh, setRefresh] = useState(0);
     const [slideList, setSlideList] = useState([]);
     const [currSlide, setCurrSlide] = useState();
     const [question, setQuestion] = useState();
     const [answers, setAnswers] = useState([]);
+    const [presName, setPresName] = useState();
 
     useEffect(() => {
         if (!usrToken) {
@@ -36,7 +36,9 @@ function PresentationDetail({usrToken, setToken}) {
         }
         async function fetchData() {
             if (refresh === 0) {
-                //Get presentation name
+                const result = await presentationApi.getPresentationName(params.id);
+                if (result.status) setPresName(result.data.presentationName);
+                else navigate('/presentations');
             }
             const slides = await presentationApi.getSlides(params.id);
             setSlideList(slides.data);
@@ -54,14 +56,12 @@ function PresentationDetail({usrToken, setToken}) {
     }, [refresh, currSlide, usrToken]);
 
     const addOption = () => {
-        setOptAdded(optAdded.concat(
-            <div key={Math.random().toString(36).slice(2, 7)} className="d-flex mb-3">
-                <input type="text" className="form-control me-3" data-id="null" placeholder="Your Answer"/>
-                <button type="button" className="text-center btn btn-sm btn-danger" onClick={removeOptionAdded}>
-                    <i className="fa fa-fw fa-xmark"></i>
-                </button>
-            </div>
-        ));
+        $('#slide-options').append(`<div id="option-${Math.random().toString(36).slice(2, 7)}" class="d-flex mb-3">\n` +
+            '<input type="text" class="form-control me-3" data-id="null" placeholder="Your Answer"/>\n' +
+            '<button type="button" class="text-center btn btn-sm btn-danger" onclick="$(this).closest(\'div.d-flex.mb-3\').remove();">\n' +
+            '<i class="fa fa-fw fa-xmark"></i>\n' +
+            '</button>\n' +
+            '</div>\n');
     }
 
     const removeOption = async (e, answerId) => {
@@ -74,12 +74,7 @@ function PresentationDetail({usrToken, setToken}) {
         if (result.status) setRefresh(refresh + 1);
     }
 
-    const removeOptionAdded = (e) => {
-        $(e.target).closest('div.d-flex.mb-3').remove();
-    }
-
     const addSlide = async () => {
-        //Presentation ID
         const result = await slideApi.createSlide(params.id);
         One.helpers('jq-notify', {
             type: `${result.status === true ? 'success' : 'danger'}`,
@@ -106,7 +101,10 @@ function PresentationDetail({usrToken, setToken}) {
                     icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
                     message: result.message
                 });
-                if (result.status) setRefresh(refresh + 1);
+                if (result.status) {
+                    setCurrSlide(null);
+                    setRefresh(refresh + 1);
+                }
             }
         })
     }
@@ -147,7 +145,7 @@ function PresentationDetail({usrToken, setToken}) {
                 message: result.message
             });
             if (result.status) {
-                setOptAdded([]);
+                $('#slide-options').find('div[id^=option-]').remove();
                 setRefresh(refresh + 1);
             }
             setQuestionInvalid(false);
@@ -155,15 +153,19 @@ function PresentationDetail({usrToken, setToken}) {
     }
 
     const changePName = async (e) => {
+        if (e.target.value === presName) return;
         if (!e.target.value) setNameInvalid(true);
         else {
-            // const result = await presentationApi.updatePresentation(e.target.getAttribute('data-old'), e.target.value);
-            // One.helpers('jq-notify', {
-            //     type: `${result.status === true ? 'success' : 'danger'}`,
-            //     icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
-            //     message: result.message
-            // });
-            setNameInvalid(false);
+            const result = await presentationApi.updatePresentation(params.id, e.target.value);
+            One.helpers('jq-notify', {
+                type: `${result.status === true ? 'success' : 'danger'}`,
+                icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+                message: result.message
+            });
+            if (result.status) {
+                setPresName(e.target.value);
+                setNameInvalid(false);
+            }
         }
     }
 
@@ -178,7 +180,7 @@ function PresentationDetail({usrToken, setToken}) {
                             </Link>
                         </div>
                         <div className="me-sm-3">
-                            <input type="text" className={`form-control ${nameInvalid ? 'is-invalid' : ''}`} defaultValue={'PresentationName'} onBlur={changePName}/>
+                            <input type="text" className={`form-control ${nameInvalid ? 'is-invalid' : ''}`} defaultValue={presName} onBlur={changePName}/>
                         </div>
                         <div className="d-inline-block ms-2">
                             <button type="button" className="btn btn-alt-success" onClick={addSlide}>
@@ -224,10 +226,10 @@ function PresentationDetail({usrToken, setToken}) {
                         { currSlide &&
                             <div className="bg-white p-4 h-100">
                                 <div className="d-flex pt-2 justify-content-center">
-                                    <p>Go to <span style={{fontWeight: 'bold'}}>{process.env.REACT_APP_CLIENT + 'present/view/' + currSlide}</span> to play</p>
+                                    <p>Go to <span style={{fontWeight: 'bold'}}>{process.env.REACT_APP_CLIENT + 'view/' + currSlide}</span> to play</p>
                                 </div>
                                 <div className="d-flex ps-4" style={{lineHeight: 1}}>
-                                    <p style={{fontSize: '30px', fontWeight: 'bold'}}>Multiple Choice</p>
+                                    <p style={{fontSize: '30px', fontWeight: 'bold'}}>{question ? question.content : 'Multiple Choice'}</p>
                                 </div>
                                 <div className="d-flex justify-content-center" style={{height: '300px', width: '100%'}}>
                                     <ResponsiveContainer width="90%" height="100%">
@@ -277,7 +279,6 @@ function PresentationDetail({usrToken, setToken}) {
                                         </button>
                                     </div>
                                 )}
-                                {optAdded}
                             </div>
                             <div className="d-flex">
                                 <button type="button" className="btn btn-alt-secondary w-100" onClick={addOption}>

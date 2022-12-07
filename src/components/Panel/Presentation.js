@@ -13,7 +13,7 @@ function Presentations({token, presentationsCreate}) {
             const result = await presentationApi.getPresentation();
             const data = result.data.map(presentation =>
                 <div key={presentation.presentationId} className="col-md-6 col-lg-4 col-xl-3">
-                    <Link to={''} className="block block-rounded block-link-pop h-100 mb-0">
+                    <div className="block block-rounded block-link-pop h-100 mb-0">
                         <Link to={'/presentation/edit/' + presentation.presentationId}>
                             <div className="block-content block-content-full text-center bg-warning">
                                 <div className="item item-2x item-circle bg-white-10 py-3 my-3 mx-auto">
@@ -37,7 +37,7 @@ function Presentations({token, presentationsCreate}) {
                                 </div>
                             </div>
                         </div>
-                    </Link>
+                    </div>
                 </div>
             );
             setPresentations(data);

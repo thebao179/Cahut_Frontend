@@ -63,7 +63,7 @@ function SlideDetail({usrToken, setToken}) {
                 <div className="bg-white p-4 h-100">
                     <div className="d-flex pt-2 justify-content-center">
                         <p>Go to <span
-                            style={{fontWeight: 'bold'}}>{process.env.REACT_APP_CLIENT + 'presentation/view/' + params.id}</span> to
+                            style={{fontWeight: 'bold'}}>{process.env.REACT_APP_CLIENT + 'view/' + params.id}</span> to
                             play</p>
                     </div>
                     <div className="d-flex ps-4" style={{lineHeight: 1}}>

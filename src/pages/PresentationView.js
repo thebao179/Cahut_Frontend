@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from "react";
 import {Container} from "react-bootstrap";
 import {useForm} from "react-hook-form";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import answerApi from "../api/AnswerApi";
 import questionApi from "../api/QuestionApi";
 import {HubConnectionBuilder} from "@microsoft/signalr";
@@ -15,6 +15,7 @@ function PresentationView() {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const {register, handleSubmit} = useForm();
     const [connection, setConnection] = useState();
+    const navigate = useNavigate();
 
     const onSubmit = async (data) => {
         if (data.answer) {
@@ -34,7 +35,7 @@ function PresentationView() {
         if (question.data) {
             const answers = await answerApi.getAnswers(question.data.questionId);
             setAnswers(answers.data);
-        } else setAnswers([]);
+        } else navigate('/');
     }
 
     useEffect(() => {
@@ -59,15 +60,6 @@ function PresentationView() {
     }, [connection])
 
     useEffect(() => {
-        async function fetchData() {
-            const question = await questionApi.getQuestion(params.id);
-            setQuestion(question.data);
-            if (question.data) {
-                const answers = await answerApi.getAnswers(question.data.questionId);
-                setAnswers(answers.data);
-            } else setAnswers([]);
-        }
-
         fetchData();
     }, [])
 

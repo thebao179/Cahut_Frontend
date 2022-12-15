@@ -29,7 +29,6 @@
     align-content: flex-start;
     list-style: none;
     width: 100%;
-    min-height: 100%;
     overflow: hidden;
     padding-bottom: 0;
 }

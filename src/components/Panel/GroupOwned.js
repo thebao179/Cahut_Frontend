@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {useEffect, useState} from "react";
 import PanelHero from "../General/PanelHero";
 import GroupDetail from "../Modals/GroupDetail";
@@ -8,6 +9,7 @@ function GroupOwned({token, grpCreate}) {
     const [groupId, setGroupId] = useState();
     const [groups, setGroups] = useState();
     const [self, setSelf] = useState();
+    const [refresh, setRefresh] = useState(0);
 
     useEffect(() => {
         async function fetchData() {
@@ -29,15 +31,16 @@ function GroupOwned({token, grpCreate}) {
                             </h4>
                             <div className="fs-sm text-end">
                                 <div className="block-options">
-                                    <button type="button" className="btn-block-option">
-                                        <i className="si si-settings fw-bold text-primary"></i>
-                                    </button>
                                     <button type="button" className="btn-block-option"
                                             data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
                                             onClick={() => {
                                                 setGroupId(group.groupName)
                                             }}>
                                         <i className="si si-info text-info fw-bold"></i>
+                                    </button>
+                                    <button type="button" className="btn-block-option"
+                                            onClick={() => deleteGroup(group.groupName)}>
+                                        <i className="si si-trash text-danger fw-bold"></i>
                                     </button>
                                 </div>
                             </div>
@@ -52,7 +55,24 @@ function GroupOwned({token, grpCreate}) {
             fetchData();
             setSelf(jwt(token).email);
         }
-    }, [grpCreate]);
+    }, [grpCreate, refresh]);
+
+    const deleteGroup = (groupName) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#4c78dd',
+            cancelButtonColor: '#dc2626',
+            confirmButtonText: 'Yes, delete it!'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+
+            }
+        })
+    }
+
     return (
         <>
             <PanelHero title={'Owned groups'} photo={'gowned'}/>

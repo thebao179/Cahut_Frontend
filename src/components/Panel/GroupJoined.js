@@ -34,9 +34,6 @@ function GroupJoined({token, grpCreate}) {
                                         <p className={`group-role ${group.role === 'Co-owner' ? 'text-warning' : 'text-success'} pt-1`}>{group.role}</p>
                                     </div>
                                     <div className="col-sm-6">
-                                        <button type="button" className="btn-block-option">
-                                            <i className="si si-settings text-primary fw-bold"></i>
-                                        </button>
                                         <button type="button" className="btn-block-option"
                                                 data-bs-toggle="modal" data-bs-target="#grpdetail-modal"
                                                 onClick={() => {

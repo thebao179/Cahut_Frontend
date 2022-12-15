@@ -3,10 +3,12 @@ import React, {useEffect, useState} from "react";
 import PanelHero from "../General/PanelHero";
 import presentationApi from "../../api/PresentationApi";
 import {Link} from "react-router-dom";
+import PresentationCollab from "../Modals/PresentationCollab";
 
 function Presentations({token, presentationsCreate}) {
     const [presentations, setPresentations] = useState();
     const [refresh, setRefresh] = useState(0);
+    const [presentationId, setPresentationId] = useState();
 
     useEffect(() => {
         async function fetchData() {
@@ -30,6 +32,13 @@ function Presentations({token, presentationsCreate}) {
                             </h4>
                             <div className="fs-sm text-end">
                                 <div className="block-options">
+                                    <button type="button" className="btn-block-option"
+                                            data-bs-toggle="modal" data-bs-target="#presentation-modal"
+                                            onClick={() => {
+                                                setPresentationId(presentation.presentationId);
+                                            }}>
+                                        <i className="si si-info text-info fw-bold"></i>
+                                    </button>
                                     <button type="button" className="btn-block-option"
                                             onClick={() => deletePresentation(presentation.presentationName)}>
                                         <i className="si si-trash text-danger fw-bold"></i>
@@ -76,6 +85,7 @@ function Presentations({token, presentationsCreate}) {
                     {presentations}
                 </div>
             </div>
+            <PresentationCollab pId={presentationId} />
         </>
     );
 }

@@ -7,6 +7,7 @@ import jwt from "jwt-decode";
 import slideApi from "../api/SlideApi";
 import questionApi from "../api/QuestionApi";
 import answerApi from "../api/AnswerApi";
+import PresentGroup from "../components/Modals/PresentGroup";
 
 function PresentationDetail({usrToken, setToken}) {
     const navigate = useNavigate();
@@ -20,6 +21,11 @@ function PresentationDetail({usrToken, setToken}) {
     const [question, setQuestion] = useState();
     const [answers, setAnswers] = useState([]);
     const [presName, setPresName] = useState();
+    const [slideType, setSlideType] = useState();
+    const [hHeading, setHHeading] = useState();
+    const [subHeading, setSubHeading] = useState();
+    const [pHeading, setPHeading] = useState();
+    const [paragraph, setParagraph] = useState();
 
     useEffect(() => {
         if (!usrToken) {
@@ -43,6 +49,7 @@ function PresentationDetail({usrToken, setToken}) {
             const slides = await presentationApi.getSlides(params.id);
             setSlideList(slides.data);
             if (currSlide) {
+                setSlideType('multiple-choice');
                 const question = await questionApi.getQuestion(currSlide);
                 setQuestion(question.data);
                 if (question.data) {
@@ -169,6 +176,10 @@ function PresentationDetail({usrToken, setToken}) {
         }
     }
 
+    const slideTypeChange = (e) => {
+        setSlideType(e.target.value);
+    }
+
     return (
         <div id="page-container" className="h-100">
             <header id="page-header">
@@ -191,13 +202,17 @@ function PresentationDetail({usrToken, setToken}) {
                     </div>
                     <div className="d-flex align-items-center">
                         <div className="d-inline-block ms-2">
-                            {currSlide &&
-                                <a href={'/presentation/present/' + currSlide} target={'_blank'}>
-                                    <button type="button" className="btn btn-info">
-                                        <i className="fa fa-fw fa-display me-1"></i> Present
-                                    </button>
-                                </a>
-                            }
+                            <button type="button" className="btn btn-warning"
+                                    data-bs-toggle="modal" data-bs-target="#grouppresent-modal">
+                                <i className="fa fa-fw fa-display me-1"></i> Group Present
+                            </button>
+                        </div>
+                        <div className="d-inline-block ms-2">
+                            <a href={'/presentation/present/' + currSlide} target={'_blank'}>
+                                <button type="button" className="btn btn-info">
+                                    <i className="fa fa-fw fa-display me-1"></i> Public Present
+                                </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -225,8 +240,19 @@ function PresentationDetail({usrToken, setToken}) {
                                              height: '100px',
                                              flex: "1 1 auto"
                                          }}>
-                                        <div className="mt-4"><i className="fa fa-chart-simple"></i></div>
-                                        <span className="fw-bold">Multiple Choice</span>
+
+                                        <div className="mt-4">
+                                            {(currSlide === data.slideId && slideType === 'multiple-choice') || data.type === 'multiple-choice' ? <i className="fa fa-chart-simple"></i> :
+                                                (currSlide === data.slideId && slideType === 'heading') || data.type === 'heading' ? <i className="fa fa-heading"></i> :
+                                                    (currSlide === data.slideId && slideType === 'paragraph') || data.type === 'paragraph' ? <i className="fa fa-paragraph"></i> : <i className="fa fa-chart-simple"></i>
+                                            }
+                                        </div>
+                                        <span className="fw-bold">
+                                            {currSlide === data.slideId && slideType === 'multiple-choice' ? 'Multiple Choice' :
+                                                currSlide === data.slideId && slideType === 'heading' ? 'Heading' :
+                                                    currSlide === data.slideId && slideType === 'paragraph' ? 'Paragraph' : 'Multiple Choice'
+                                            }
+                                        </span>
                                     </div>
                                 </li>
                             </a>
@@ -234,7 +260,7 @@ function PresentationDetail({usrToken, setToken}) {
                     </ol>
                 </div>
                 <div className="h-100 position-relative"
-                     style={{width: "auto", flex: "1 1 auto"}}>
+                     style={{width: "calc(100% - 690px)", flex: "1 1 auto"}}>
                     <div className="p-4" style={{height: 'fit-content'}}>
                         {currSlide &&
                             <div className="bg-white p-4 h-100">
@@ -243,25 +269,57 @@ function PresentationDetail({usrToken, setToken}) {
                                         style={{fontWeight: 'bold'}}>{process.env.REACT_APP_CLIENT + 'view/' + currSlide}</span> to
                                         play</p>
                                 </div>
-                                <div className="d-flex ps-4" style={{lineHeight: 1}}>
-                                    <p style={{
-                                        fontSize: '30px',
-                                        fontWeight: 'bold'
-                                    }}>{question ? question.content : 'Multiple Choice'}</p>
-                                </div>
-                                <div className="d-flex justify-content-center" style={{height: '300px', width: '100%'}}>
-                                    <ResponsiveContainer width="90%" height="100%">
-                                        <BarChart width={150} height={40} data={answers}
-                                                  margin={{top: 20, bottom: 20}}>
-                                            <Bar dataKey="numSelected"
-                                                 fill="#4c78dd">
-                                                <LabelList dataKey="content"
-                                                           position="bottom"
-                                                           style={{fontWeight: "bold"}}/>
-                                                <LabelList dataKey="numSelected" position="top"/>
-                                            </Bar>
-                                        </BarChart>
-                                    </ResponsiveContainer>
+                                <div style={{height: '400px'}}>
+                                    {slideType === 'multiple-choice' &&
+                                        <>
+                                            <div className="d-flex ps-4" style={{lineHeight: 1}}>
+                                                <p className="w-100" style={{
+                                                    fontSize: '30px',
+                                                    fontWeight: 'bold'
+                                                }}>{question ? question.content : 'Multiple Choice'}</p>
+                                            </div>
+                                            <div className="d-flex justify-content-center" style={{height: '300px', width: '100%'}}>
+                                                <ResponsiveContainer width="90%" height="100%">
+                                                    <BarChart width={150} height={40} data={answers}
+                                                              margin={{top: 20, bottom: 20}}>
+                                                        <Bar dataKey="numSelected"
+                                                             fill="#4c78dd">
+                                                            <LabelList dataKey="content"
+                                                                       position="bottom"
+                                                                       style={{fontWeight: "bold"}}/>
+                                                            <LabelList dataKey="numSelected" position="top"/>
+                                                        </Bar>
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </>
+                                    }
+                                    {slideType === 'heading' &&
+                                        <>
+                                            <div className="d-flex pt-7">
+                                                <p className="w-100 text-center" style={{
+                                                    fontSize: '30px',
+                                                    fontWeight: 'bold'
+                                                }}>{hHeading}</p>
+                                            </div>
+                                            <div className="d-flex">
+                                                <p className="w-100 text-center">{subHeading}</p>
+                                            </div>
+                                        </>
+                                    }
+                                    {slideType === 'paragraph' &&
+                                        <>
+                                            <div className="d-flex pt-7">
+                                                <p className="w-100 text-center" style={{
+                                                    fontSize: '30px',
+                                                    fontWeight: 'bold'
+                                                }}>{pHeading}</p>
+                                            </div>
+                                            <div className="d-flex">
+                                                <p className="w-100 text-center">{paragraph}</p>
+                                            </div>
+                                        </>
+                                    }
                                 </div>
                             </div>
                         }
@@ -279,36 +337,99 @@ function PresentationDetail({usrToken, setToken}) {
                                     <i className="fa fa-fw fa-upload me-1"></i> Save Changes
                                 </button>
                             </div>
-                            <div className="mb-4">
-                                <label className="form-label" style={{fontWeight: 'bold'}}>Your Question</label>
-                                <input type="text" name="question"
-                                       className={`form-control ${questionInvalid ? 'is-invalid' : ''}`}
-                                       defaultValue={question ? question.content : ''}
-                                       placeholder={'Type Your Question'}/>
-                            </div>
-                            <div className="mb-4" id="slide-options">
-                                <label className="form-label" style={{fontWeight: 'bold'}}>Options</label>
-                                {answers.map((data) =>
-                                    <div key={data.answerId} className="d-flex mb-3">
-                                        <input type="text" className="form-control me-3" data-id={data.answerId}
-                                               placeholder="Your Answer"
-                                               defaultValue={data.content}/>
-                                        <button type="button" className="text-center btn btn-sm btn-danger"
-                                                onClick={(e) => removeOption(e, data.answerId)}>
-                                            <i className="fa fa-fw fa-xmark"></i>
+                            {slideType === 'multiple-choice' &&
+                                <>
+                                    <div className="mb-4">
+                                        <label className="form-label" style={{fontWeight: 'bold'}}>Slide Type</label>
+                                        <select className="form-select" name="slide-type" onChange={slideTypeChange}>
+                                            <option value="multiple-choice" selected={true}>Multiple Choice</option>
+                                            <option value="heading">Heading</option>
+                                            <option value="paragraph">Paragraph</option>
+                                        </select>
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="form-label" style={{fontWeight: 'bold'}}>Your Question</label>
+                                        <input type="text" name="question"
+                                               className={`form-control ${questionInvalid ? 'is-invalid' : ''}`}
+                                               defaultValue={question ? question.content : ''}
+                                               placeholder={'Type Your Question'}/>
+                                    </div>
+                                    <div className="mb-4" id="slide-options">
+                                        <label className="form-label" style={{fontWeight: 'bold'}}>Options</label>
+                                        {answers.map((data) =>
+                                            <div key={data.answerId} className="d-flex mb-3">
+                                                <input type="text" className="form-control me-3" data-id={data.answerId}
+                                                       placeholder="Your Answer"
+                                                       defaultValue={data.content}/>
+                                                <button type="button" className="text-center btn btn-sm btn-danger"
+                                                        onClick={(e) => removeOption(e, data.answerId)}>
+                                                    <i className="fa fa-fw fa-xmark"></i>
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="d-flex">
+                                        <button type="button" className="btn btn-alt-secondary w-100" onClick={addOption}>
+                                            <i className="fa fa-fw fa-plus me-1"></i>Add option
                                         </button>
                                     </div>
-                                )}
-                            </div>
-                            <div className="d-flex">
-                                <button type="button" className="btn btn-alt-secondary w-100" onClick={addOption}>
-                                    <i className="fa fa-fw fa-plus me-1"></i>Add option
-                                </button>
-                            </div>
+                                </>
+                            }
+                            {slideType === 'heading' &&
+                                <>
+                                    <div className="mb-4">
+                                        <label className="form-label" style={{fontWeight: 'bold'}}>Slide Type</label>
+                                        <select className="form-select" name="slide-type" onChange={slideTypeChange}>
+                                            <option value="multiple-choice">Multiple Choice</option>
+                                            <option value="heading" selected={true}>Heading</option>
+                                            <option value="paragraph">Paragraph</option>
+                                        </select>
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="form-label" style={{fontWeight: 'bold'}}>Heading</label>
+                                        <input type="text" className="form-control" name="h-heading"
+                                               defaultValue={hHeading}
+                                               placeholder="Slide with heading" />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="form-label" style={{fontWeight: 'bold'}}>Subheading</label>
+                                        <textarea className="form-control" name="subheading"
+                                                  rows="5" placeholder="Subheading"
+                                                  defaultValue={subHeading}
+                                                  spellCheck="false" style={{resize: 'none'}}></textarea>
+                                    </div>
+                                </>
+                            }
+                            {slideType === 'paragraph' &&
+                                <>
+                                    <div className="mb-4">
+                                        <label className="form-label" style={{fontWeight: 'bold'}}>Slide Type</label>
+                                        <select className="form-select" name="slide-type" onChange={slideTypeChange}>
+                                            <option value="multiple-choice">Multiple Choice</option>
+                                            <option value="heading">Heading</option>
+                                            <option value="paragraph" selected={true}>Paragraph</option>
+                                        </select>
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="form-label" style={{fontWeight: 'bold'}}>Heading</label>
+                                        <input type="text" className="form-control" name="p-heading"
+                                               defaultValue={pHeading}
+                                               placeholder="Slide with heading" />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="form-label" style={{fontWeight: 'bold'}}>Paragraph</label>
+                                        <textarea className="form-control" name="paragraph"
+                                                  rows="5" placeholder="Paragraph"
+                                                  defaultValue={paragraph}
+                                                  spellCheck="false" style={{resize: 'none'}}></textarea>
+                                    </div>
+                                </>
+                            }
                         </div>
                     }
                 </div>
             </main>
+            <PresentGroup presentationId={params.id}/>
         </div>
     );
 }

@@ -40,86 +40,88 @@ function SignUpForm() {
     }
 
     return (
-        <div className="w-100">
-            <div className="text-center mb-5">
-                <p className="mb-3">
-                    <i className="fa fa-2x fa-circle-notch text-primary-light"/>
-                </p>
-                <h1 className="fw-bold mb-2">Create Account</h1>
-                <p className="fw-medium text-muted">
-                    Get your access today in one easy step
-                </p>
-            </div>
+        <div className="p-4 w-100 flex-grow-1 d-flex align-items-center">
+            <div className="w-100">
+                <div className="text-center mb-5">
+                    <p className="mb-3">
+                        <i className="fa fa-2x fa-circle-notch text-primary-light"/>
+                    </p>
+                    <h1 className="fw-bold mb-2">Create Account</h1>
+                    <p className="fw-medium text-muted">
+                        Get your access today in one easy step
+                    </p>
+                </div>
 
-            <div className="row g-0 justify-content-center">
-                <div className="col-sm-8 col-xl-4">
-                    <form
-                        className="js-validation-signup"
-                        onSubmit={handleSubmit(onSubmit)}
-                    >
-                        <div className="mb-4">
-                            <input
-                                type="text"
-                                className={`form-control form-control-lg form-control-alt py-3 ${errors.username ? "is-invalid" : ""}`}
-                                placeholder="Username"
-                                {...register("username")}
-                            />
-                            {errors.username && (
-                                <p className="fs-sm fw-medium text-danger">
-                                    {errors.username.message}
-                                </p>
-                            )}
-                        </div>
-                        <div className="mb-4">
-                            <input
-                                type="email"
-                                className={`form-control form-control-lg form-control-alt py-3 ${errors.email ? "is-invalid" : ""}`}
-                                placeholder="Email"
-                                {...register("email")}
-                            />
-                            {errors.email && (
-                                <p className="fs-sm fw-medium text-danger">
-                                    {errors.email.message}
-                                </p>
-                            )}
-                        </div>
-                        <div className="mb-4">
-                            <input
-                                type="password"
-                                className={`form-control form-control-lg form-control-alt py-3 ${errors.password ? "is-invalid" : ""}`}
-                                placeholder="Password"
-                                {...register("password")}
-                            />
-                            {errors.password && (
-                                <p className="fs-sm fw-medium text-danger">
-                                    {errors.password.message}
-                                </p>
-                            )}
-                        </div>
-                        <div className="mb-4">
-                            <input
-                                type="password"
-                                className={`form-control form-control-lg form-control-alt py-3 ${errors.password2 ? "is-invalid" : ""}`}
-                                placeholder="Confirm Password"
-                                {...register("password2")}
-                            />
-                            {errors.password2 && (
-                                <p className="fs-sm fw-medium text-danger">
-                                    {errors.password2.message}
-                                </p>
-                            )}
-                        </div>
-                        <div className="mb-4">
-                            <a className="fs-sm fw-medium" href="/">
-                                Already have an account?
-                            </a>
-                        </div>
-                        <div className="text-center">
-                            <button type="submit" className="btn btn-lg btn-alt-success">
-                                <i className="fa fa-fw fa-plus me-1 opacity-50"/> Sign Up
-                            </button>
-                        </div>
-                    </form>
+                <div className="row g-0 justify-content-center">
+                    <div className="col-sm-8 col-xl-4">
+                        <form
+                            className="js-validation-signup"
+                            onSubmit={handleSubmit(onSubmit)}
+                        >
+                            <div className="mb-4">
+                                <input
+                                    type="text"
+                                    className={`form-control form-control-lg form-control-alt py-3 ${errors.username ? "is-invalid" : ""}`}
+                                    placeholder="Username"
+                                    {...register("username")}
+                                />
+                                {errors.username && (
+                                    <p className="fs-sm fw-medium text-danger">
+                                        {errors.username.message}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="mb-4">
+                                <input
+                                    type="email"
+                                    className={`form-control form-control-lg form-control-alt py-3 ${errors.email ? "is-invalid" : ""}`}
+                                    placeholder="Email"
+                                    {...register("email")}
+                                />
+                                {errors.email && (
+                                    <p className="fs-sm fw-medium text-danger">
+                                        {errors.email.message}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="mb-4">
+                                <input
+                                    type="password"
+                                    className={`form-control form-control-lg form-control-alt py-3 ${errors.password ? "is-invalid" : ""}`}
+                                    placeholder="Password"
+                                    {...register("password")}
+                                />
+                                {errors.password && (
+                                    <p className="fs-sm fw-medium text-danger">
+                                        {errors.password.message}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="mb-4">
+                                <input
+                                    type="password"
+                                    className={`form-control form-control-lg form-control-alt py-3 ${errors.password2 ? "is-invalid" : ""}`}
+                                    placeholder="Confirm Password"
+                                    {...register("password2")}
+                                />
+                                {errors.password2 && (
+                                    <p className="fs-sm fw-medium text-danger">
+                                        {errors.password2.message}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="mb-4">
+                                <a className="fs-sm fw-medium" href="/">
+                                    Already have an account?
+                                </a>
+                            </div>
+                            <div className="text-center">
+                                <button type="submit" className="btn btn-lg btn-alt-success">
+                                    <i className="fa fa-fw fa-plus me-1 opacity-50"/> Sign Up
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

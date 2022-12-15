@@ -24,6 +24,14 @@ function App() {
             element: <Authentication component={'signup'} usrToken={token}/>
         },
         {
+            path: "/password-reset",
+            element: <Authentication component={'password-reset'} usrToken={token}/>
+        },
+        {
+            path: "/change-password",
+            element: <Authentication component={'change-password'} usrToken={token}/>
+        },
+        {
             path: "/dashboard",
             element: <Panel component={'dashboard'} setToken={setToken} usrToken={token}/>
         },

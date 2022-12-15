@@ -103,7 +103,7 @@ function SignInForm({setToken}) {
                             </div>
                             <div className="d-flex justify-content-between align-items-center mb-4">
                                 <div>
-                                    <a className="text-muted fs-sm fw-medium d-block d-lg-inline-block mb-1">
+                                    <a href={'/password-reset'} className="text-muted fs-sm fw-medium d-block d-lg-inline-block mb-1">
                                         Forgot Password?
                                     </a>
                                 </div>

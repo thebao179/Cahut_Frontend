@@ -2,6 +2,8 @@ import React, {useEffect} from "react";
 import SignInForm from "../components/Authentication/SignInForm";
 import SignUpForm from "../components/Authentication/SignUpForm";
 import {useNavigate} from "react-router-dom";
+import ForgotPassword from "../components/Authentication/ForgotPassword";
+import PasswordReset from "../components/Authentication/PasswordReset";
 
 function Authentication({component, setToken, usrToken}) {
     const navigate = useNavigate();
@@ -21,7 +23,7 @@ function Authentication({component, setToken, usrToken}) {
                         <div className="hero-static col-lg-4 d-none d-lg-flex flex-column justify-content-center">
                             <div className="p-4 p-xl-5 flex-grow-1 d-flex align-items-center">
                                 <div className="w-100">
-                                    <a className="link-fx fw-semibold fs-2 text-white">
+                                    <a href={'/'} className="link-fx fw-semibold fs-2 text-white">
                                         Realtime Learning Platform
                                     </a>
                                     <p className="text-white-75 me-xl-8 mt-2"/>
@@ -53,6 +55,8 @@ function Authentication({component, setToken, usrToken}) {
                             <div className="p-4 w-100 flex-grow-1 d-flex align-items-center">
                                 {component === 'signin' && <SignInForm setToken={setToken}/>}
                                 {component === 'signup' && <SignUpForm/>}
+                                {component === 'password-reset' && <ForgotPassword/>}
+                                {component === 'change-password' && <PasswordReset/>}
                             </div>
                             <div
                                 className="px-4 py-3 w-100 d-lg-none d-flex flex-column flex-sm-row justify-content-between fs-sm text-center text-sm-start">

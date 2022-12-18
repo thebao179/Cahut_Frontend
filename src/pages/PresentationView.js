@@ -71,10 +71,10 @@ function PresentationView() {
                         {
                             answers ? answers.map(answer =>
                                 <div className="form-check border border-3 rounded"
-                                     style={{display: "flex", alignItems: "left"}} id={'A'} key={answer.answerId}>
+                                     style={{display: "flex", alignItems: "left"}} id={'A'} key={answer.optionId}>
                                     <label className="form-check-label" htmlFor="example-checkbox-default1"
                                            style={{margin: "10px"}}>
-                                        <input className="form-check-input" type="radio" value={answer.answerId}
+                                        <input className="form-check-input" type="radio" value={answer.optionId}
                                                name="example-checkbox-default" {...register("answer")} />
                                         {answer.content}
                                     </label>

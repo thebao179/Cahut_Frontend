@@ -1,27 +1,27 @@
 import axiosClient from "./AxiosClient";
 
 const slideApi = {
-    createSlide: (presentationId) => {
+    createMultipleChoiceSlide: (presentationId) => {
         const config = {
             params: {
                 presentationId: presentationId,
             },
         }
-        const url = "/slide/create/";
+        const url = "/slide/multiplechoice/create/";
         return axiosClient.post(url, null, config);
     },
-    deleteSlide: (slideId) => {
+    deleteMultipleChoiceSlide: (slideId) => {
         const config = {
             params: {
                 slideId: slideId,
             },
         }
-        const url = "/slide/delete";
+        const url = "/slide/multiplechoice/delete";
         return axiosClient.get(url, config);
     },
-    updateSlide: (question, answers) => {
-        const url = "/slide/update";
-        return axiosClient.post(url, {question: question, answers: answers});
+    updateMultipleChoiceSlide: (question, options) => {
+        const url = "/slide/multiplechoice/update";
+        return axiosClient.post(url, {question: question, options: options});
     }
 }
 

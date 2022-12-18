@@ -7,7 +7,7 @@ const questionApi = {
                 slideId: slideId,
             },
         }
-        const url = "/slide/get/question";
+        const url = "/slide/multiplechoice/get/question";
         return axiosClient.get(url, config);
     },
 }

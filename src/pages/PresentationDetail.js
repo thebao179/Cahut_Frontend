@@ -47,7 +47,7 @@ function PresentationDetail({usrToken, setToken}) {
                 else navigate('/presentations');
             }
             const slides = await presentationApi.getSlides(params.id);
-            setSlideList(slides.data);
+            setSlideList(slides.data[0]);
             if (currSlide) {
                 setSlideType('multiple-choice');
                 const question = await questionApi.getQuestion(currSlide);
@@ -82,7 +82,7 @@ function PresentationDetail({usrToken, setToken}) {
     }
 
     const addSlide = async () => {
-        const result = await slideApi.createSlide(params.id);
+        const result = await slideApi.createMultipleChoiceSlide(params.id);
         One.helpers('jq-notify', {
             type: `${result.status === true ? 'success' : 'danger'}`,
             icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
@@ -102,7 +102,7 @@ function PresentationDetail({usrToken, setToken}) {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const result = await slideApi.deleteSlide(currSlide);
+                const result = await slideApi.deleteMultipleChoiceSlide(currSlide);
                 One.helpers('jq-notify', {
                     type: `${result.status === true ? 'success' : 'danger'}`,
                     icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
@@ -132,7 +132,7 @@ function PresentationDetail({usrToken, setToken}) {
                 questionId: question ? question.questionId : "null",
                 slideId: currSlide,
                 type: 'Multiple choice',
-                isEdited: question ? question.content !== questionEdited : "true",
+                isEdited: question ? (question.content !== questionEdited).toString() : "true",
                 content: questionEdited,
             }
             let ans = [];
@@ -140,12 +140,12 @@ function PresentationDetail({usrToken, setToken}) {
                 const value = $(v).val();
                 $(v).removeClass('is-invalid');
                 ans.push({
-                    answerId: $(v).attr("data-id"),
+                    optionId: $(v).attr("data-id"),
                     content: value,
                     isEdited: ($(v).attr("data-id") === "null" || value !== answers[k].content).toString(),
                 });
             });
-            const result = await slideApi.updateSlide(ques, ans);
+            const result = await slideApi.updateMultipleChoiceSlide(ques, ans);
             One.helpers('jq-notify', {
                 type: `${result.status === true ? 'success' : 'danger'}`,
                 icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
@@ -357,12 +357,12 @@ function PresentationDetail({usrToken, setToken}) {
                                     <div className="mb-4" id="slide-options">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Options</label>
                                         {answers.map((data) =>
-                                            <div key={data.answerId} className="d-flex mb-3">
-                                                <input type="text" className="form-control me-3" data-id={data.answerId}
+                                            <div key={data.optionId} className="d-flex mb-3">
+                                                <input type="text" className="form-control me-3" data-id={data.optionId}
                                                        placeholder="Your Answer"
                                                        defaultValue={data.content}/>
                                                 <button type="button" className="text-center btn btn-sm btn-danger"
-                                                        onClick={(e) => removeOption(e, data.answerId)}>
+                                                        onClick={(e) => removeOption(e, data.optionId)}>
                                                     <i className="fa fa-fw fa-xmark"></i>
                                                 </button>
                                             </div>

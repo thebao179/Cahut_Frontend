@@ -7,25 +7,25 @@ const answerApi = {
                 questionId: questionId,
             },
         }
-        const url = "/slide/get/answers";
+        const url = "/slide/multiplechoice/get/options";
         return axiosClient.get(url, config);
     },
-    deleteAnswer: (answerId) => {
+    deleteAnswer: (optionId) => {
         const config = {
             params: {
-                answerId: answerId,
+                optionId: optionId,
             },
         }
-        const url = "/slide/delete/answer";
+        const url = "/slide/multiplechoice/delete/option";
         return axiosClient.get(url, config);
     },
-    submitAnswer: (answerId) => {
+    submitAnswer: (optionId) => {
         const config = {
             params: {
-                answerId: answerId,
+                optionId: optionId,
             }
         }
-        const url = "/slide/submitanswer";
+        const url = "/slide/multiplechoice/submitchoice";
         return axiosClient.post(url, null, config);
     }
 }

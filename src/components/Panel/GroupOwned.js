@@ -10,6 +10,7 @@ function GroupOwned({token, grpCreate}) {
     const [groups, setGroups] = useState();
     const [self, setSelf] = useState();
     const [refresh, setRefresh] = useState(0);
+    const [grpRefresh, setGrpRefresh] = useState(0);
 
     useEffect(() => {
         async function fetchData() {
@@ -55,7 +56,7 @@ function GroupOwned({token, grpCreate}) {
             fetchData();
             setSelf(jwt(token).email);
         }
-    }, [grpCreate, refresh]);
+    }, [grpCreate, refresh, grpRefresh]);
 
     const deleteGroup = (groupName) => {
         Swal.fire({
@@ -68,7 +69,13 @@ function GroupOwned({token, grpCreate}) {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-
+                const result = await groupApi.deleteGroup(groupName);
+                One.helpers('jq-notify', {
+                    type: `${result.status === true ? 'success' : 'danger'}`,
+                    icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+                    message: result.message
+                });
+                if (result.status) setRefresh(refresh + 1);
             }
         })
     }
@@ -81,7 +88,7 @@ function GroupOwned({token, grpCreate}) {
                     {groups}
                 </div>
             </div>
-            <GroupDetail groupId={groupId} role={'Owner'} self={self}/>
+            <GroupDetail groupId={groupId} role={'Owner'} self={self} setGrpRefresh={setGrpRefresh} grpRefresh={grpRefresh}/>
         </>
     );
 }

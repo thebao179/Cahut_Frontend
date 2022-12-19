@@ -48,7 +48,7 @@ function Navbar({component}) {
                             </li>
                             <li className="nav-main-item">
                                 <Link to={'/presentations'}
-                                      className={`nav-main-link ${component === 'profile' && 'active'}`}>
+                                      className={`nav-main-link ${component === 'presentations' && 'active'}`}>
                                     <i className="nav-main-link-icon fab fa-slideshare"></i>
                                     <span className="nav-main-link-name">Presentations</span>
                                 </Link>

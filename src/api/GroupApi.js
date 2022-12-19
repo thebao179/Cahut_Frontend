@@ -51,7 +51,16 @@ const groupApi = {
     joinGroupByLink: (Code) => {
         const url = "/group/join/" + Code;
         return axiosClient.get(url);
-    }
+    },
+    deleteGroup: (groupName) => {
+        const config = {
+            params: {
+                grName: groupName
+            },
+        };
+        const url = "/group/delete";
+        return axiosClient.post(url, null, config);
+    },
 }
 
 export default groupApi;

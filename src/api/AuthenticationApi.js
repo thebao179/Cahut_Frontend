@@ -20,7 +20,16 @@ const authenticationApi = {
     activateAccount: (UserId) => {
         const url = "auth/activate/account/" + UserId;
         return axiosClient.get(url);
-    }
+    },
+    forgotPassword: (email) => {
+        const config = {
+            params: {
+                email: email
+            }
+        };
+        const url = "/auth/forgotpassword";
+        return axiosClient.get(url, config);
+    },
 };
 
 export default authenticationApi;

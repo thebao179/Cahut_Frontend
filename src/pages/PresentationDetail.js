@@ -8,6 +8,7 @@ import slideApi from "../api/SlideApi";
 import questionApi from "../api/QuestionApi";
 import answerApi from "../api/AnswerApi";
 import PresentGroup from "../components/Modals/PresentGroup";
+import SlideTypeChoose from "../components/Modals/SlideTypeChoose";
 
 function PresentationDetail({usrToken, setToken}) {
     const navigate = useNavigate();
@@ -73,16 +74,6 @@ function PresentationDetail({usrToken, setToken}) {
 
     const removeOption = async (e, answerId) => {
         const result = await answerApi.deleteAnswer(answerId);
-        One.helpers('jq-notify', {
-            type: `${result.status === true ? 'success' : 'danger'}`,
-            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
-            message: result.message
-        });
-        if (result.status) setRefresh(refresh + 1);
-    }
-
-    const addSlide = async () => {
-        const result = await slideApi.createMultipleChoiceSlide(params.id);
         One.helpers('jq-notify', {
             type: `${result.status === true ? 'success' : 'danger'}`,
             icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
@@ -195,8 +186,9 @@ function PresentationDetail({usrToken, setToken}) {
                                    defaultValue={presName} onBlur={changePName}/>
                         </div>
                         <div className="d-inline-block ms-2">
-                            <button type="button" className="btn btn-alt-success" onClick={addSlide}>
-                                <i className="fa fa-fw fa-plus me-1"></i> Slide
+                            <button type="button" className="btn btn-alt-success"
+                                    data-bs-toggle="modal" data-bs-target="#slide-add-modal">
+                                <i className="fa fa-fw fa-plus me-1"></i> New Slide
                             </button>
                         </div>
                     </div>
@@ -430,6 +422,7 @@ function PresentationDetail({usrToken, setToken}) {
                 </div>
             </main>
             <PresentGroup presentationId={params.id}/>
+            <SlideTypeChoose presentationId={params.id} setPresRefresh={setRefresh} presRefresh={refresh}/>
         </div>
     );
 }

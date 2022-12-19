@@ -9,6 +9,7 @@ function GroupJoined({token, grpCreate}) {
     const [role, setRole] = useState(0);
     const [groups, setGroups] = useState();
     const [self, setSelf] = useState();
+    const [grpRefresh, setGrpRefresh] = useState(0);
 
     useEffect(() => {
         async function fetchData() {
@@ -56,7 +57,7 @@ function GroupJoined({token, grpCreate}) {
             fetchData();
             setSelf(jwt(token).email);
         }
-    }, [grpCreate]);
+    }, [grpCreate, grpRefresh]);
 
     return (
         <>
@@ -66,7 +67,7 @@ function GroupJoined({token, grpCreate}) {
                     {groups}
                 </div>
             </div>
-            <GroupDetail groupId={groupId} role={role} self={self}/>
+            <GroupDetail groupId={groupId} role={role} self={self} setGrpRefresh={setGrpRefresh} grpRefresh={grpRefresh}/>
         </>
     );
 }

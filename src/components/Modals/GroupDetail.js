@@ -7,7 +7,7 @@ function validateEmail(email) {
     return str.test(email);
 }
 
-function GroupDetail({groupId, role, self}) {
+function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh}) {
     const [data, setData] = useState([]);
     const [invitation, setInvitation] = useState();
     let idChanged = useRef(false);
@@ -29,6 +29,7 @@ function GroupDetail({groupId, role, self}) {
                     autoWidth: !1,
                     dom: "<'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
                     destroy: true,
+                    bInfo: false,
                 });
             idChanged.current = false;
         } else if (groupId && !idChanged.current) {
@@ -51,6 +52,9 @@ function GroupDetail({groupId, role, self}) {
             idChanged.current = true;
         }
     }, [groupId, data]);
+
+    if (DataTable.isDataTable('#group-members'))
+        $('#group-members').DataTable().destroy();
 
     const copyInv = () => {
         const copyText = document.getElementById('group-link');
@@ -82,7 +86,10 @@ function GroupDetail({groupId, role, self}) {
         setData(tempData);
         const result = await groupApi.kickMember(groupName, email);
 
-        if (result.status) setData([]);
+        if (result.status) {
+            setData([]);
+            setGrpRefresh(grpRefresh + 1);
+        }
 
         One.helpers('jq-notify', {
             type: `${result.status === true ? 'success' : 'danger'}`,

@@ -2,6 +2,7 @@ import React from "react";
 import * as yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
+import authenticationApi from "../../api/AuthenticationApi";
 
 const ForgotPasswordSchema = yup.object().shape({
     email: yup
@@ -19,8 +20,14 @@ function ForgotPassword() {
         resolver: yupResolver(ForgotPasswordSchema)
     });
 
-    const onSubmit = (data) => {
-        //console.log(data.email);
+    const onSubmit = async (data) => {
+        const result = await authenticationApi.forgotPassword(data.email);
+        // eslint-disable-next-line no-undef
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message
+        });
     }
 
     return (

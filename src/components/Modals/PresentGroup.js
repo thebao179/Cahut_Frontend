@@ -35,7 +35,7 @@ function PresentGroup({presentationId}) {
                             <table className="table table-striped table-vcenter table-borderless table-sm">
                                 <thead>
                                 <tr>
-                                    <th className="text-info">Group Name</th>
+                                    <th className="text-info modal-title">Group Name</th>
                                     <th></th>
                                 </tr>
                                 </thead>

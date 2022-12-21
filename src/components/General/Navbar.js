@@ -47,11 +47,27 @@ function Navbar({component}) {
                                 </ul>
                             </li>
                             <li className="nav-main-item">
-                                <Link to={'/presentations'}
-                                      className={`nav-main-link ${component === 'presentations' && 'active'}`}>
+                                <Link to={'/presentations/owned'}
+                                      className={`nav-main-link nav-main-link-submenu ${(component === 'powned' || component === 'pcollab') && 'active'}`}
+                                      data-toggle="submenu"
+                                      aria-haspopup="true" aria-expanded="true">
                                     <i className="nav-main-link-icon fab fa-slideshare"></i>
                                     <span className="nav-main-link-name">Presentations</span>
                                 </Link>
+                                <ul className="nav-main-submenu">
+                                    <li className="nav-main-item">
+                                        <Link to={'/presentations/owned'}
+                                              className={`nav-main-link ${component === 'powned' && 'active'}`}>
+                                            <span className="nav-main-link-name">Presentation Owned</span>
+                                        </Link>
+                                    </li>
+                                    <li className="nav-main-item">
+                                        <Link to={'/presentations/collaborated'}
+                                              className={`nav-main-link ${component === 'pcollab' && 'active'}`}>
+                                            <span className="nav-main-link-name">Presentation Collaborated</span>
+                                        </Link>
+                                    </li>
+                                </ul>
                             </li>
                             <li className="nav-main-item">
                                 <Link to={'/profile'}

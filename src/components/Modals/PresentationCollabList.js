@@ -1,21 +1,23 @@
 /* eslint-disable */
 import React, {useEffect, useRef, useState} from "react";
+import collabApi from "../../api/CollabApi";
 
 function validateEmail(email) {
     const str = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return str.test(email);
 }
 
-function PresentationCollab({pId}) {
+function PresentationCollabList({pId}) {
     let idChanged = useRef(false);
-    const [data, setData] = useState([
-        {username: 'Trong Le', email: 'quoctrongle2001@gmail.com'},
-        {username: 'Trong Le1', email: 'quoctrongle2001@gmail.com'},
-        {username: 'Trong Le2', email: 'quoctrongle2001@gmail.com'},
-    ]);
+    const [data, setData] = useState([]);
+    const [refresh, setRefresh] = useState(0);
 
     useEffect(() => {
-        if (data.length !== 0 && idChanged.current) {
+        async function fetchData() {
+            const result = await collabApi.getCollabs(pId);
+            setData(result.data);
+        }
+        if (idChanged.current) {
             if (!DataTable.isDataTable('#presentation-collabs'))
                 $('#presentation-collabs').DataTable({
                     pageLength: 10,
@@ -24,14 +26,11 @@ function PresentationCollab({pId}) {
                     autoWidth: !1,
                     dom: "<'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
                     destroy: true,
+                    bInfo: false,
                 });
             idChanged.current = false;
         } else if (pId && !idChanged.current) {
-            setData([
-                {username: `Trong Le ${pId}`, email: 'quoctrongle2001@gmail.com'},
-                {username: 'Trong Le1', email: 'quoctrongle2001@gmail.com'},
-                {username: 'Trong Le2', email: 'quoctrongle2001@gmail.com'},
-            ]);
+            fetchData();
             $('#presentation-select2').select2({
                 placeholder: 'Enter Email',
                 tags: true,
@@ -49,7 +48,36 @@ function PresentationCollab({pId}) {
             });
             idChanged.current = true;
         }
-    }, [pId, data]);
+    }, [pId, data, refresh]);
+
+    if (DataTable.isDataTable('#presentation-collabs'))
+        $('#presentation-collabs').DataTable().destroy();
+
+    const addCollab = async () => {
+        const value = $('#presentation-select2').val();
+        if (value.length) {
+            const result = await collabApi.addCollabs(pId, value);
+            One.helpers('jq-notify', {
+                type: `${result.status === true ? 'success' : 'danger'}`,
+                icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+                message: result.message
+            });
+            if (result.status) {
+                $('#presentation-select2').val(null).trigger('change');
+                setRefresh(refresh + 1);
+            }
+        }
+    }
+
+    const removeCollab = async (email) => {
+        const result = await collabApi.removeCollab(pId, email);
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message
+        });
+        if (result.status) setData([]);
+    }
 
     return (
         <div className="modal fade" id="presentation-modal" role="dialog"
@@ -75,7 +103,7 @@ function PresentationCollab({pId}) {
                                 </select>
                                 <div className="row justify-content-end">
                                     <div className="col-md-3 text-end">
-                                        <button type="button" className="btn btn-alt-success mt-3">
+                                        <button type="button" className="btn btn-alt-success mt-3" onClick={addCollab}>
                                             <i className="fa fa-fw fa-plus me-1"></i> Add people
                                         </button>
                                     </div>
@@ -98,7 +126,7 @@ function PresentationCollab({pId}) {
                                             <td className="fw-semibold fs-sm">{e.username}</td>
                                             <td className="d-none d-sm-table-cell fs-sm">{e.email}</td>
                                             <td>
-                                                <button type="button" className="text-center btn btn-sm btn-danger">
+                                                <button type="button" className="text-center btn btn-sm btn-danger" onClick={() => removeCollab(e.email)}>
                                                     <i className="fa fa-fw fa-xmark"></i>
                                                 </button>
                                             </td>
@@ -121,4 +149,4 @@ function PresentationCollab({pId}) {
     );
 }
 
-export default PresentationCollab;
+export default PresentationCollabList;

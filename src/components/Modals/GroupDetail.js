@@ -20,7 +20,7 @@ function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh}) {
             setInvitation(groupInv.data);
         }
 
-        if (data.length !== 0 && idChanged.current) {
+        if (idChanged.current) {
             if (!DataTable.isDataTable('#group-members'))
                 $('#group-members').DataTable({
                     pageLength: 10,
@@ -72,18 +72,13 @@ function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh}) {
                     icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
                     message: result.message
                 });
+                $('#group-select2').val(null).trigger('change');
             });
             One.helpers('jq-notify', {type: 'info', icon: 'fa fa-info-circle me-1', message: 'Sending'});
         }
     }
 
     const handleRemoveClick = async (groupName, email) => {
-        const tempData = data;
-        const index = tempData.indexOf(email);
-        if (index !== -1) {
-            tempData.splice(index, 1);
-        }
-        setData(tempData);
         const result = await groupApi.kickMember(groupName, email);
 
         if (result.status) {

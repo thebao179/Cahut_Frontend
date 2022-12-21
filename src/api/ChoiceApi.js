@@ -1,6 +1,6 @@
 import axiosClient from "./AxiosClient";
 
-const answerApi = {
+const choiceApi = {
     getAnswers: (questionId) => {
         const config = {
             params: {
@@ -30,4 +30,4 @@ const answerApi = {
     }
 }
 
-export default answerApi;
+export default choiceApi;

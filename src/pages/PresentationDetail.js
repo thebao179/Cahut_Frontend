@@ -5,8 +5,8 @@ import {Bar, BarChart, LabelList, ResponsiveContainer} from "recharts";
 import presentationApi from "../api/PresentationApi";
 import jwt from "jwt-decode";
 import slideApi from "../api/SlideApi";
-import questionApi from "../api/QuestionApi";
-import answerApi from "../api/AnswerApi";
+import multipleChoiceQuestionApi from "../api/MultipleChoiceQuestionApi";
+import choiceApi from "../api/ChoiceApi";
 import PresentGroup from "../components/Modals/PresentGroup";
 import SlideTypeChoose from "../components/Modals/SlideTypeChoose";
 
@@ -45,16 +45,16 @@ function PresentationDetail({usrToken, setToken}) {
             if (refresh === 0) {
                 const result = await presentationApi.getPresentationName(params.id);
                 if (result.status) setPresName(result.data.presentationName);
-                else navigate('/presentations');
+                else navigate('/dashboard');
             }
             const slides = await presentationApi.getSlides(params.id);
             setSlideList(slides.data[0]);
             if (currSlide) {
                 setSlideType('multiple-choice');
-                const question = await questionApi.getQuestion(currSlide);
+                const question = await multipleChoiceQuestionApi.getQuestion(currSlide);
                 setQuestion(question.data);
                 if (question.data) {
-                    const answers = await answerApi.getAnswers(question.data.questionId);
+                    const answers = await choiceApi.getAnswers(question.data.questionId);
                     setAnswers(answers.data);
                 } else setAnswers([]);
             }
@@ -73,7 +73,7 @@ function PresentationDetail({usrToken, setToken}) {
     }
 
     const removeOption = async (e, answerId) => {
-        const result = await answerApi.deleteAnswer(answerId);
+        const result = await choiceApi.deleteAnswer(answerId);
         One.helpers('jq-notify', {
             type: `${result.status === true ? 'success' : 'danger'}`,
             icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
@@ -177,9 +177,9 @@ function PresentationDetail({usrToken, setToken}) {
                 <div className="content-header">
                     <div className="d-flex align-items-center">
                         <div className="me-sm-3">
-                            <Link to={'/presentations'}>
+                            <a style={{cursor: 'pointer'}} onClick={() => navigate(-1)}>
                                 <i className="text-warning fa fa-2x fa-arrow-left"></i>
-                            </Link>
+                            </a>
                         </div>
                         <div className="me-sm-3">
                             <input type="text" className={`form-control ${nameInvalid ? 'is-invalid' : ''}`}
@@ -220,8 +220,8 @@ function PresentationDetail({usrToken, setToken}) {
                      style={{width: '230px', overflowY: "auto"}}>
                     <ol className="slide-preview pe-0 ps-0">
                         {slideList.map((data, index) =>
-                            <a href={'#'} key={data.slideId} onClick={() => setCurrSlide(data.slideId)}
-                               style={{color: "black"}}>
+                            <a key={data.slideId} onClick={() => setCurrSlide(data.slideId)}
+                               style={{color: "black", cursor: 'pointer'}}>
                                 <li className={`d-flex pt-3 pb-3 ${currSlide === data.slideId ? 'bg-info-light' : ''}`}
                                     style={{paddingLeft: '10px', paddingRight: '10px'}}>
                                     <span className="pe-3 fw-bold">{index + 1}</span>
@@ -292,10 +292,10 @@ function PresentationDetail({usrToken, setToken}) {
                                                 <p className="w-100 text-center" style={{
                                                     fontSize: '30px',
                                                     fontWeight: 'bold'
-                                                }}>{hHeading}</p>
+                                                }}>{hHeading ? hHeading : "Heading"}</p>
                                             </div>
                                             <div className="d-flex">
-                                                <p className="w-100 text-center">{subHeading}</p>
+                                                <p className="w-100 text-center">{subHeading ? subHeading : "Sub Heading"}</p>
                                             </div>
                                         </>
                                     }
@@ -305,10 +305,10 @@ function PresentationDetail({usrToken, setToken}) {
                                                 <p className="w-100 text-center" style={{
                                                     fontSize: '30px',
                                                     fontWeight: 'bold'
-                                                }}>{pHeading}</p>
+                                                }}>{pHeading ? pHeading : "Heading"}</p>
                                             </div>
                                             <div className="d-flex">
-                                                <p className="w-100 text-center">{paragraph}</p>
+                                                <p className="w-100 text-center">{paragraph ? paragraph : "Use this paragraph to explain something in detail. Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition."}</p>
                                             </div>
                                         </>
                                     }

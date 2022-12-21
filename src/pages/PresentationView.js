@@ -3,8 +3,8 @@ import React, {useEffect, useState} from "react";
 import {Container} from "react-bootstrap";
 import {useForm} from "react-hook-form";
 import {useNavigate, useParams} from "react-router-dom";
-import answerApi from "../api/AnswerApi";
-import questionApi from "../api/QuestionApi";
+import choiceApi from "../api/ChoiceApi";
+import multipleChoiceQuestionApi from "../api/MultipleChoiceQuestionApi";
 import {HubConnectionBuilder} from "@microsoft/signalr";
 import {Bar, BarChart, LabelList, ResponsiveContainer} from "recharts";
 
@@ -19,7 +19,7 @@ function PresentationView() {
 
     const onSubmit = async (data) => {
         if (data.answer) {
-            await answerApi.submitAnswer(data.answer);
+            await choiceApi.submitAnswer(data.answer);
             setIsSubmitted(true);
             if (connection) {
                 await connection.send("SendResult", params.id, "updateResult");
@@ -30,10 +30,10 @@ function PresentationView() {
     };
 
     const fetchData = async () => {
-        const question = await questionApi.getQuestion(params.id);
+        const question = await multipleChoiceQuestionApi.getQuestion(params.id);
         setQuestion(question.data);
         if (question.data) {
-            const answers = await answerApi.getAnswers(question.data.questionId);
+            const answers = await choiceApi.getAnswers(question.data.questionId);
             setAnswers(answers.data);
         } else navigate('/');
     }

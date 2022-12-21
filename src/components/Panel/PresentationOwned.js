@@ -3,9 +3,9 @@ import React, {useEffect, useState} from "react";
 import PanelHero from "../General/PanelHero";
 import presentationApi from "../../api/PresentationApi";
 import {Link} from "react-router-dom";
-import PresentationCollab from "../Modals/PresentationCollab";
+import PresentationCollabList from "../Modals/PresentationCollabList";
 
-function Presentations({token, presentationsCreate}) {
+function PresentationOwned({token, presentationsCreate}) {
     const [presentations, setPresentations] = useState();
     const [refresh, setRefresh] = useState(0);
     const [presentationId, setPresentationId] = useState();
@@ -79,15 +79,15 @@ function Presentations({token, presentationsCreate}) {
 
     return (
         <>
-            <PanelHero title={'Presentations'} photo={'presentation'}/>
+            <PanelHero title={'Owned Presentations'} photo={'powned'}/>
             <div className="content content-boxed">
                 <div className="row items-push py-4">
                     {presentations}
                 </div>
             </div>
-            <PresentationCollab pId={presentationId} />
+            <PresentationCollabList pId={presentationId} />
         </>
     );
 }
 
-export default Presentations;
+export default PresentationOwned;

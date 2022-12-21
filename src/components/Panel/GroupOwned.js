@@ -82,7 +82,7 @@ function GroupOwned({token, grpCreate}) {
 
     return (
         <>
-            <PanelHero title={'Owned groups'} photo={'gowned'}/>
+            <PanelHero title={'Owned Groups'} photo={'gowned'}/>
             <div className="content content-boxed">
                 <div className="row items-push py-4">
                     {groups}

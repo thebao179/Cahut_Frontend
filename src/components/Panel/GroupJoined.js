@@ -32,7 +32,7 @@ function GroupJoined({token, grpCreate}) {
                             <div className="fs-sm text-end">
                                 <div className="block-options d-flex" style={{paddingLeft: 0}}>
                                     <div className="col-sm-6 text-start">
-                                        <p className={`group-role ${group.role === 'Co-owner' ? 'text-warning' : 'text-success'} pt-1`}>{group.role}</p>
+                                        <p style={{marginBottom: 0}} className={`group-role ${group.role === 'Co-owner' ? 'text-warning' : 'text-success'} pt-1`}>{group.role}</p>
                                     </div>
                                     <div className="col-sm-6">
                                         <button type="button" className="btn-block-option"
@@ -61,7 +61,7 @@ function GroupJoined({token, grpCreate}) {
 
     return (
         <>
-            <PanelHero title={'Joined groups'} photo={'gjoined'}/>
+            <PanelHero title={'Joined Groups'} photo={'gjoined'}/>
             <div className="content content-boxed">
                 <div className="row items-push py-4">
                     {groups}

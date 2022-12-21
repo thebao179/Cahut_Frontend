@@ -1,6 +1,6 @@
 import axiosClient from "./AxiosClient";
 
-const questionApi = {
+const multipleChoiceQuestionApi = {
     getQuestion: (slideId) => {
         const config = {
             params: {
@@ -12,4 +12,4 @@ const questionApi = {
     },
 }
 
-export default questionApi;
+export default multipleChoiceQuestionApi;

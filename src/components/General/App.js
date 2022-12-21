@@ -41,10 +41,10 @@ function App() {
                 path: "joined",
                 element: <Panel component={'gjoined'} setToken={setToken} usrToken={token}/>
             },
-                {
-                    path: "owned",
-                    element: <Panel component={'gowned'} setToken={setToken} usrToken={token}/>
-                }]
+            {
+                path: "owned",
+                element: <Panel component={'gowned'} setToken={setToken} usrToken={token}/>
+            }]
         },
         {
             path: "/profile",
@@ -60,7 +60,14 @@ function App() {
         },
         {
             path: "/presentations",
-            element: <Panel component={'presentations'} setToken={setToken} usrToken={token}/>
+            children: [{
+                path: "collaborated",
+                element: <Panel component={'pcollab'} setToken={setToken} usrToken={token}/>
+            },
+            {
+                path: "owned",
+                element: <Panel component={'powned'} setToken={setToken} usrToken={token}/>
+            }]
         },
         {
             path: "/presentation/edit/:id",

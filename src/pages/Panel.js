@@ -10,8 +10,9 @@ import GroupAdd from "../components/Modals/GroupAdd";
 import Profile from "../components/Panel/Profile";
 import {useLocation, useNavigate} from "react-router-dom";
 import jwt from "jwt-decode";
-import Presentations from "../components/Panel/Presentation";
 import PresentationAdd from "../components/Modals/PresentationAdd";
+import PresentationOwned from "../components/Panel/PresentationOwned";
+import PresentationCollab from "../components/Panel/PresentationCollab";
 
 function Panel({component, usrToken, setToken}) {
     const navigate = useNavigate();
@@ -55,8 +56,9 @@ function Panel({component, usrToken, setToken}) {
                 {component === 'gowned' && <GroupOwned token={usrToken} grpCreate={grpCreate}/>}
                 {component === 'profile' &&
                     <Profile token={usrToken} profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
-                {component === 'presentations' &&
-                    <Presentations token={usrToken} presentationsCreate={presentationsCreated}/>}
+                {component === 'powned' &&
+                    <PresentationOwned token={usrToken} presentationsCreate={presentationsCreated}/>}
+                {component === 'pcollab' && <PresentationCollab token={usrToken}/>}
             </main>
             <GroupAdd grpCreate={grpCreate} setGrpCreate={setGrpCreate}/>
             <PresentationAdd preCreate={presentationsCreated} setPreCreate={setPresentationsCreated}/>

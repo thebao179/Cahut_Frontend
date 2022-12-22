@@ -9,6 +9,9 @@ import multipleChoiceQuestionApi from "../api/MultipleChoiceQuestionApi";
 import choiceApi from "../api/ChoiceApi";
 import PresentGroup from "../components/Modals/PresentGroup";
 import SlideTypeChoose from "../components/Modals/SlideTypeChoose";
+import headingSlideApi from "../api/HeadingSlideApi";
+import paragraphSlideApi from "../api/ParagraphSlideApi";
+import multipleChoiceSlideApi from "../api/MultipleChoiceSlideApi";
 
 function PresentationDetail({usrToken, setToken}) {
     const navigate = useNavigate();
@@ -50,13 +53,28 @@ function PresentationDetail({usrToken, setToken}) {
             const slides = await presentationApi.getSlides(params.id);
             setSlideList(slides.data[0]);
             if (currSlide) {
-                setSlideType('multiple-choice');
-                const question = await multipleChoiceQuestionApi.getQuestion(currSlide);
-                setQuestion(question.data);
-                if (question.data) {
-                    const answers = await choiceApi.getAnswers(question.data.questionId);
-                    setAnswers(answers.data);
-                } else setAnswers([]);
+                if (slideType === 'MultipleChoice') {
+                    const question = await multipleChoiceQuestionApi.getQuestion(currSlide);
+                    setQuestion(question.data);
+                    if (question.data) {
+                        const answers = await choiceApi.getAnswers(question.data.questionId);
+                        setAnswers(answers.data);
+                    } else setAnswers([]);
+                }
+                else if (slideType === 'Heading') {
+                    const result = await headingSlideApi.getData(currSlide);
+                    if (result.data) {
+                        setHHeading(result.data.headingContent);
+                        setSubHeading(result.data.subHeadingContent);
+                    }
+                }
+                else if (slideType === 'Paragraph') {
+                    const result = await paragraphSlideApi.getData(currSlide);
+                    if (result.data) {
+                        setPHeading(result.data.headingContent);
+                        setParagraph(result.data.paragraphContent);
+                    }
+                }
             }
         }
 
@@ -93,7 +111,10 @@ function PresentationDetail({usrToken, setToken}) {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const result = await slideApi.deleteMultipleChoiceSlide(currSlide);
+                let result;
+                const type = slideType === 'MultipleChoice' ? 'multipleChoice' : slideType === 'Heading' ? 'heading' : slideType === 'Paragraph' ? 'paragraph' : '';
+                if (slideType === 'MultipleChoice') result = await multipleChoiceSlideApi.deleteMultipleChoiceSlide(currSlide);
+                else result = await slideApi.removeSlide(params.id, currSlide, type);
                 One.helpers('jq-notify', {
                     type: `${result.status === true ? 'success' : 'danger'}`,
                     icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
@@ -107,7 +128,7 @@ function PresentationDetail({usrToken, setToken}) {
         })
     }
 
-    const saveSlide = async () => {
+    const saveMultipleChoiceSlide = async () => {
         let count = 0;
         $('#slide-options').find('input').each(function (k, v) {
             const value = $(v).val();
@@ -136,7 +157,7 @@ function PresentationDetail({usrToken, setToken}) {
                     isEdited: ($(v).attr("data-id") === "null" || value !== answers[k].content).toString(),
                 });
             });
-            const result = await slideApi.updateMultipleChoiceSlide(ques, ans);
+            const result = await multipleChoiceSlideApi.updateMultipleChoiceSlide(ques, ans);
             One.helpers('jq-notify', {
                 type: `${result.status === true ? 'success' : 'danger'}`,
                 icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
@@ -148,6 +169,30 @@ function PresentationDetail({usrToken, setToken}) {
             }
             setQuestionInvalid(false);
         }
+    }
+
+    const saveHeadingSlide = async () => {
+        const heading = $('#slide-properties').find('input[name=h-heading]').val();
+        const subHeading = $('#slide-properties').find('textarea[name=subheading]').val();
+        const result = await headingSlideApi.updateData(params.id, currSlide, heading, subHeading);
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message
+        });
+        if (result.status) setRefresh(refresh + 1);
+    }
+
+    const saveParagraphSlide = async () => {
+        const heading = $('#slide-properties').find('input[name=p-heading]').val();
+        const paragraph = $('#slide-properties').find('textarea[name=paragraph]').val();
+        const result = await paragraphSlideApi.updateData(params.id, currSlide, heading, paragraph);
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message
+        });
+        if (result.status) setRefresh(refresh + 1);
     }
 
     const changePName = async (e) => {
@@ -220,7 +265,7 @@ function PresentationDetail({usrToken, setToken}) {
                      style={{width: '230px', overflowY: "auto"}}>
                     <ol className="slide-preview pe-0 ps-0">
                         {slideList.map((data, index) =>
-                            <a key={data.slideId} onClick={() => setCurrSlide(data.slideId)}
+                            <a key={data.slideId} onClick={() => {setCurrSlide(data.slideId);setSlideType(data.slideType);}}
                                style={{color: "black", cursor: 'pointer'}}>
                                 <li className={`d-flex pt-3 pb-3 ${currSlide === data.slideId ? 'bg-info-light' : ''}`}
                                     style={{paddingLeft: '10px', paddingRight: '10px'}}>
@@ -234,15 +279,15 @@ function PresentationDetail({usrToken, setToken}) {
                                          }}>
 
                                         <div className="mt-4">
-                                            {(currSlide === data.slideId && slideType === 'multiple-choice') || data.type === 'multiple-choice' ? <i className="fa fa-chart-simple"></i> :
-                                                (currSlide === data.slideId && slideType === 'heading') || data.type === 'heading' ? <i className="fa fa-heading"></i> :
-                                                    (currSlide === data.slideId && slideType === 'paragraph') || data.type === 'paragraph' ? <i className="fa fa-paragraph"></i> : <i className="fa fa-chart-simple"></i>
+                                            {(currSlide === data.slideId && slideType === 'MultipleChoice') || data.slideType === 'MultipleChoice' ? <i className="fa fa-chart-simple"></i> :
+                                                (currSlide === data.slideId && slideType === 'Heading') || data.slideType === 'Heading' ? <i className="fa fa-heading"></i> :
+                                                    (currSlide === data.slideId && slideType === 'Paragraph') || data.slideType === 'Paragraph' ? <i className="fa fa-paragraph"></i> : <></>
                                             }
                                         </div>
                                         <span className="fw-bold">
-                                            {currSlide === data.slideId && slideType === 'multiple-choice' ? 'Multiple Choice' :
-                                                currSlide === data.slideId && slideType === 'heading' ? 'Heading' :
-                                                    currSlide === data.slideId && slideType === 'paragraph' ? 'Paragraph' : 'Multiple Choice'
+                                            {(currSlide === data.slideId && slideType === 'MultipleChoice') || data.slideType === 'MultipleChoice' ? 'Multiple Choice' :
+                                                (currSlide === data.slideId && slideType === 'Heading') || data.slideType === 'Heading' ? 'Heading' :
+                                                    (currSlide === data.slideId && slideType === 'Paragraph') || data.slideType === 'Paragraph' ? 'Paragraph' : ''
                                             }
                                         </span>
                                     </div>
@@ -256,13 +301,12 @@ function PresentationDetail({usrToken, setToken}) {
                     <div className="p-4" style={{height: 'fit-content'}}>
                         {currSlide &&
                             <div className="bg-white p-4 h-100">
-                                <div className="d-flex pt-2 justify-content-center">
-                                    <p>Go to <span
-                                        style={{fontWeight: 'bold'}}>{process.env.REACT_APP_CLIENT + 'view/' + currSlide}</span> to
-                                        play</p>
+                                <div className="d-flex pt-4 justify-content-center">
+                                    <p></p>
+                                    {/*<p>Go to <span style={{fontWeight: 'bold'}}>{process.env.REACT_APP_CLIENT + 'view/' + currSlide}</span> to play</p>*/}
                                 </div>
                                 <div style={{height: '400px'}}>
-                                    {slideType === 'multiple-choice' &&
+                                    {slideType === 'MultipleChoice' &&
                                         <>
                                             <div className="d-flex ps-4" style={{lineHeight: 1}}>
                                                 <p className="w-100" style={{
@@ -286,7 +330,7 @@ function PresentationDetail({usrToken, setToken}) {
                                             </div>
                                         </>
                                     }
-                                    {slideType === 'heading' &&
+                                    {slideType === 'Heading' &&
                                         <>
                                             <div className="d-flex pt-7">
                                                 <p className="w-100 text-center" style={{
@@ -299,7 +343,7 @@ function PresentationDetail({usrToken, setToken}) {
                                             </div>
                                         </>
                                     }
-                                    {slideType === 'paragraph' &&
+                                    {slideType === 'Paragraph' &&
                                         <>
                                             <div className="d-flex pt-7">
                                                 <p className="w-100 text-center" style={{
@@ -325,18 +369,18 @@ function PresentationDetail({usrToken, setToken}) {
                                 <button type="button" className="btn btn-danger" onClick={removeSlide}>
                                     <i className="fa fa-fw fa-times me-1"></i> Delete Slide
                                 </button>
-                                <button type="button" className="btn btn-primary" onClick={saveSlide}>
+                                <button type="button" className="btn btn-primary" onClick={slideType === 'MultipleChoice' ? saveMultipleChoiceSlide : slideType === 'Heading' ? saveHeadingSlide : slideType === 'Paragraph' ? saveParagraphSlide : ''}>
                                     <i className="fa fa-fw fa-upload me-1"></i> Save Changes
                                 </button>
                             </div>
-                            {slideType === 'multiple-choice' &&
+                            {slideType === 'MultipleChoice' &&
                                 <>
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Slide Type</label>
                                         <select className="form-select" name="slide-type" onChange={slideTypeChange}>
-                                            <option value="multiple-choice" selected={true}>Multiple Choice</option>
-                                            <option value="heading">Heading</option>
-                                            <option value="paragraph">Paragraph</option>
+                                            <option value="MultipleChoice" selected={true}>Multiple Choice</option>
+                                            <option value="Heading">Heading</option>
+                                            <option value="Paragraph">Paragraph</option>
                                         </select>
                                     </div>
                                     <div className="mb-4">
@@ -367,14 +411,14 @@ function PresentationDetail({usrToken, setToken}) {
                                     </div>
                                 </>
                             }
-                            {slideType === 'heading' &&
+                            {slideType === 'Heading' &&
                                 <>
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Slide Type</label>
                                         <select className="form-select" name="slide-type" onChange={slideTypeChange}>
-                                            <option value="multiple-choice">Multiple Choice</option>
-                                            <option value="heading" selected={true}>Heading</option>
-                                            <option value="paragraph">Paragraph</option>
+                                            <option value="MultipleChoice">Multiple Choice</option>
+                                            <option value="Heading" selected={true}>Heading</option>
+                                            <option value="Paragraph">Paragraph</option>
                                         </select>
                                     </div>
                                     <div className="mb-4">
@@ -392,14 +436,14 @@ function PresentationDetail({usrToken, setToken}) {
                                     </div>
                                 </>
                             }
-                            {slideType === 'paragraph' &&
+                            {slideType === 'Paragraph' &&
                                 <>
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Slide Type</label>
                                         <select className="form-select" name="slide-type" onChange={slideTypeChange}>
-                                            <option value="multiple-choice">Multiple Choice</option>
-                                            <option value="heading">Heading</option>
-                                            <option value="paragraph" selected={true}>Paragraph</option>
+                                            <option value="MultipleChoice">Multiple Choice</option>
+                                            <option value="Heading">Heading</option>
+                                            <option value="Paragraph" selected={true}>Paragraph</option>
                                         </select>
                                     </div>
                                     <div className="mb-4">
@@ -411,7 +455,7 @@ function PresentationDetail({usrToken, setToken}) {
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Paragraph</label>
                                         <textarea className="form-control" name="paragraph"
-                                                  rows="5" placeholder="Paragraph"
+                                                  rows="6" placeholder="Use this paragraph to explain something in detail. Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition."
                                                   defaultValue={paragraph}
                                                   spellCheck="false" style={{resize: 'none'}}></textarea>
                                     </div>

@@ -5,6 +5,7 @@ import {HubConnectionBuilder} from "@microsoft/signalr";
 import jwt from "jwt-decode";
 import multipleChoiceQuestionApi from "../api/MultipleChoiceQuestionApi";
 import choiceApi from "../api/ChoiceApi";
+import ChatBox from "../components/Plugins/ChatBox";
 
 function SlideDetail({usrToken, setToken}) {
     const navigate = useNavigate();
@@ -62,8 +63,38 @@ function SlideDetail({usrToken, setToken}) {
         }
     }, [connection])
 
+    const goPreviousSlide = () => {
+
+    }
+
+    const goNextSlide = () => {
+
+    }
+
+    const endPresentation = () => {
+
+    }
+
     return (
         <div id="page-container">
+            <div className="top-screen" style={{left: 0}}>
+                <button type="button" className="btn btn-lg btn-danger" onClick={endPresentation}>
+                    <i className="fa fa-fw fa-xmark"></i> End
+                </button>
+            </div>
+            <div className="middle-screen" style={{left: 0}}>
+                <button type="button" className="btn btn-lg btn-circle btn-secondary" style={{padding: '0.8rem 1rem'}} onClick={goPreviousSlide}>
+                    <i className="fa fa-fw fa-angle-left"></i>
+                </button>
+            </div>
+            <div className="middle-screen" style={{right: 0}}>
+                <button type="button" className="btn btn-lg btn-circle btn-secondary" style={{padding: '0.8rem 1rem'}} onClick={goNextSlide}>
+                    <i className="fa fa-fw fa-angle-right"></i>
+                </button>
+            </div>
+            <div className="top-screen" style={{right: 0}}>
+                <ChatBox></ChatBox>
+            </div>
             <div className="p-4" style={{height: '100vh'}}>
                 <div className="bg-white p-4 h-100">
                     <div className="d-flex pt-2 justify-content-center">

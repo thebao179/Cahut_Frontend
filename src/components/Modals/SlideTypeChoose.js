@@ -9,8 +9,10 @@ function SlideTypeChoose({presentationId, presRefresh, setPresRefresh}) {
     } = useForm();
 
     const onSubmit = async (data) => {
-        let result;
-        if (data.slideType === 'multiplechoice') result = await slideApi.createMultipleChoiceSlide(presentationId);
+        //let result;
+        //if (data.slideType === 'multiplechoice') result = await slideApi.createMultipleChoiceSlide(presentationId);
+        //else result = await slideApi.createSlide(presentationId, data.slideType)
+        const result = await slideApi.createSlide(presentationId, data.slideType)
         // eslint-disable-next-line no-undef
         One.helpers('jq-notify', {
             type: `${result.status === true ? 'success' : 'danger'}`,
@@ -40,7 +42,7 @@ function SlideTypeChoose({presentationId, presRefresh, setPresRefresh}) {
                                 <div className="mb-4">
                                     <label className="form-label modal-title text-danger mb-1">Slide Type</label>
                                     <select className="form-select" {...register("slideType")}>
-                                        <option value="multiplechoice">Multiple Choice</option>
+                                        <option value="multipleChoice">Multiple Choice</option>
                                         <option value="heading">Heading</option>
                                         <option value="paragraph">Paragraph</option>
                                     </select>

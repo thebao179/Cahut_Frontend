@@ -32,3 +32,20 @@
     overflow: hidden;
     padding-bottom: 0;
 }
+
+.middle-screen {
+    position: fixed;
+    top: 50%;
+    bottom: 50%;
+    margin: 0 3rem;
+}
+
+.top-screen {
+    position: fixed;
+    top: 3rem;
+    margin: 0 3rem;
+}
+
+.btn-circle {
+    border-radius: 50%;
+}

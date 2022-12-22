@@ -16,6 +16,11 @@ function PresentationView() {
     const {register, handleSubmit} = useForm();
     const [connection, setConnection] = useState();
     const navigate = useNavigate();
+    const [type, setType] = useState('multiple-choice');
+    const [hHeading, setHHeading] = useState();
+    const [subHeading, setSubHeading] = useState();
+    const [pHeading, setPHeading] = useState();
+    const [paragraph, setParagraph] = useState();
 
     const onSubmit = async (data) => {
         if (data.answer) {
@@ -117,19 +122,67 @@ function PresentationView() {
     }
 
     return (
-        <Container className="w-50 p-3">
-            <div className="block-content text-center col-lg-4">
-                <div>
-                    <a className="d-block fw-semibold text-modern fs-2">Cahut</a>
-                    <a className="d-block fw-semibold fs-5 tracking-wider text-dual">Realtime<span
-                        className="fw-normal"> Learning Platform</span></a>
+        <div id="page-container">
+            {type === 'multiple-choice' &&
+                <Container className="w-50 p-4">
+                    <div className="block-content text-center">
+                        <div>
+                            <a href="/" className="d-block fw-semibold text-modern fs-2">Cahut</a>
+                            <a className="d-block fw-semibold fs-5 tracking-wider text-dual">Realtime<span
+                                className="fw-normal"> Learning Platform</span></a>
+                        </div>
+                        <div className="mt-4">
+                            <h3 className="d-flex justify-content-start">{question ? question.content : ""}</h3>
+                            {questionVote()}
+                        </div>
+                    </div>
+                </Container>
+            }
+            {type === 'heading' &&
+                <div className="p-4" style={{height: '100vh'}}>
+                    <div className="bg-white h-100">
+                        <div className="block-content text-center">
+                            <div>
+                                <a href="/" className="d-block fw-semibold text-modern fs-2">Cahut</a>
+                                <a className="d-block fw-semibold fs-5 tracking-wider text-dual">Realtime<span
+                                    className="fw-normal"> Learning Platform</span></a>
+                            </div>
+                        </div>
+                        <div className="d-flex pt-9">
+                            <p className="w-100 text-center" style={{
+                                fontSize: '30px',
+                                fontWeight: 'bold'
+                            }}>{hHeading ? hHeading : "Heading"}</p>
+                        </div>
+                        <div className="d-flex">
+                            <p className="w-100 text-center">{subHeading ? subHeading : "Sub Heading"}</p>
+                        </div>
+                    </div>
                 </div>
-                <div className="mt-5">
-                    <h3 className="d-flex justify-content-start">{question ? question.content : ""}</h3>
-                    {questionVote()}
+            }
+            {type === 'paragraph' &&
+                <div className="p-4" style={{height: '100vh'}}>
+                    <div className="bg-white h-100">
+                        <div className="block-content text-center">
+                            <div>
+                                <a href="/" className="d-block fw-semibold text-modern fs-2">Cahut</a>
+                                <a className="d-block fw-semibold fs-5 tracking-wider text-dual">Realtime<span
+                                    className="fw-normal"> Learning Platform</span></a>
+                            </div>
+                        </div>
+                        <div className="d-flex pt-9">
+                            <p className="w-100 text-center" style={{
+                                fontSize: '30px',
+                                fontWeight: 'bold'
+                            }}>{pHeading ? pHeading : "Heading"}</p>
+                        </div>
+                        <div className="d-flex">
+                            <p className="w-100 text-center">{paragraph ? paragraph : "Use this paragraph to explain something in detail. Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition."}</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </Container>
+            }
+        </div>
     );
 }
 

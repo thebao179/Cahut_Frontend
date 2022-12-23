@@ -6,6 +6,7 @@ import jwt from "jwt-decode";
 import multipleChoiceQuestionApi from "../api/MultipleChoiceQuestionApi";
 import choiceApi from "../api/ChoiceApi";
 import ChatBox from "../components/Plugins/ChatBox";
+import PresentationQuestion from "../components/Plugins/PresentationQuestion";
 
 function SlideDetail({usrToken, setToken}) {
     const navigate = useNavigate();
@@ -93,6 +94,7 @@ function SlideDetail({usrToken, setToken}) {
                 </button>
             </div>
             <div className="top-screen" style={{right: 0}}>
+                <PresentationQuestion></PresentationQuestion>
                 <ChatBox></ChatBox>
             </div>
             <div className="p-4" style={{height: '100vh'}}>

@@ -46,6 +46,7 @@ function PresentationCollabList({pId}) {
                     return null;
                 },
             });
+            $('#presentation-select2').val(null).trigger('change');
             idChanged.current = true;
         }
     }, [pId, data, refresh]);

@@ -45,6 +45,10 @@ const presentationApi = {
         const url = "/presentation/name";
         return axiosClient.get(url, config);
     },
+    getCollabPresentation: () => {
+        const url = "/presentation/getCollabPresentations";
+        return axiosClient.get(url);
+    }
 }
 
 export default presentationApi;

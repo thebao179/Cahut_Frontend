@@ -144,7 +144,7 @@ function PresentationDetail({usrToken, setToken}) {
                 questionId: question ? question.questionId : "null",
                 slideId: currSlide,
                 type: 'Multiple choice',
-                isEdited: question ? (question.content !== questionEdited).toString() : "true",
+                isEdited: "true",
                 content: questionEdited,
             }
             let ans = [];
@@ -375,19 +375,19 @@ function PresentationDetail({usrToken, setToken}) {
                             </div>
                             {slideType === 'MultipleChoice' &&
                                 <>
-                                    <div className="mb-4">
-                                        <label className="form-label" style={{fontWeight: 'bold'}}>Slide Type</label>
-                                        <select className="form-select" name="slide-type" onChange={slideTypeChange}>
-                                            <option value="MultipleChoice" selected={true}>Multiple Choice</option>
-                                            <option value="Heading">Heading</option>
-                                            <option value="Paragraph">Paragraph</option>
-                                        </select>
-                                    </div>
+                                    {/*<div className="mb-4">*/}
+                                    {/*    <label className="form-label" style={{fontWeight: 'bold'}}>Slide Type</label>*/}
+                                    {/*    <select className="form-select" name="slide-type" onChange={slideTypeChange}>*/}
+                                    {/*        <option value="MultipleChoice" selected={true}>Multiple Choice</option>*/}
+                                    {/*        <option value="Heading">Heading</option>*/}
+                                    {/*        <option value="Paragraph">Paragraph</option>*/}
+                                    {/*    </select>*/}
+                                    {/*</div>*/}
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Your Question</label>
                                         <input type="text" name="question"
                                                className={`form-control ${questionInvalid ? 'is-invalid' : ''}`}
-                                               defaultValue={question ? question.content : ''}
+                                               value={question ? question.content : ''} onChange={(e) => {setQuestion({...question, content: e.target.value})}}
                                                placeholder={'Type Your Question'}/>
                                     </div>
                                     <div className="mb-4" id="slide-options">
@@ -413,50 +413,50 @@ function PresentationDetail({usrToken, setToken}) {
                             }
                             {slideType === 'Heading' &&
                                 <>
-                                    <div className="mb-4">
-                                        <label className="form-label" style={{fontWeight: 'bold'}}>Slide Type</label>
-                                        <select className="form-select" name="slide-type" onChange={slideTypeChange}>
-                                            <option value="MultipleChoice">Multiple Choice</option>
-                                            <option value="Heading" selected={true}>Heading</option>
-                                            <option value="Paragraph">Paragraph</option>
-                                        </select>
-                                    </div>
+                                    {/*<div className="mb-4">*/}
+                                    {/*    <label className="form-label" style={{fontWeight: 'bold'}}>Slide Type</label>*/}
+                                    {/*    <select className="form-select" name="slide-type" onChange={slideTypeChange}>*/}
+                                    {/*        <option value="MultipleChoice">Multiple Choice</option>*/}
+                                    {/*        <option value="Heading" selected={true}>Heading</option>*/}
+                                    {/*        <option value="Paragraph">Paragraph</option>*/}
+                                    {/*    </select>*/}
+                                    {/*</div>*/}
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Heading</label>
                                         <input type="text" className="form-control" name="h-heading"
-                                               defaultValue={hHeading}
+                                               value={hHeading} onChange={(e) => {setHHeading(e.target.value)}}
                                                placeholder="Slide with heading" />
                                     </div>
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Subheading</label>
                                         <textarea className="form-control" name="subheading"
                                                   rows="5" placeholder="Subheading"
-                                                  defaultValue={subHeading}
+                                                  value={subHeading} onChange={(e) => {setSubHeading(e.target.value)}}
                                                   spellCheck="false" style={{resize: 'none'}}></textarea>
                                     </div>
                                 </>
                             }
                             {slideType === 'Paragraph' &&
                                 <>
-                                    <div className="mb-4">
-                                        <label className="form-label" style={{fontWeight: 'bold'}}>Slide Type</label>
-                                        <select className="form-select" name="slide-type" onChange={slideTypeChange}>
-                                            <option value="MultipleChoice">Multiple Choice</option>
-                                            <option value="Heading">Heading</option>
-                                            <option value="Paragraph" selected={true}>Paragraph</option>
-                                        </select>
-                                    </div>
+                                    {/*<div className="mb-4">*/}
+                                    {/*    <label className="form-label" style={{fontWeight: 'bold'}}>Slide Type</label>*/}
+                                    {/*    <select className="form-select" name="slide-type" onChange={slideTypeChange}>*/}
+                                    {/*        <option value="MultipleChoice">Multiple Choice</option>*/}
+                                    {/*        <option value="Heading">Heading</option>*/}
+                                    {/*        <option value="Paragraph" selected={true}>Paragraph</option>*/}
+                                    {/*    </select>*/}
+                                    {/*</div>*/}
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Heading</label>
                                         <input type="text" className="form-control" name="p-heading"
-                                               defaultValue={pHeading}
+                                               value={pHeading} onChange={(e) => {setPHeading(e.target.value)}}
                                                placeholder="Slide with heading" />
                                     </div>
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Paragraph</label>
                                         <textarea className="form-control" name="paragraph"
                                                   rows="6" placeholder="Use this paragraph to explain something in detail. Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition."
-                                                  defaultValue={paragraph}
+                                                  value={paragraph} onChange={(e) => {setParagraph(e.target.value)}}
                                                   spellCheck="false" style={{resize: 'none'}}></textarea>
                                     </div>
                                 </>

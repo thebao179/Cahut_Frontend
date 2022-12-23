@@ -49,6 +49,7 @@ function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh}) {
                     return null;
                 },
             });
+            $('#group-select2').val(null).trigger('change');
             idChanged.current = true;
         }
     }, [groupId, data]);

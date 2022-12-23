@@ -54,6 +54,7 @@ function PresentationDetail({usrToken, setToken}) {
             setSlideList(slides.data[0]);
             if (currSlide) {
                 if (slideType === 'MultipleChoice') {
+                    $('#slide-options').find('div[id^=option-]').remove();
                     const question = await multipleChoiceQuestionApi.getQuestion(currSlide);
                     setQuestion(question.data);
                     if (question.data) {
@@ -141,7 +142,7 @@ function PresentationDetail({usrToken, setToken}) {
         if (!questionEdited) setQuestionInvalid(true);
         else if (count === 0) {
             const ques = {
-                questionId: question ? question.questionId : "null",
+                questionId: question.questionId ? question.questionId : "null",
                 slideId: currSlide,
                 type: 'Multiple choice',
                 isEdited: "true",

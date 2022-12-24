@@ -28,7 +28,7 @@ function App() {
             element: <Authentication component={'password-reset'} usrToken={token}/>
         },
         {
-            path: "/change-password",
+            path: "/change-password/:code",
             element: <Authentication component={'change-password'} usrToken={token}/>
         },
         {

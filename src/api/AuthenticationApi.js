@@ -30,6 +30,19 @@ const authenticationApi = {
         const url = "/auth/forgotpassword";
         return axiosClient.get(url, config);
     },
+    changePassword: (resetCode, newPassword) => {
+        const url = "/auth/password/reset";
+        return axiosClient.post(url, {resetCode, newPassword});
+    },
+    checkResetCode: (resetCode) => {
+        const config = {
+            params: {
+                resetCode: resetCode
+            }
+        };
+        const url = "/auth/checkResetCode";
+        return axiosClient.get(url, config)
+    }
 };
 
 export default authenticationApi;

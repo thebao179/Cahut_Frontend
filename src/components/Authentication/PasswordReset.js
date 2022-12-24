@@ -1,7 +1,9 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import * as yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
+import {useNavigate, useParams} from "react-router-dom";
+import authenticationApi from "../../api/AuthenticationApi";
 
 const PasswordResetSchema = yup.object().shape({
     password: yup
@@ -22,9 +24,35 @@ function PasswordReset() {
     } = useForm({
         resolver: yupResolver(PasswordResetSchema)
     });
+    const params = useParams();
+    const [count, setCount] = useState(5);
+    const navigate = useNavigate();
 
-    const onSubmit = (data) => {
-        //console.log(data.password);
+    useEffect(() => {
+        async function fetchData() {
+            const result = await authenticationApi.checkResetCode(params.code);
+            if (!result.status) navigate('/');
+        }
+        fetchData();
+    }, []);
+
+    const onSubmit = async (data) => {
+        const result = await authenticationApi.changePassword(params.code, data.password);
+        // eslint-disable-next-line no-undef
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message
+        });
+        if (result.status) {
+            const timer = setTimeout(() => {
+                setCount(count - 1);
+                if (count <= 0) navigate('/');
+            }, 1000);
+            return () => {
+                clearInterval(timer);
+            };
+        }
     }
 
     return (

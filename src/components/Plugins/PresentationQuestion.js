@@ -1,16 +1,127 @@
+import { event } from "jquery";
 import { useEffect, useState } from "react";
 
 function PresentationQuestion() {
-    
-    const [isQuestionHide, setIsQuestionPanelHide] = useState(true)
-    const ToggleQuestionPanel = () => {
-        setIsQuestionPanelHide(!isQuestionHide)
-    }
+
+    // const [isQuestionHide, setIsQuestionPanelHide] = useState(true)
+    // const ToggleQuestionPanel = () => {
+    //     console.log('toggle');
+    //     setIsQuestionPanelHide(!isQuestionHide)
+    // }
+
+    const StopPropa = (e) => {
+        e.stopPropagation();
+    };
 
     return (
         <>
-            <div className="col-md-6">
-                <div className={isQuestionHide ? 'block block-rounded':'block block-rounded block-mode-hidden'}>
+            {/* <div className="collapse mt-3 plugin-data" id="collapseQuestion" >
+                        <table className="table table-hover table-vcenter">
+                            <thead>
+                                <tr>
+                                    <th className="text-center" style={{ width: "50px" }}>
+                                        Order
+                                    </th>
+                                    <th>Question</th>
+                                    <th>Upvote</th>
+                                    <th>
+                                        Status
+                                    </th>
+                                    <th className="text-center" style={{ width: "100px" }}>
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th className="text-center" scope="row">
+                                        1
+                                    </th>
+                                    <td className="fw-semibold fs-sm">
+                                        This is a question
+                                    </td>
+                                    <td className="text-center" scope="row">
+                                        12
+                                    </td>
+                                    <td className="text-center" scope="row">
+                                        Answered
+                                    </td>
+                                    <td className="text-center" scope="row">
+                                        <div className="btn-group">
+                                            <button
+                                                type="button"
+                                                className="btn btn-sm btn-alt-secondary"
+                                            >
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <span>Mark as answered</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> */}
+
+            <div className="plugin-container" >
+                <div className="btn btn-info btn-lg btn-block" data-mdb-toggle="collapse" href="#collapseQuestion"
+                    role="button" aria-expanded="false">
+                    <div className="d-flex justify-content-between align-items-center">
+                        <span style={{ paddingRight: "5px" }}>Question (123)</span>
+                        <i class="far fa-question-circle"></i>
+                    </div>
+
+
+                </div>
+                <div className="collapse mt-3 plugin-data-question" id="collapseQuestion" >
+                    <table className="table table-hover table-vcenter " data-mdb-perfect-scrollbar="true">
+                        <thead>
+                            <tr>
+                                <th className="text-center" style={{ width: "50px" }}>
+                                    Order
+                                </th>
+                                <th>Question</th>
+                                <th>Upvote</th>
+                                <th>
+                                    Status
+                                </th>
+                                <th className="text-center" style={{ width: "100px" }}>
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm">
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    Answered
+                                </td>
+                                <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* <div className="col-md-6">
+                <div className={isQuestionHide ? 'block':'block block-mode-hidden'}>
                     <div className="block-header block-header-default">
                         <h3 className="block-title">Question <small>(Num of question)</small></h3>
                         <div className="block-options">
@@ -249,9 +360,7 @@ function PresentationQuestion() {
   
                     </div>
                 </div>
-            </div>
-
-
+            </div> */}
         </>
     );
 }

@@ -77,6 +77,7 @@ function SlideDetail({usrToken, setToken}) {
     }
 
     return (
+        <>
         <div id="page-container">
             <div className="top-screen" style={{left: 0}}>
                 <button type="button" className="btn btn-lg btn-danger" onClick={endPresentation}>
@@ -92,11 +93,8 @@ function SlideDetail({usrToken, setToken}) {
                 <button type="button" className="btn btn-lg btn-circle btn-secondary" style={{padding: '0.8rem 1rem'}} onClick={goNextSlide}>
                     <i className="fa fa-fw fa-angle-right"></i>
                 </button>
-            </div>
-            <div className="top-screen" style={{right: 0}}>
-                <PresentationQuestion></PresentationQuestion>
-                <ChatBox></ChatBox>
-            </div>
+            </div >
+
             <div className="p-4" style={{height: '100vh'}}>
                 <div className="bg-white p-4 h-100">
                     <div className="d-flex pt-2 justify-content-center">
@@ -154,6 +152,15 @@ function SlideDetail({usrToken, setToken}) {
                 </div>
             </div>
         </div>
+        <div className="middle-bottom-screen plugin-panel" >
+            <div className="plugin-panel__element">
+                <ChatBox></ChatBox>
+            </div>
+            <div className="plugin-panel__element">
+                <PresentationQuestion></PresentationQuestion>
+            </div>
+        </div>
+        </>
     );
 }
 

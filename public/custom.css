@@ -40,6 +40,21 @@
     margin: 0 3rem;
 }
 
+.middle-bottom-screen{
+    position: fixed;
+    left: 40%;
+    margin: 0 3rem;
+    bottom: 3rem;
+}
+
+.bottom-screen {
+    position: fixed;
+    padding: 0;
+    bottom: 3rem;
+    margin: 0 3rem;
+    z-index: 1;
+}
+
 .top-screen {
     position: fixed;
     top: 3rem;
@@ -48,4 +63,40 @@
 
 .btn-circle {
     border-radius: 50%;
+}
+
+.plugin-panel{
+    display: flex;
+}
+
+.plugin-panel__element{
+    height: 40px;
+    padding: 0 4px;
+    width: 200px;
+}
+
+.plugin-container{
+    position: relative;
+}
+
+.plugin-data-question{
+    position: absolute;
+    left: 0px;
+    min-height: 460px;
+    top: -500px;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
+.plugin-data-chat{
+    position: absolute;
+    right: 0px;
+    min-height: 460px;
+    border-radius: 3px;
+    top: -500px;
+    border: 1px solid black;
+}
+
+.plugin-panel__element:hover{
+    cursor: pointer;
 }

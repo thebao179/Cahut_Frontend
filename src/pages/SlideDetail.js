@@ -157,7 +157,7 @@ function SlideDetail({usrToken, setToken}) {
                 <ChatBox></ChatBox>
             </div>
             <div className="plugin-panel__element">
-                <PresentationQuestion></PresentationQuestion>
+                <PresentationQuestion viewer={'presenter'}></PresentationQuestion>
             </div>
         </div>
         </>

@@ -82,16 +82,49 @@
 .plugin-data-question{
     position: absolute;
     left: 0px;
-    min-height: 460px;
+    max-height: 460px;
+    background-color: white;
     top: -500px;
+    overflow-y: scroll;
     border: 1px solid black;
     border-radius: 3px;
+}
+
+.plugin-question__status{
+    padding: 2px 0;
+    border-radius: 3px;
+    width: 120px;
+}
+
+.plugin-question__status:hover{
+    opacity: 0.75;
+}
+
+.plugin-question__body{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.plugin-question__answered{
+    background-color: yellowgreen;
+}
+
+.plugin-question__notanswered{
+    background-color: #ccc;
+}
+
+.plugin-table-th{
+    position: sticky; 
+    background-color: white !important;
+    padding: 0;
+    top: 0;
 }
 
 .plugin-data-chat{
     position: absolute;
     right: 0px;
-    min-height: 460px;
+    max-height: 460px;
     border-radius: 3px;
     top: -500px;
     border: 1px solid black;
@@ -99,4 +132,10 @@
 
 .plugin-panel__element:hover{
     cursor: pointer;
+}
+
+
+.chat-content{
+    height: 350px;
+    overflow-y:scroll;
 }

@@ -7,6 +7,8 @@ import choiceApi from "../api/ChoiceApi";
 import multipleChoiceQuestionApi from "../api/MultipleChoiceQuestionApi";
 import {HubConnectionBuilder} from "@microsoft/signalr";
 import {Bar, BarChart, LabelList, ResponsiveContainer} from "recharts";
+import ChatBox from "../components/Plugins/ChatBox";
+import PresentationQuestion from "../components/Plugins/PresentationQuestion";
 
 function PresentationView() {
     const params = useParams();
@@ -122,6 +124,7 @@ function PresentationView() {
     }
 
     return (
+        <>
         <div id="page-container">
             {type === 'multiple-choice' &&
                 <Container className="w-50 p-4">
@@ -183,6 +186,15 @@ function PresentationView() {
                 </div>
             }
         </div>
+        <div className="middle-bottom-screen plugin-panel" >
+                <div className="plugin-panel__element">
+                    <ChatBox></ChatBox>
+                </div>
+                <div className="plugin-panel__element">
+                    <PresentationQuestion viewer={'student'}></PresentationQuestion>
+                </div>
+            </div>
+        </>
     );
 }
 

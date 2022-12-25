@@ -1,7 +1,8 @@
 import { event } from "jquery";
 import { useEffect, useState } from "react";
+import $ from 'jquery';
 
-function PresentationQuestion() {
+function PresentationQuestion({viewer}) {
 
     // const [isQuestionHide, setIsQuestionPanelHide] = useState(true)
     // const ToggleQuestionPanel = () => {
@@ -9,9 +10,41 @@ function PresentationQuestion() {
     //     setIsQuestionPanelHide(!isQuestionHide)
     // }
 
+    console.log(viewer);
+
     const StopPropa = (e) => {
         e.stopPropagation();
     };
+
+    const changeQuestionStatus = (e) => {
+        console.log(e);
+        let questionId = $(e).find('input[name=questionId]').val();
+        console.log(e.className);
+        if(viewer == 'presenter'){
+            if(e.className == 'plugin-question__status plugin-question__notanswered'){
+                e.className = 'plugin-question__status plugin-question__answered'
+                e.innerHTML = 'Answered'
+            }
+            else{
+                e.className = 'plugin-question__status plugin-question__notanswered'
+                e.innerHTML = 'Not answered'
+            }
+        }
+        else{
+            if(e.className == 'far fa-thumbs-up'){
+                e.className = 'fas fa-thumbs-up'
+            }
+            else{
+                e.className = 'far fa-thumbs-up'
+            }
+        }
+
+    }
+
+    const sendQuestion = async () => {
+        const msg = $('#inputQuestionField').find('input[name=question]').val();
+        $('#inputQuestionField').find('input[name=question]').val('')
+    }
 
     return (
         <>
@@ -72,21 +105,21 @@ function PresentationQuestion() {
 
 
                 </div>
-                <div className="collapse mt-3 plugin-data-question" id="collapseQuestion" >
-                    <table className="table table-hover table-vcenter " data-mdb-perfect-scrollbar="true">
+                <div className="collapse mt-3 plugin-data-question plugin-question__body" id="collapseQuestion" >
+                    <table className="table table-hover table-vcenter " style={{ width: "max-content"}}>
                         <thead>
                             <tr>
-                                <th className="text-center" style={{ width: "50px" }}>
+                                <th className="text-center plugin-table-th" style={{ width: "50px" }}>
                                     Order
                                 </th>
-                                <th>Question</th>
-                                <th>Upvote</th>
-                                <th>
-                                    Status
-                                </th>
-                                <th className="text-center" style={{ width: "100px" }}>
+                                <th className="text-center plugin-table-th" style={{ width: "250px" }}>Question</th>
+                                <th className="plugin-table-th">Upvote</th>
+                                <th className="plugin-table-th">
+                                     {viewer == 'presenter' ? 'Status':'Action'}
+                                </th>   
+                                {/* <th className="text-center" style={{ width: "100px" }}>
                                     Actions
-                                </th>
+                                </th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -94,16 +127,28 @@ function PresentationQuestion() {
                                 <th className="text-center" scope="row">
                                     1
                                 </th>
-                                <td className="fw-semibold fs-sm">
-                                    This is a question
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question 1
                                 </td>
                                 <td className="text-center" scope="row">
                                     12
                                 </td>
                                 <td className="text-center" scope="row">
-                                    Answered
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
                                 </td>
-                                <td className="text-center" scope="row">
+                                {/* <td className="text-center" scope="row">
                                     <div className="btn-group">
                                         <button
                                             type="button"
@@ -113,10 +158,536 @@ function PresentationQuestion() {
                                         </button>
                                         <span>Mark as answered</span>
                                     </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question 2
                                 </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
+                            </tr>
+                            <tr>
+                                <th className="text-center" scope="row">
+                                    1
+                                </th>
+                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
+                                    This is a question
+                                </td>
+                                <td className="text-center" scope="row">
+                                    12
+                                </td>
+                                <td className="text-center" scope="row">
+                                    {
+                                        viewer == 'presenter' ? 
+                                        <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                            Not answered
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                            </div> :
+                                        <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
+                                        </i>    
+
+                                        //<i class="far fa-thumbs-up"></i>
+                                    }
+                                    
+                                </td>
+                                {/* <td className="text-center" scope="row">
+                                    <div className="btn-group">
+                                        <button
+                                            type="button"
+                                            className="btn btn-sm btn-alt-secondary"
+                                        >
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <span>Mark as answered</span>
+                                    </div>
+                                </td> */}
                             </tr>
                         </tbody>
                     </table>
+
+                    <div>
+                        {viewer != 'presenter'? 
+                     <div className="card-footer d-flex justify-content-start align-items-center p-3" id="inputQuestionField">
+                        <input type="text" className="form-control form-control-lg" name="question" placeholder="Type question" />
+                        <span className="ms-3 link-info send-msg-btn"><i className="fas fa-paper-plane btn" onClick={sendQuestion}></i></span>
+                    </div> :<div></div> }
+                     </div>
                 </div>
             </div>
 

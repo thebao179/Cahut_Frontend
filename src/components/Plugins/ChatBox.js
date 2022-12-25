@@ -1,7 +1,14 @@
+import $ from 'jquery';
+
 function ChatBox() {
     const StopPropa = (e) =>{
         e.stopPropagation();
     };
+
+    const sendMessage = async () => {
+        const msg = $('#inputMsgField').find('input[name=message]').val();
+        $('#inputMsgField').find('input[name=message]').val('')
+    }
 
     return (
         <>
@@ -17,12 +24,12 @@ function ChatBox() {
             
             <div className="collapse mt-3 plugin-data-chat" id="collapseChat">
                 <div className="card">
-                    <div className="card-body" data-mdb-perfect-scrollbar="true"
+                    <div className="card-body"
                         style={{ position: "relative", height: "370px", width: "400px" }}>
                         <div className="d-flex flex-row justify-content-start">
                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
                                 alt="avatar 1" style={{ width: "45px", height: "100%" }} />
-                            <div>
+                            <div className='chat-content'>
                                 <p className="small p-2 ms-3 mb-1 rounded-3"
                                     style={{ backgroundColor: "#f5f6f7" }}>Hi</p>
                                 <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>How
@@ -33,13 +40,73 @@ function ChatBox() {
                                     doing
                                     tomorrow? Can we come up a bar?
                                 </p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
+                                    are you
+                                    doing
+                                    tomorrow? Can we come up a bar?
+                                </p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
+                                    are you
+                                    doing
+                                    tomorrow? Can we come up a bar?
+                                </p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
+                                    are you
+                                    doing
+                                    tomorrow? Can we come up a bar?
+                                </p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
+                                    are you
+                                    doing
+                                    tomorrow? Can we come up a bar?
+                                </p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
+                                    are you
+                                    doing
+                                    tomorrow? Can we come up a bar?
+                                </p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
+                                    are you
+                                    doing
+                                    tomorrow? Can we come up a bar?
+                                </p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
+                                    are you
+                                    doing
+                                    tomorrow? Can we come up a bar?
+                                </p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
+                                    are you
+                                    doing
+                                    tomorrow? Can we come up a bar?
+                                </p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
+                                    are you
+                                    doing
+                                    tomorrow? Can we come up a bar?
+                                </p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
+                                    are you
+                                    doing
+                                    tomorrow? Can we come up a bar?
+                                </p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
+                                    are you
+                                    doing
+                                    tomorrow? Can we come up a bar?
+                                </p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
+                                    are you
+                                    doing
+                                    tomorrow? Can we come up a bar?
+                                </p>
                                 <p className="small ms-3 mb-3 rounded-3 text-muted">23:58</p>
                             </div>
                         </div>
                     </div>
-                    <div className="card-footer d-flex justify-content-start align-items-center p-3">
+                    <div className="card-footer d-flex justify-content-start align-items-center p-3" id="inputMsgField">
                         <input type="text" className="form-control form-control-lg" name="message" placeholder="Type message" />
-                        <a className="ms-3 link-info" href="#"><i className="fas fa-paper-plane"></i></a>
+                        <span className="ms-3 link-info send-msg-btn"><i className="fas fa-paper-plane btn" onClick={sendMessage}></i></span>
                     </div>
                 </div>
             </div>

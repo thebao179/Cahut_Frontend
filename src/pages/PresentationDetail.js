@@ -237,6 +237,13 @@ function PresentationDetail({usrToken, setToken}) {
                                 <i className="fa fa-fw fa-plus me-1"></i> New Slide
                             </button>
                         </div>
+                        <div className="d-inline-block ms-2">
+                            <Link to={'/presentation/result/' + params.id}>
+                                <button type="button" className="btn btn-alt-info">
+                                    <i className="fa fa-fw fa-square-poll-vertical me-1"></i> View Results
+                                </button>
+                            </Link>
+                        </div>
                     </div>
                     <div className="d-flex align-items-center">
                         <div className="d-inline-block ms-2">

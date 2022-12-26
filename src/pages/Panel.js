@@ -13,6 +13,7 @@ import jwt from "jwt-decode";
 import PresentationAdd from "../components/Modals/PresentationAdd";
 import PresentationOwned from "../components/Panel/PresentationOwned";
 import PresentationCollab from "../components/Panel/PresentationCollab";
+import PresentationResult from "../components/Panel/PresentationResult";
 
 function Panel({component, usrToken, setToken}) {
     const navigate = useNavigate();
@@ -59,6 +60,7 @@ function Panel({component, usrToken, setToken}) {
                 {component === 'powned' &&
                     <PresentationOwned token={usrToken} presentationsCreate={presentationsCreated}/>}
                 {component === 'pcollab' && <PresentationCollab token={usrToken}/>}
+                {component === 'presult' && <PresentationResult token={usrToken}/>}
             </main>
             <GroupAdd grpCreate={grpCreate} setGrpCreate={setGrpCreate}/>
             <PresentationAdd preCreate={presentationsCreated} setPreCreate={setPresentationsCreated}/>

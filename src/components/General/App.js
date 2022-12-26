@@ -81,6 +81,10 @@ function App() {
             path: "/presentation/present/:id",
             element: <SlideDetail usrToken={token} setToken={setToken}/>
         },
+        {
+            path: "/presentation/result/:id",
+            element: <Panel component={'presult'} usrToken={token} setToken={setToken}/>
+        },
     ]);
 
     return (

@@ -25,7 +25,6 @@ function PasswordReset() {
         resolver: yupResolver(PasswordResetSchema)
     });
     const params = useParams();
-    const [count, setCount] = useState(5);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -45,13 +44,9 @@ function PasswordReset() {
             message: result.message
         });
         if (result.status) {
-            const timer = setTimeout(() => {
-                setCount(count - 1);
-                if (count <= 0) navigate('/');
-            }, 1000);
-            return () => {
-                clearInterval(timer);
-            };
+            setTimeout(() => {
+                navigate('/');
+            }, 4000);
         }
     }
 

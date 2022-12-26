@@ -14,12 +14,9 @@ function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh}) {
     let idChanged = useRef(false);
 
     const getPresentation = async () => {
-        //const result = await groupApi.getPresentation(groupId);
-        setPresent({
-            role: "Owner",
-            presentationId: "63c229ec-d7a0-4808-f819-08dae64042f3",
-        });
-        //setPresent({});
+        const result = await groupApi.getPresentation(groupId);
+        if (result.status) setPresent(result.data);
+        else setPresent({});
     }
 
     useEffect(() => {
@@ -134,16 +131,16 @@ function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh}) {
                             </div>
                             <div className="block-content fs-sm">
                                 {(present.role === "Owner" || present.role === "Co-owner") &&
-                                    <a href={'/presentation/present/' + present.presentationId} target="_blank">
+                                    <a href={'/presentation/present/' + present.presentationId}>
                                         <button type="button" className="btn btn-warning me-1 mb-3">
-                                            <i className="fa fa-fw fa-display me-1"></i> Go to presentation
+                                            <i className="fa fa-fw fa-display me-1"></i> Go To Presentation
                                         </button>
                                     </a>
                                 }
                                 {present.role === "Member" &&
-                                    <a href={'/view/' + present.presentationId} target="_blank">
+                                    <a href={'/view/' + present.presentationId}>
                                         <button type="button" className="btn btn-warning me-1 mb-3">
-                                            <i className="fa fa-fw fa-display me-1"></i> Go to presentation
+                                            <i className="fa fa-fw fa-display me-1"></i> Go To Presentation
                                         </button>
                                     </a>
                                 }

@@ -33,6 +33,7 @@ function PresentationDetail({usrToken, setToken}) {
     const [isPresent, setIsPresent] = useState(false);
     const [role, setRole] = useState();
     const [isAccess, setIsAccess] = useState(false);
+    const [presentType, setPresentType] = useState();
 
     useEffect(() => {
         if (!usrToken) {
@@ -55,6 +56,7 @@ function PresentationDetail({usrToken, setToken}) {
                     setPresName(info.data.presentationName);
                     setIsPresent(info.data.isBeingPresented);
                     setRole(info.data.role);
+                    setPresentType(info.data.presentatingType);
                 }
                 else navigate('/dashboard');
             }
@@ -227,18 +229,14 @@ function PresentationDetail({usrToken, setToken}) {
 
     const presentPublic = async () => {
         const result = await presentationApi.presentPublic(params.id);
-        if (result.status) {
-            setIsPresent(true);
-            window.open(
-                '/presentation/present/' + params.id,
-                '_blank'
-            );
+        if (result.status) window.location.href = '/presentation/present/' + params.id;
+        else {
+            One.helpers('jq-notify', {
+                type: `${result.status === true ? 'success' : 'danger'}`,
+                icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+                message: result.message
+            });
         }
-        One.helpers('jq-notify', {
-            type: `${result.status === true ? 'success' : 'danger'}`,
-            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
-            message: result.message
-        });
     }
 
     if (!isAccess) {
@@ -267,13 +265,13 @@ function PresentationDetail({usrToken, setToken}) {
                                 <i className="fa fa-fw fa-plus me-1"></i> New Slide
                             </button>
                         </div>
-                        <div className="d-inline-block ms-2">
-                            <Link to={'/presentation/result/' + params.id}>
-                                <button type="button" className="btn btn-alt-info">
-                                    <i className="fa fa-fw fa-square-poll-vertical me-1"></i> View Results
-                                </button>
-                            </Link>
-                        </div>
+                        {/*<div className="d-inline-block ms-2">*/}
+                        {/*    <Link to={'/presentation/result/' + params.id}>*/}
+                        {/*        <button type="button" className="btn btn-alt-info">*/}
+                        {/*            <i className="fa fa-fw fa-square-poll-vertical me-1"></i> View Results*/}
+                        {/*        </button>*/}
+                        {/*    </Link>*/}
+                        {/*</div>*/}
                     </div>
                     {role === "Owner" &&
                         <div className="d-flex align-items-center">
@@ -292,11 +290,20 @@ function PresentationDetail({usrToken, setToken}) {
                                     </div>
                                 </>
                             }
-                            {isPresent &&
+                            {isPresent && presentType === "public" &&
                                 <div className="d-inline-block ms-2">
-                                    <a href={'/presentation/present/' + params.id} target={'_blank'}>
+                                    <a href={'/presentation/present/' + params.id}>
                                         <button type="button" className="btn btn-info">
-                                            <i className="fa fa-fw fa-display me-1"></i> Presentating
+                                            <i className="fa fa-fw fa-display me-1"></i> Presentating In Public
+                                        </button>
+                                    </a>
+                                </div>
+                            }
+                            {isPresent && presentType === "group" &&
+                                <div className="d-inline-block ms-2">
+                                    <a href={'/presentation/present/' + params.id}>
+                                        <button type="button" className="btn btn-warning">
+                                            <i className="fa fa-fw fa-display me-1"></i> Presentating In Group
                                         </button>
                                     </a>
                                 </div>

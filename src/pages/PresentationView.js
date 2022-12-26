@@ -58,7 +58,7 @@ function PresentationView() {
                 }
                 setIsAccess(true);
             }
-            else navigate('/');
+            else navigate('/dashboard');
         }
         let result;
         if (pType.current === "public") result = await presentationApi.getCurrentSlidePublic(params.id);

@@ -34,13 +34,12 @@ function SlideDetail({usrToken, setToken}) {
     const fetchData = async () => {
         if (isInitial.current) {
             const info = await presentationApi.getPresentationInfoTeacher(params.id);
-            console.log(info);
             if (info.status) {
                 pType.current = info.data.presentationType;
                 groupId.current = info.data.groupId;
                 setIsAccess(true);
             }
-            else window.close();
+            else navigate('/dashboard');
         }
         let result;
         if (pType.current === "public") result = await presentationApi.getCurrentSlidePublic(params.id);
@@ -125,7 +124,7 @@ function SlideDetail({usrToken, setToken}) {
 
     const endPresentation = async () => {
         const result = await presentationApi.endPresentation(params.id);
-        if (result.status) window.close();
+        if (result.status) navigate(-1);
     }
 
     if (!isAccess) {

@@ -17,17 +17,16 @@ function PresentGroup({presentationId, setIsPresent}) {
         const result = await presentationApi.presentGroup(presentationId, groupName);
         if (result.status) {
             setIsPresent(true);
-            window.open(
-                '/presentation/present/' + presentationId,
-                '_blank'
-            );
+            window.location.href = '/presentation/present/' + presentationId;
         }
-        // eslint-disable-next-line no-undef
-        One.helpers('jq-notify', {
-            type: `${result.status === true ? 'success' : 'danger'}`,
-            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
-            message: result.message
-        });
+        else {
+            // eslint-disable-next-line no-undef
+            One.helpers('jq-notify', {
+                type: `${result.status === true ? 'success' : 'danger'}`,
+                icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+                message: result.message
+            });
+        }
     }
 
     return (

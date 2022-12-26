@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Container} from "react-bootstrap";
 import {useForm} from "react-hook-form";
 import {useNavigate, useParams} from "react-router-dom";
@@ -9,6 +9,9 @@ import {HubConnectionBuilder} from "@microsoft/signalr";
 import {Bar, BarChart, LabelList, ResponsiveContainer} from "recharts";
 import ChatBox from "../components/Plugins/ChatBox";
 import PresentationQuestion from "../components/Plugins/PresentationQuestion";
+import presentationApi from "../api/PresentationApi";
+import headingSlideApi from "../api/HeadingSlideApi";
+import paragraphSlideApi from "../api/ParagraphSlideApi";
 
 function PresentationView() {
     const params = useParams();
@@ -18,12 +21,17 @@ function PresentationView() {
     const {register, handleSubmit} = useForm();
     const [connection, setConnection] = useState();
     const navigate = useNavigate();
-    const [type, setType] = useState('multiple-choice');
+    const [type, setType] = useState();
     const [hHeading, setHHeading] = useState();
     const [subHeading, setSubHeading] = useState();
     const [pHeading, setPHeading] = useState();
     const [paragraph, setParagraph] = useState();
-    const slideId = params.id;
+    const [isAccess, setIsAccess] = useState(false);
+    let isInitial = useRef(true);
+    let pType = useRef();
+    let groupId = useRef();
+    let currSlideId = useRef();
+
     const onSubmit = async (data) => {
         if (data.answer) {
             await choiceApi.submitAnswer(data.answer);
@@ -37,17 +45,56 @@ function PresentationView() {
     };
 
     const fetchData = async () => {
-        const question = await multipleChoiceQuestionApi.getQuestion(params.id);
-        setQuestion(question.data);
-        if (question.data) {
-            const answers = await choiceApi.getAnswers(question.data.questionId);
-            setAnswers(answers.data);
-        } else navigate('/');
+        if (isInitial.current) {
+            const res = await presentationApi.getPresentationType(params.id);
+            if (res.status) {
+                if (res.data.presentationType === 'group') {
+                    const info = await presentationApi.getGroupPresentationInfoStudent(params.id, res.data.groupId);
+                    if (info.status) {
+                        pType.current = res.data.presentationType;
+                        groupId.current = res.data.groupId;
+                    }
+                    else navigate('/');
+                }
+                setIsAccess(true);
+            }
+            else navigate('/');
+        }
+        let result;
+        if (pType.current === "public") result = await presentationApi.getCurrentSlidePublic(params.id);
+        else if (pType.current === "group") result = await presentationApi.getCurrentSlideGroup(params.id, groupId.current);
+        if (result.status) {
+            currSlideId.current = result.data.slideId;
+            setType(result.data.slideType);
+            if (result.data.slideType === "multipleChoice") {
+                setIsSubmitted(false);
+                const question = await multipleChoiceQuestionApi.getQuestion(result.data.slideId);
+                setQuestion(question.data);
+                if (question.data) {
+                    const answers = await choiceApi.getAnswers(question.data.questionId);
+                    setAnswers(answers.data);
+                } else setAnswers([]);
+            }
+            else if (result.data.slideType === "heading") {
+                const heading = await headingSlideApi.getData(result.data.slideId);
+                if (heading.data) {
+                    setHHeading(heading.data.headingContent);
+                    setSubHeading(heading.data.subHeadingContent);
+                }
+            }
+            else if (result.data.slideType === "paragraph") {
+                const paragraph = await paragraphSlideApi.getData(result.data.slideId);
+                if (paragraph.data) {
+                    setPHeading(paragraph.data.headingContent);
+                    setParagraph(paragraph.data.paragraphContent);
+                }
+            }
+        }
     }
 
     useEffect(() => {
         const connect = new HubConnectionBuilder()
-            .withUrl(process.env.REACT_APP_REALTIME_HOST+ "?slideId=" + slideId)
+            .withUrl(process.env.REACT_APP_REALTIME_HOST+ "?slideId=" + currSlideId.current)
             .withAutomaticReconnect()
             .build();
         setConnection(connect);
@@ -124,70 +171,76 @@ function PresentationView() {
         )
     }
 
+    if (!isAccess) {
+        return (
+            <></>
+        );
+    }
+
     return (
         <>
-        <div id="page-container">
-            {type === 'multiple-choice' &&
-                <Container className="w-50 p-4">
-                    <div className="block-content text-center">
-                        <div>
-                            <a href="/" className="d-block fw-semibold text-modern fs-2">Cahut</a>
-                            <a className="d-block fw-semibold fs-5 tracking-wider text-dual">Realtime<span
-                                className="fw-normal"> Learning Platform</span></a>
-                        </div>
-                        <div className="mt-4">
-                            <h3 className="d-flex justify-content-start">{question ? question.content : ""}</h3>
-                            {questionVote()}
-                        </div>
-                    </div>
-                </Container>
-            }
-            {type === 'heading' &&
-                <div className="p-4" style={{height: '100vh'}}>
-                    <div className="bg-white h-100">
+            <div id="page-container">
+                {type === 'multipleChoice' &&
+                    <Container className="w-50 p-4">
                         <div className="block-content text-center">
                             <div>
                                 <a href="/" className="d-block fw-semibold text-modern fs-2">Cahut</a>
                                 <a className="d-block fw-semibold fs-5 tracking-wider text-dual">Realtime<span
                                     className="fw-normal"> Learning Platform</span></a>
                             </div>
-                        </div>
-                        <div className="d-flex pt-9">
-                            <p className="w-100 text-center" style={{
-                                fontSize: '30px',
-                                fontWeight: 'bold'
-                            }}>{hHeading ? hHeading : "Heading"}</p>
-                        </div>
-                        <div className="d-flex">
-                            <p className="w-100 text-center">{subHeading ? subHeading : "Sub Heading"}</p>
-                        </div>
-                    </div>
-                </div>
-            }
-            {type === 'paragraph' &&
-                <div className="p-4" style={{height: '100vh'}}>
-                    <div className="bg-white h-100">
-                        <div className="block-content text-center">
-                            <div>
-                                <a href="/" className="d-block fw-semibold text-modern fs-2">Cahut</a>
-                                <a className="d-block fw-semibold fs-5 tracking-wider text-dual">Realtime<span
-                                    className="fw-normal"> Learning Platform</span></a>
+                            <div className="mt-4">
+                                <h3 className="d-flex justify-content-start">{question ? question.content : ""}</h3>
+                                {questionVote()}
                             </div>
                         </div>
-                        <div className="d-flex pt-9">
-                            <p className="w-100 text-center" style={{
-                                fontSize: '30px',
-                                fontWeight: 'bold'
-                            }}>{pHeading ? pHeading : "Heading"}</p>
-                        </div>
-                        <div className="d-flex">
-                            <p className="w-100 text-center">{paragraph ? paragraph : "Use this paragraph to explain something in detail. Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition."}</p>
+                    </Container>
+                }
+                {type === 'heading' &&
+                    <div className="p-4" style={{height: '100vh'}}>
+                        <div className="bg-white h-100">
+                            <div className="block-content text-center">
+                                <div>
+                                    <a href="/" className="d-block fw-semibold text-modern fs-2">Cahut</a>
+                                    <a className="d-block fw-semibold fs-5 tracking-wider text-dual">Realtime<span
+                                        className="fw-normal"> Learning Platform</span></a>
+                                </div>
+                            </div>
+                            <div className="d-flex pt-9">
+                                <p className="w-100 text-center" style={{
+                                    fontSize: '30px',
+                                    fontWeight: 'bold'
+                                }}>{hHeading ? hHeading : "Heading"}</p>
+                            </div>
+                            <div className="d-flex">
+                                <p className="w-100 text-center">{subHeading ? subHeading : "Sub Heading"}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
-        <div className="middle-bottom-screen plugin-panel" >
+                }
+                {type === 'paragraph' &&
+                    <div className="p-4" style={{height: '100vh'}}>
+                        <div className="bg-white h-100">
+                            <div className="block-content text-center">
+                                <div>
+                                    <a href="/" className="d-block fw-semibold text-modern fs-2">Cahut</a>
+                                    <a className="d-block fw-semibold fs-5 tracking-wider text-dual">Realtime<span
+                                        className="fw-normal"> Learning Platform</span></a>
+                                </div>
+                            </div>
+                            <div className="d-flex pt-9">
+                                <p className="w-100 text-center" style={{
+                                    fontSize: '30px',
+                                    fontWeight: 'bold'
+                                }}>{pHeading ? pHeading : "Heading"}</p>
+                            </div>
+                            <div className="d-flex">
+                                <p className="w-100 text-center">{paragraph ? paragraph : "Use this paragraph to explain something in detail. Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition."}</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div className="middle-bottom-screen plugin-panel" >
                 <div className="plugin-panel__element">
                     <ChatBox></ChatBox>
                 </div>

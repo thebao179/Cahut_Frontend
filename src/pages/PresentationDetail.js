@@ -30,6 +30,9 @@ function PresentationDetail({usrToken, setToken}) {
     const [subHeading, setSubHeading] = useState();
     const [pHeading, setPHeading] = useState();
     const [paragraph, setParagraph] = useState();
+    const [isPresent, setIsPresent] = useState(false);
+    const [role, setRole] = useState();
+    const [isAccess, setIsAccess] = useState(false);
 
     useEffect(() => {
         if (!usrToken) {
@@ -46,8 +49,13 @@ function PresentationDetail({usrToken, setToken}) {
 
         async function fetchData() {
             if (refresh === 0) {
-                const result = await presentationApi.getPresentationName(params.id);
-                if (result.status) setPresName(result.data.presentationName);
+                const info = await presentationApi.getPresentationInfo(params.id);
+                if (info.status) {
+                    setIsAccess(true);
+                    setPresName(info.data.presentationName);
+                    setIsPresent(info.data.isBeingPresented);
+                    setRole(info.data.role);
+                }
                 else navigate('/dashboard');
             }
             const slides = await presentationApi.getSlides(params.id);
@@ -217,6 +225,28 @@ function PresentationDetail({usrToken, setToken}) {
         setSlideType(e.target.value);
     }
 
+    const presentPublic = async () => {
+        const result = await presentationApi.presentPublic(params.id);
+        if (result.status) {
+            setIsPresent(true);
+            window.open(
+                '/presentation/present/' + params.id,
+                '_blank'
+            );
+        }
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message
+        });
+    }
+
+    if (!isAccess) {
+        return (
+            <></>
+        );
+    }
+
     return (
         <div id="page-container" className="h-100">
             <header id="page-header">
@@ -245,21 +275,34 @@ function PresentationDetail({usrToken, setToken}) {
                             </Link>
                         </div>
                     </div>
-                    <div className="d-flex align-items-center">
-                        <div className="d-inline-block ms-2">
-                            <button type="button" className="btn btn-warning"
-                                    data-bs-toggle="modal" data-bs-target="#grouppresent-modal">
-                                <i className="fa fa-fw fa-display me-1"></i> Group Present
-                            </button>
+                    {role === "Owner" &&
+                        <div className="d-flex align-items-center">
+                            {!isPresent &&
+                                <>
+                                    <div className="d-inline-block ms-2">
+                                        <button type="button" className="btn btn-warning"
+                                                data-bs-toggle="modal" data-bs-target="#grouppresent-modal">
+                                            <i className="fa fa-fw fa-display me-1"></i> Group Present
+                                        </button>
+                                    </div>
+                                    <div className="d-inline-block ms-2">
+                                        <button type="button" className="btn btn-info" onClick={presentPublic}>
+                                            <i className="fa fa-fw fa-display me-1"></i> Public Present
+                                        </button>
+                                    </div>
+                                </>
+                            }
+                            {isPresent &&
+                                <div className="d-inline-block ms-2">
+                                    <a href={'/presentation/present/' + params.id} target={'_blank'}>
+                                        <button type="button" className="btn btn-info">
+                                            <i className="fa fa-fw fa-display me-1"></i> Presentating
+                                        </button>
+                                    </a>
+                                </div>
+                            }
                         </div>
-                        <div className="d-inline-block ms-2">
-                            <a href={'/presentation/present/' + currSlide} target={'_blank'}>
-                                <button type="button" className="btn btn-info">
-                                    <i className="fa fa-fw fa-display me-1"></i> Public Present
-                                </button>
-                            </a>
-                        </div>
-                    </div>
+                    }
                 </div>
             </header>
             <main id="main-container" className="position-relative"
@@ -473,7 +516,7 @@ function PresentationDetail({usrToken, setToken}) {
                     }
                 </div>
             </main>
-            <PresentGroup presentationId={params.id}/>
+            <PresentGroup presentationId={params.id} setIsPresent={setIsPresent}/>
             <SlideTypeChoose presentationId={params.id} setPresRefresh={setRefresh} presRefresh={refresh}/>
         </div>
     );

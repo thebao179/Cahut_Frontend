@@ -10,7 +10,17 @@ function validateEmail(email) {
 function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh}) {
     const [data, setData] = useState([]);
     const [invitation, setInvitation] = useState();
+    const [present, setPresent] = useState({});
     let idChanged = useRef(false);
+
+    const getPresentation = async () => {
+        //const result = await groupApi.getPresentation(groupId);
+        setPresent({
+            role: "Owner",
+            presentationId: "63c229ec-d7a0-4808-f819-08dae64042f3",
+        });
+        //setPresent({});
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -34,6 +44,7 @@ function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh}) {
             idChanged.current = false;
         } else if (groupId && !idChanged.current) {
             fetchData();
+            getPresentation();
             $('#group-select2').select2({
                 placeholder: 'Enter To Add',
                 tags: true,
@@ -122,6 +133,20 @@ function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh}) {
                                 </div>
                             </div>
                             <div className="block-content fs-sm">
+                                {(present.role === "Owner" || present.role === "Co-owner") &&
+                                    <a href={'/presentation/present/' + present.presentationId} target="_blank">
+                                        <button type="button" className="btn btn-warning me-1 mb-3">
+                                            <i className="fa fa-fw fa-display me-1"></i> Go to presentation
+                                        </button>
+                                    </a>
+                                }
+                                {present.role === "Member" &&
+                                    <a href={'/view/' + present.presentationId} target="_blank">
+                                        <button type="button" className="btn btn-warning me-1 mb-3">
+                                            <i className="fa fa-fw fa-display me-1"></i> Go to presentation
+                                        </button>
+                                    </a>
+                                }
                                 <div className="mb-4">
                                     <label className="form-label modal-title text-info mb-1">Group Invitation</label>
                                     <div className="input-group">

@@ -61,6 +61,15 @@ const groupApi = {
         const url = "/group/delete";
         return axiosClient.post(url, null, config);
     },
+    getPresentation: (groupName) => {
+        const config = {
+            params: {
+                groupName: groupName
+            },
+        };
+        const url = "/group/getPresentation";
+        return axiosClient.get(url, config);
+    },
 }
 
 export default groupApi;

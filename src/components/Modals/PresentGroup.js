@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from "react";
 import groupApi from "../../api/GroupApi";
+import presentationApi from "../../api/PresentationApi";
 
-function PresentGroup({presentationId}) {
+function PresentGroup({presentationId, setIsPresent}) {
     const [groups, setGroups] = useState([]);
 
     useEffect(() => {
@@ -12,8 +13,21 @@ function PresentGroup({presentationId}) {
         fetchData();
     }, []);
 
-    const presentGroup = (groupName) => {
-        //console.log('present in group ' + groupName);
+    const presentGroup = async (groupName) => {
+        const result = await presentationApi.presentGroup(presentationId, groupName);
+        if (result.status) {
+            setIsPresent(true);
+            window.open(
+                '/presentation/present/' + presentationId,
+                '_blank'
+            );
+        }
+        // eslint-disable-next-line no-undef
+        One.helpers('jq-notify', {
+            type: `${result.status === true ? 'success' : 'danger'}`,
+            icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,
+            message: result.message
+        });
     }
 
     return (

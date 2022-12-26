@@ -82,12 +82,22 @@
 .plugin-data-question{
     position: absolute;
     left: 0px;
+    min-height: 460px;
     max-height: 460px;
     background-color: white;
-    top: -500px;
-    overflow-y: scroll;
+    top: -541px;
     border: 1px solid black;
     border-radius: 3px;
+}
+
+.plugin-student-question__board{
+    height: 380px;
+    overflow-y: scroll;
+}
+
+.plugin-teacher-question__board{
+    overflow-y: scroll;
+    
 }
 
 .plugin-question__status{
@@ -101,9 +111,17 @@
 }
 
 .plugin-question__body{
-    display: flex;
+    /* display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-between; */
+    position: relative;
+    width: max-content;
+}
+
+.send-question-field{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
 }
 
 .plugin-question__answered{
@@ -124,6 +142,7 @@
 .plugin-data-chat{
     position: absolute;
     right: 0px;
+    min-height: 460px;
     max-height: 460px;
     border-radius: 3px;
     top: -500px;

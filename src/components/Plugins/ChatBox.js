@@ -26,81 +26,27 @@ function ChatBox() {
                 <div className="card">
                     <div className="card-body"
                         style={{ position: "relative", height: "370px", width: "400px" }}>
-                        <div className="d-flex flex-row justify-content-start">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava5-bg.webp"
-                                alt="avatar 1" style={{ width: "45px", height: "100%" }} />
+                             {/* className="d-flex flex-row justify-content-start" */}
+                        <div>
                             <div className='chat-content'>
                                 <p className="small p-2 ms-3 mb-1 rounded-3"
+                                    style={{ backgroundColor: "#f5f6f7", width:"90%",  }}>Hi</p>
+                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}> sender: How
+                                    are you
+                                    ...???
+                                    </p>
+
+                                <p className="small ms-4 mb-3 rounded-3 text-muted" style={{fontSize:"11px"}}>23:58</p>
+
+
+                                    <p className="small p-2 ms-3 mb-1 rounded-3"
                                     style={{ backgroundColor: "#f5f6f7" }}>Hi</p>
                                 <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>How
                                     are you
-                                    ...???</p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>What
-                                    are you
-                                    doing
-                                    tomorrow? Can we come up a bar?
-                                </p>
-                                <p className="small ms-3 mb-3 rounded-3 text-muted">23:58</p>
+                                    ...???
+                                    </p>
+                                
+                                {/* <p className="small ms-3 mb-3 rounded-3 text-muted">23:58</p> */}
                             </div>
                         </div>
                     </div>

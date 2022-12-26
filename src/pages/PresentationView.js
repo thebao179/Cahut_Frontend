@@ -23,7 +23,7 @@ function PresentationView() {
     const [subHeading, setSubHeading] = useState();
     const [pHeading, setPHeading] = useState();
     const [paragraph, setParagraph] = useState();
-
+    const slideId = params.id;
     const onSubmit = async (data) => {
         if (data.answer) {
             await choiceApi.submitAnswer(data.answer);
@@ -47,7 +47,7 @@ function PresentationView() {
 
     useEffect(() => {
         const connect = new HubConnectionBuilder()
-            .withUrl(process.env.REACT_APP_REALTIME_HOST)
+            .withUrl(process.env.REACT_APP_REALTIME_HOST+ "?slideId=" + slideId)
             .withAutomaticReconnect()
             .build();
         setConnection(connect);
@@ -58,7 +58,8 @@ function PresentationView() {
             connection
                 .start()
                 .then(() => {
-                    connection.on(params.id, (message) => {
+                    console.log(connection.connectionId);
+                    connection.on("ReceiveResult", (slideId, message) => {
                         fetchData();
                     });
                 })

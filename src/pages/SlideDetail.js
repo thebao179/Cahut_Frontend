@@ -19,6 +19,7 @@ function SlideDetail({usrToken, setToken}) {
     const [pHeading, setPHeading] = useState();
     const [paragraph, setParagraph] = useState();
     const [type, setType] = useState('multiple-choice');
+    const slideId = params.id;
 
     const fetchData = async () => {
         const question = await multipleChoiceQuestionApi.getQuestion(params.id);
@@ -44,7 +45,7 @@ function SlideDetail({usrToken, setToken}) {
 
     useEffect(() => {
         const connect = new HubConnectionBuilder()
-            .withUrl(process.env.REACT_APP_REALTIME_HOST)
+            .withUrl(process.env.REACT_APP_REALTIME_HOST + "?slideId=" + slideId, { accessTokenFactory: () => usrToken })
             .withAutomaticReconnect()
             .build();
         setConnection(connect);
@@ -55,7 +56,8 @@ function SlideDetail({usrToken, setToken}) {
             connection
                 .start()
                 .then(() => {
-                    connection.on(params.id, (message) => {
+                    console.log(connection.connectionId);
+                    connection.on("ReceiveResult", (slideId, message) => {
                         if (message === "updateResult")
                             fetchData();
                     });

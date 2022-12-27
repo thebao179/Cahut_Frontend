@@ -58,7 +58,7 @@ function PresentationView() {
                 }
                 setIsAccess(true);
             }
-            else navigate('/dashboard');
+            else navigate('/');
         }
         let result;
         if (pType.current === "public") result = await presentationApi.getCurrentSlidePublic(params.id);
@@ -242,10 +242,10 @@ function PresentationView() {
             </div>
             <div className="middle-bottom-screen plugin-panel" >
                 <div className="plugin-panel__element">
-                    <ChatBox></ChatBox>
+                    <ChatBox presentationId={params.id} userEmail={typeof(jwt) !== "undefined" ? jwt(usrToken).email : null}></ChatBox>
                 </div>
                 <div className="plugin-panel__element">
-                    <PresentationQuestion viewer={'student'}></PresentationQuestion>
+                    <PresentationQuestion viewer={'student'}></PresentationQuestion >
                 </div>
             </div>
         </>

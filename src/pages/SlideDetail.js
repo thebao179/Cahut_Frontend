@@ -34,12 +34,13 @@ function SlideDetail({usrToken, setToken}) {
     const fetchData = async () => {
         if (isInitial.current) {
             const info = await presentationApi.getPresentationInfoTeacher(params.id);
+            console.log(info);
             if (info.status) {
                 pType.current = info.data.presentationType;
                 groupId.current = info.data.groupId;
                 setIsAccess(true);
             }
-            else navigate('/dashboard');
+            else window.close();
         }
         let result;
         if (pType.current === "public") result = await presentationApi.getCurrentSlidePublic(params.id);
@@ -124,7 +125,7 @@ function SlideDetail({usrToken, setToken}) {
 
     const endPresentation = async () => {
         const result = await presentationApi.endPresentation(params.id);
-        if (result.status) navigate(-1);
+        if (result.status) window.close();
     }
 
     if (!isAccess) {
@@ -216,7 +217,7 @@ function SlideDetail({usrToken, setToken}) {
             </div>
             <div className="middle-bottom-screen plugin-panel" >
                 <div className="plugin-panel__element">
-                    <ChatBox></ChatBox>
+                    <ChatBox presentationId={params.id} userEmail={jwt(usrToken).email}></ChatBox>
                 </div>
                 <div className="plugin-panel__element">
                     <PresentationQuestion viewer={'presenter'}></PresentationQuestion>

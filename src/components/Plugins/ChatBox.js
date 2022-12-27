@@ -1,6 +1,47 @@
 import $ from 'jquery';
+import React, {useEffect, useState} from "react";
+import chatApi from "../../api/ChatApi";
+import {HubConnectionBuilder} from "@microsoft/signalr";
 
-function ChatBox() {
+function ChatBox({presentationId, userEmail}) {
+    const [connection, setConnection] = useState();
+    const [chatMsgs, setChatMsgs] = useState([]);
+
+    const fetchData = async() =>{
+        const chatMsgList = await chatApi.getAllChatMessages(presentationId);
+        console.log('ds tin nhan', chatMsgList);
+        setChatMsgs(chatMsgList.data)
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, []
+    )
+
+    useEffect(() => {
+        const connect = new HubConnectionBuilder()
+            // .withUrl(process.env.REACT_APP_REALTIME_HOST + "?slideId=" + currSlideId.current, { accessTokenFactory: () => usrToken })
+            .withUrl(process.env.REACT_APP_REALTIME_HOST + "?presentationId=" + presentationId)
+            .withAutomaticReconnect()
+            .build();
+        setConnection(connect);
+    }, []);
+
+    useEffect(() => {
+        if (connection) {
+            connection
+                .start()
+                .then(() => {
+                    console.log(connection.connectionId);
+                    connection.on("ReceiveResult", (slideId, message) => {
+                        if (message === "updateResult")
+                            fetchData();
+                    });
+                })
+                .catch((error) => console.log(error));
+        }
+    }, [connection])
+
     const StopPropa = (e) =>{
         e.stopPropagation();
     };
@@ -8,6 +49,12 @@ function ChatBox() {
     const sendMessage = async () => {
         const msg = $('#inputMsgField').find('input[name=message]').val();
         $('#inputMsgField').find('input[name=message]').val('')
+        const sendMsgResult = chatApi.sendMessage(userEmail, msg, presentationId);
+        console.log('ket qua gui tn', sendMsgResult);
+    }
+
+    const dateFormat = (data) => {
+        return new Date(data).toLocaleString()
     }
 
     return (
@@ -29,24 +76,25 @@ function ChatBox() {
                              {/* className="d-flex flex-row justify-content-start" */}
                         <div>
                             <div className='chat-content'>
-                                <p className="small p-2 ms-3 mb-1 rounded-3"
+                                {chatMsgs.map((data, index) => 
+                                <>
+                                    <p key={data.timeSent} className='small p-2 ms-3 mb-1 rounded-3' style={{ backgroundColor: "#f5f6f7", maxWidth:"90%"}}>
+                                        {data.sender}: {data.message}
+                                    </p>
+                                <p className="small ms-4 mb-3 rounded-3 text-muted" style={{fontSize:"11px"}}>
+                                    {dateFormat(data.timeSent)}
+                                </p>
+                                </>
+                                )}
+                                {/* <p className="small p-2 ms-3 mb-1 rounded-3"
                                     style={{ backgroundColor: "#f5f6f7", width:"90%",  }}>Hi</p>
                                 <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}> sender: How
                                     are you
                                     ...???
                                     </p>
-
                                 <p className="small ms-4 mb-3 rounded-3 text-muted" style={{fontSize:"11px"}}>23:58</p>
-
-
-                                    <p className="small p-2 ms-3 mb-1 rounded-3"
-                                    style={{ backgroundColor: "#f5f6f7" }}>Hi</p>
-                                <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: "#f5f6f7" }}>How
-                                    are you
-                                    ...???
-                                    </p>
                                 
-                                {/* <p className="small ms-3 mb-3 rounded-3 text-muted">23:58</p> */}
+                                */}
                             </div>
                         </div>
                     </div>

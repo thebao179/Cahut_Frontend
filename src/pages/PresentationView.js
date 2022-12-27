@@ -56,6 +56,10 @@ function PresentationView() {
                     }
                     else navigate('/');
                 }
+                else {
+                    pType.current = res.data.presentationType;
+                    groupId.current = res.data.groupId;
+                }
                 setIsAccess(true);
             }
             else navigate('/');

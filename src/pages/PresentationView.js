@@ -12,8 +12,9 @@ import PresentationQuestion from "../components/Plugins/PresentationQuestion";
 import presentationApi from "../api/PresentationApi";
 import headingSlideApi from "../api/HeadingSlideApi";
 import paragraphSlideApi from "../api/ParagraphSlideApi";
+import jwt from "jwt-decode";
 
-function PresentationView() {
+function PresentationView({usrToken}) {
     const params = useParams();
     const [answers, setAnswers] = useState([]);
     const [question, setQuestion] = useState();
@@ -31,17 +32,24 @@ function PresentationView() {
     let pType = useRef();
     let groupId = useRef();
     let currSlideId = useRef();
+    let dataChanged = useRef(false);
 
     const onSubmit = async (data) => {
         if (data.answer) {
             await choiceApi.submitAnswer(data.answer);
             setIsSubmitted(true);
+            if (pType.current === "group") {
+                const email = jwt(usrToken).email;
+                const quesId = question.questionId;
+                const arr = JSON.parse(localStorage.getItem('syssave'));
+                arr.push(`${email};${quesId}`);
+                localStorage.setItem('syssave', JSON.stringify(arr));
+            }
             if (connection) {
                 await connection.send("SendResult", params.id, "updateResult");
             }
-            return;
         }
-        One.helpers('jq-notify', {type: 'danger', icon: 'fa fa-times me-1', message: 'Please submit your answer'});
+        else One.helpers('jq-notify', {type: 'danger', icon: 'fa fa-times me-1', message: 'Please submit your answer'});
     };
 
     const fetchData = async () => {
@@ -49,6 +57,7 @@ function PresentationView() {
             const res = await presentationApi.getPresentationType(params.id);
             if (res.status) {
                 if (res.data.presentationType === 'group') {
+                    if (!usrToken) navigate('/');
                     const info = await presentationApi.getGroupPresentationInfoStudent(params.id, res.data.groupId);
                     if (info.status) {
                         pType.current = res.data.presentationType;
@@ -71,10 +80,19 @@ function PresentationView() {
             currSlideId.current = result.data.slideId;
             setType(result.data.slideType);
             if (result.data.slideType === "multipleChoice") {
-                setIsSubmitted(false);
+                setIsSubmitted(dataChanged.current);
+                dataChanged.current = !dataChanged.current;
                 const question = await multipleChoiceQuestionApi.getQuestion(result.data.slideId);
                 setQuestion(question.data);
                 if (question.data) {
+                    const arr = JSON.parse(localStorage.getItem('syssave'));
+                    for (const ele of arr) {
+                        const str = ele.split(';');
+                        if (str[0] === jwt(usrToken).email && str[1] === question.data.questionId) {
+                            setIsSubmitted(true);
+                            break;
+                        }
+                    }
                     const answers = await choiceApi.getAnswers(question.data.questionId);
                     setAnswers(answers.data);
                 } else setAnswers([]);
@@ -98,7 +116,7 @@ function PresentationView() {
 
     useEffect(() => {
         const connect = new HubConnectionBuilder()
-            .withUrl(process.env.REACT_APP_REALTIME_HOST+ "?slideId=" + currSlideId.current)
+            .withUrl(process.env.REACT_APP_REALTIME_HOST+ "?presentationId=" + params.id)
             .withAutomaticReconnect()
             .build();
         setConnection(connect);
@@ -109,8 +127,8 @@ function PresentationView() {
             connection
                 .start()
                 .then(() => {
-                    console.log(connection.connectionId);
                     connection.on("ReceiveResult", (slideId, message) => {
+                        dataChanged.current = true;
                         fetchData();
                     });
                 })

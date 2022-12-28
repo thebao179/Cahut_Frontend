@@ -1,6 +1,6 @@
 import {Bar, BarChart, LabelList, ResponsiveContainer} from "recharts";
 import React, {useEffect, useRef, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {HubConnectionBuilder} from "@microsoft/signalr";
 import jwt from "jwt-decode";
 import multipleChoiceQuestionApi from "../api/MultipleChoiceQuestionApi";
@@ -34,13 +34,13 @@ function SlideDetail({usrToken, setToken}) {
     const fetchData = async () => {
         if (isInitial.current) {
             const info = await presentationApi.getPresentationInfoTeacher(params.id);
-            console.log(info);
+            console.log(info)
             if (info.status) {
                 pType.current = info.data.presentationType;
                 groupId.current = info.data.groupId;
                 setIsAccess(true);
             }
-            else window.close();
+            else navigate('/dashboard');
         }
         let result;
         if (pType.current === "public") result = await presentationApi.getCurrentSlidePublic(params.id);
@@ -90,7 +90,7 @@ function SlideDetail({usrToken, setToken}) {
 
     useEffect(() => {
         const connect = new HubConnectionBuilder()
-            .withUrl(process.env.REACT_APP_REALTIME_HOST + "?slideId=" + currSlideId.current, { accessTokenFactory: () => usrToken })
+            .withUrl(process.env.REACT_APP_REALTIME_HOST + "?presentationId=" + params.id, { accessTokenFactory: () => usrToken })
             .withAutomaticReconnect()
             .build();
         setConnection(connect);
@@ -125,7 +125,7 @@ function SlideDetail({usrToken, setToken}) {
 
     const endPresentation = async () => {
         const result = await presentationApi.endPresentation(params.id);
-        if (result.status) window.close();
+        if (result.status) navigate(-1);
     }
 
     if (!isAccess) {
@@ -141,6 +141,11 @@ function SlideDetail({usrToken, setToken}) {
                     <button type="button" className="btn btn-lg btn-danger" onClick={endPresentation}>
                         <i className="fa fa-fw fa-xmark"></i> End
                     </button>
+                    <Link to={'/presentation/result/' + params.id}>
+                        <button type="button" className="btn btn-lg btn-alt-info ms-3">
+                            <i className="fa fa-fw fa-square-poll-vertical me-1"></i> View Results
+                        </button>
+                    </Link>
                 </div>
                 {isPrev &&
                     <div className="middle-screen" style={{left: 0}}>

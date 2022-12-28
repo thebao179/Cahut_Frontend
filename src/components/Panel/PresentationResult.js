@@ -11,9 +11,13 @@ function PresentationResult({token}) {
     const [questions, setQuestions] = useState([]);
     const [choices, setChoices] = useState([]);
     const [refresh, setRefresh] = useState(0);
+    const [isAccess, setIsAccess] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
+            const info = await presentationApi.getPresentationInfoTeacher(params.id);
+            if (info.status) setIsAccess(true);
+            else navigate('/dashboard');
             const result = await presentationApi.getPresentationName(params.id);
             if (result.status) setPresName(result.data.presentationName);
             isInitial = false;
@@ -50,6 +54,12 @@ function PresentationResult({token}) {
         setRefresh(refresh + 1);
         if (DataTable.isDataTable('#presentation-results'))
             $('#presentation-results').DataTable().destroy();
+    }
+
+    if (!isAccess) {
+        return (
+            <></>
+        );
     }
 
     return (

@@ -113,12 +113,18 @@ function SlideDetail({usrToken, setToken}) {
 
     const goPreviousSlide = async () => {
         const result = await presentationApi.updatePreviousSlide(params.id, groupId.current);
+        if(connection){
+            connection.send("ChangeSlide", params.id, "Previous");
+        }
         if (result.message === 'Has meet start of presentation') setIsPrev(false);
         else if (result.status) setRefresh(refresh + 1);
     }
 
     const goNextSlide = async () => {
         const result = await presentationApi.updateNextSlide(params.id, groupId.current);
+        if(connection){
+            connection.send("ChangeSlide", params.id, "Next");
+        }
         if (result.message === 'Has reached end of presentation') setIsNext(false);
         else if (result.status) setRefresh(refresh + 1);
     }

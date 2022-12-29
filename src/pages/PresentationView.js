@@ -38,13 +38,13 @@ function PresentationView({usrToken}) {
         if (data.answer) {
             await choiceApi.submitAnswer(data.answer);
             setIsSubmitted(true);
-            if (pType.current === "group") {
-                const email = jwt(usrToken).email;
-                const quesId = question.questionId;
-                const arr = JSON.parse(localStorage.getItem('syssave'));
-                arr.push(`${email};${quesId}`);
-                localStorage.setItem('syssave', JSON.stringify(arr));
-            }
+            // if (pType.current === "group") {
+            //     const email = jwt(usrToken).email;
+            //     const quesId = question.questionId;
+            //     const arr = JSON.parse(localStorage.getItem('syssave'));
+            //     arr.push(`${email};${quesId}`);
+            //     localStorage.setItem('syssave', JSON.stringify(arr));
+            // }
             if (connection) {
                 await connection.send("SendResult", params.id, "updateResult");
             }
@@ -85,14 +85,14 @@ function PresentationView({usrToken}) {
                 const question = await multipleChoiceQuestionApi.getQuestion(result.data.slideId);
                 setQuestion(question.data);
                 if (question.data) {
-                    const arr = JSON.parse(localStorage.getItem('syssave'));
-                    for (const ele of arr) {
-                        const str = ele.split(';');
-                        if (str[0] === jwt(usrToken).email && str[1] === question.data.questionId) {
-                            setIsSubmitted(true);
-                            break;
-                        }
-                    }
+                    // const arr = JSON.parse(localStorage.getItem('syssave'));
+                    // for (const ele of arr) {
+                    //     const str = ele.split(';');
+                    //     if (str[0] === jwt(usrToken).email && str[1] === question.data.questionId) {
+                    //         setIsSubmitted(true);
+                    //         break;
+                    //     }
+                    // }
                     const answers = await choiceApi.getAnswers(question.data.questionId);
                     setAnswers(answers.data);
                 } else setAnswers([]);
@@ -131,6 +131,9 @@ function PresentationView({usrToken}) {
                         dataChanged.current = true;
                         fetchData();
                     });
+                    connection.on("ChangeSlide", (presentationId, action) => {
+                        fetchData();
+                    })
                 })
                 .catch((error) => console.log(error));
         }

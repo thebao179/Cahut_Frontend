@@ -33,8 +33,7 @@ function ChatBox({presentationId, userEmail}) {
                 .start()
                 .then(() => {
                     console.log(connection.connectionId);
-                    connection.on("ReceiveResult", (slideId, message) => {
-                        if (message === "updateResult")
+                    connection.on("ReceiveMessage", (slideId, message) => {
                             fetchData();
                     });
                 })
@@ -48,9 +47,13 @@ function ChatBox({presentationId, userEmail}) {
 
     const sendMessage = async () => {
         const msg = $('#inputMsgField').find('input[name=message]').val();
-        $('#inputMsgField').find('input[name=message]').val('')
+        $('#inputMsgField').find('input[name=message]').val('');
         const sendMsgResult = chatApi.sendMessage(userEmail, msg, presentationId);
-        console.log('ket qua gui tn', sendMsgResult);
+        if(connection){
+            connection.send("SendMessage", presentationId, msg);
+        }
+        fetchData();
+        
     }
 
     const dateFormat = (data) => {

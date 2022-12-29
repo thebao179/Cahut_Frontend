@@ -14,6 +14,7 @@ import PresentationAdd from "../components/Modals/PresentationAdd";
 import PresentationOwned from "../components/Panel/PresentationOwned";
 import PresentationCollab from "../components/Panel/PresentationCollab";
 import PresentationResult from "../components/Panel/PresentationResult";
+import {HubConnectionBuilder} from "@microsoft/signalr";
 
 function Panel({component, usrToken, setToken}) {
     const navigate = useNavigate();
@@ -21,6 +22,29 @@ function Panel({component, usrToken, setToken}) {
     const [profileUpd, setProfileUpd] = useState(0);
     const [grpCreate, setGrpCreate] = useState(0);
     const [presentationsCreated, setPresentationsCreated] = useState(0);
+    const [connection, setConnection] = useState();
+
+    useEffect(() => {
+        const connect = new HubConnectionBuilder()
+            .withUrl(process.env.REACT_APP_REALTIME_HOST + "?presentationId=" + null, { accessTokenFactory: () => usrToken })
+            .withAutomaticReconnect()
+            .build();
+        setConnection(connect);
+    }, []);
+
+    useEffect(() => {
+        if (connection) {
+            connection
+                .start()
+                .then(() => {
+                    console.log(connection.connectionId);
+                    connection.on("NotifyGroup", (notifyInfo) => {
+                        console.log(notifyInfo);
+                    });
+                })
+                .catch((error) => console.log(error));
+        }
+    }, [connection])
 
     useEffect(() => {
         if (!usrToken) {

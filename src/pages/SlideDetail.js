@@ -231,7 +231,7 @@ function SlideDetail({usrToken, setToken}) {
                     <ChatBox presentationId={params.id} userEmail={jwt(usrToken).email}></ChatBox>
                 </div>
                 <div className="plugin-panel__element">
-                    <PresentationQuestion viewer={'presenter'}></PresentationQuestion>
+                    <PresentationQuestion presentationId={params.id} viewer={'presenter'} groupId = {groupId.current}></PresentationQuestion>
                 </div>
             </div>
         </>

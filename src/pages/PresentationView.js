@@ -270,7 +270,7 @@ function PresentationView({usrToken}) {
                     <ChatBox presentationId={params.id} userEmail={typeof(jwt) !== "undefined" ? jwt(usrToken).email : null}></ChatBox>
                 </div>
                 <div className="plugin-panel__element">
-                    <PresentationQuestion viewer={'student'}></PresentationQuestion >
+                    <PresentationQuestion presentationId={params.id} viewer={'student'} groupId = {groupId.current}></PresentationQuestion >
                 </div>
             </div>
         </>

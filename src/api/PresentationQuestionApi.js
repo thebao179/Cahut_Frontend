@@ -50,7 +50,7 @@ const presentationQuestionApi = {
                 groupId: groupId
             },
         }
-        const url = "/question/markAnswered";
+        const url = "/question/updateQuestionAnswered";
         return axiosClient.post(url, null, config);
     },
 }

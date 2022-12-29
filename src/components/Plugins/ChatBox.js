@@ -47,13 +47,15 @@ function ChatBox({presentationId, userEmail}) {
 
     const sendMessage = async () => {
         const msg = $('#inputMsgField').find('input[name=message]').val();
-        $('#inputMsgField').find('input[name=message]').val('');
-        const sendMsgResult = chatApi.sendMessage(userEmail, msg, presentationId);
-        if(connection){
-            connection.send("SendMessage", presentationId, msg);
+        if(msg){
+            console.log('msg not empty');
+            $('#inputMsgField').find('input[name=message]').val('');
+            const sendMsgResult = chatApi.sendMessage(userEmail, msg, presentationId);
+            if(connection){
+                connection.send("SendMessage", presentationId, msg);
+            }
+            fetchData();
         }
-        fetchData();
-        
     }
 
     const dateFormat = (data) => {

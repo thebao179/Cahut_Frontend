@@ -267,7 +267,7 @@ function PresentationView({usrToken}) {
             </div>
             <div className="middle-bottom-screen plugin-panel" >
                 <div className="plugin-panel__element">
-                    <ChatBox presentationId={params.id} userEmail={typeof(jwt) !== "undefined" ? jwt(usrToken).email : null}></ChatBox>
+                    <ChatBox presentationId={params.id} userEmail={usrToken ? jwt(usrToken).email : null}></ChatBox>
                 </div>
                 <div className="plugin-panel__element">
                     <PresentationQuestion presentationId={params.id} viewer={'student'} groupId = {groupId.current}></PresentationQuestion >

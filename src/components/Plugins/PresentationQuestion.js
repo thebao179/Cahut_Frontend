@@ -109,10 +109,12 @@ function PresentationQuestion({presentationId, viewer, groupId}) {
     }
 
     const sendQuestion = async () => {
-        const msg = $('#inputQuestionField').find('input[name=question]').val();
-        $('#inputQuestionField').find('input[name=question]').val('')
-        const sendQuestionResult = presentationQuestionApi.sendQuestion(msg, presentationId);
-        console.log('kq gui question', sendQuestionResult);
+        const question = $('#inputQuestionField').find('input[name=question]').val();
+        if(question){
+            $('#inputQuestionField').find('input[name=question]').val('')
+            const sendQuestionResult = presentationQuestionApi.sendQuestion(question, presentationId);
+            console.log('kq gui question', sendQuestionResult);
+        }
     }
 
     return (

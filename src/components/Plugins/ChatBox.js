@@ -30,7 +30,7 @@ function ChatBox({ connection, presentationId, userEmail }) {
 
     const sendMessage = async () => {
         const msg = $('#inputMsgField').find('input[name=message]').val();
-        if (msg) {
+        if (msg.trim()) {
             console.log('msg not empty');
             $('#inputMsgField').find('input[name=message]').val('');
             const sendMsgResult = await chatApi.sendMessage(userEmail, msg, presentationId);
@@ -42,10 +42,24 @@ function ChatBox({ connection, presentationId, userEmail }) {
             }
             
         }
+        else{
+            // eslint-disable-next-line no-undef
+            One.helpers('jq-notify', {
+                type: `${'danger'}`,
+                icon: `${'fa fa-times me-1'}`,
+                message: `Can not send empty message`
+            });
+        }
     }
 
     const dateFormat = (data) => {
         return new Date(data).toLocaleString()
+    }
+
+    const handleKeyPressInInputField = async(e) => {
+        if(e.key === 'Enter'){
+            sendMessage()
+        }
     }
 
     return (
@@ -90,7 +104,7 @@ function ChatBox({ connection, presentationId, userEmail }) {
                             </div>
                         </div>
                         <div className="card-footer d-flex justify-content-start align-items-center p-3" id="inputMsgField">
-                            <input type="text" className="form-control form-control-lg" name="message" placeholder="Type message" />
+                            <input onKeyUp={e => handleKeyPressInInputField(e)} type="text" className="form-control form-control-lg" name="message" placeholder="Type message" />
                             <span className="ms-3 link-info send-msg-btn"><i className="fas fa-paper-plane btn" onClick={sendMessage}></i></span>
                         </div>
                     </div>

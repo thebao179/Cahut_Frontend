@@ -1,4 +1,4 @@
-import { event } from "jquery";
+import { data, event } from "jquery";
 import { useEffect, useState } from "react";
 import presentationQuestionApi from "../../api/PresentationQuestionApi";
 import {HubConnectionBuilder} from "@microsoft/signalr";
@@ -69,23 +69,40 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
     const changeQuestionStatus = async(e) => {
         let questionId = $(e).find('input[name=questionId]').val();
         if(viewer == 'presenter'){
-            const markAnsweredResult = await presentationQuestionApi.markQuestionAsAnswered(questionId, groupId)
+            console.log('questionId', questionId);
+            console.log('groupId', groupId);
+            const updateQuestionStatusResult = await presentationQuestionApi.updateQuestionStatus(questionId, groupId)
             if(e.className == 'plugin-question__status plugin-question__notanswered'){
-                if(markAnsweredResult.status == true){
+                if(updateQuestionStatusResult.status == true){
                     e.className = 'plugin-question__status plugin-question__answered'
-                    e.innerHTML = 'Answered'
+                    // e.innerHTML = 'Answered'
+                    e.innerHTML = ` Answered
+                    <input name="questionId" type="hidden" value=${questionId}></input>
+                    `
                 }
                 else{
-
+                    // eslint-disable-next-line no-undef
+                    One.helpers('jq-notify', {
+                        type: `${'danger'}`,
+                        icon: `${'fa fa-times me-1'}`,
+                        message: updateQuestionStatusResult.message
+                    });
                 }
             }
             else{
-                if(markAnsweredResult.status == true){
+                if(updateQuestionStatusResult.status == true){
                     e.className = 'plugin-question__status plugin-question__notanswered'
-                    e.innerHTML = 'Not answered'
+                    // e.innerHTML = 'Not answered'
+                    e.innerHTML = ` Not answered
+                    <input name="questionId" type="hidden" value=${questionId}></input>`
                 }
                 else{
-
+                    // eslint-disable-next-line no-undef
+                    One.helpers('jq-notify', {
+                        type: `${'danger'}`,
+                        icon: `${'fa fa-times me-1'}`,
+                        message: updateQuestionStatusResult.message
+                    });
                 }
             }
         }
@@ -96,7 +113,12 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                     e.className = 'fas fa-thumbs-up'
                 }
                 else{
-
+                    // eslint-disable-next-line no-undef
+                    One.helpers('jq-notify', {
+                        type: `${'danger'}`,
+                        icon: `${'fa fa-times me-1'}`,
+                        message: upvoteQuestionResult.message
+                    });
                 }
             }
             else{
@@ -105,7 +127,12 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                     e.className = 'far fa-thumbs-up'
                 }
                 else{
-                    
+                    // eslint-disable-next-line no-undef
+                    One.helpers('jq-notify', {
+                        type: `${'danger'}`,
+                        icon: `${'fa fa-times me-1'}`,
+                        message: unUpvoteQuestionResult.message
+                    });
                 }
             }
         }
@@ -114,7 +141,7 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
 
     const sendQuestion = async () => {
         const question = $('#inputQuestionField').find('input[name=question]').val();
-        if(question){
+        if(question.trim()){
             $('#inputQuestionField').find('input[name=question]').val('')
             const sendQuestionResult = await presentationQuestionApi.sendQuestion(question, presentationId);
             if(sendQuestionResult.status == true){
@@ -124,6 +151,20 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
             }
             
             fetchData();
+        }
+        else{
+            // eslint-disable-next-line no-undef
+            One.helpers('jq-notify', {
+                type: `${'danger'}`,
+                icon: `${'fa fa-times me-1'}`,
+                message: `Can not send empty question`
+            });
+        }
+    }
+
+    const handleKeyPressInInputField = async(e) => {
+        if(e.key === 'Enter'){
+            sendQuestion()
         }
     }
 
@@ -180,7 +221,7 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                 <div className="btn btn-info btn-lg btn-block" data-mdb-toggle="collapse" href="#collapseQuestion"
                     role="button" aria-expanded="false">
                     <div className="d-flex justify-content-between align-items-center">
-                        <span style={{ paddingRight: "5px" }}>Question (123)</span>
+                        <span style={{ paddingRight: "5px" }}>Question ({presentationQuestion.length})</span>
                         <i class="far fa-question-circle"></i>
                     </div>
 
@@ -293,7 +334,7 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                     </div>
                                     }
                                 </td>
-                                {data.isUpvoted == true? 
+                                {data.isUpvote == true? 
                                     <td className="text-center" scope="row">
                                     <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
                                                 <input name="questionId" type="hidden" value={data.questionId}></input>
@@ -340,7 +381,7 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
 
                             </div>
                     <div className="send-question-field card-footer d-flex justify-content-start align-items-center p-3" id="inputQuestionField">
-                        <input type="text" className="form-control form-control-lg" name="question" placeholder="Type question" />
+                        <input onKeyUp={e => handleKeyPressInInputField(e)}  type="text" className="form-control form-control-lg" name="question" placeholder="Type question" />
                         <span className="ms-3 link-info send-msg-btn"><i className="fas fa-paper-plane btn" onClick={sendQuestion}></i></span>
                     </div>
                 </div>

@@ -43,7 +43,7 @@ const presentationQuestionApi = {
         return axiosClient.get(url, config);
     },
 
-    markQuestionAsAnswered: (questionId, groupId) =>{
+    updateQuestionStatus: (questionId, groupId) =>{
         const config = {
             params:{
                 questionId: questionId,

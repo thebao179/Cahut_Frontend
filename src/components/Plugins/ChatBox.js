@@ -10,7 +10,6 @@ function ChatBox({ connection, presentationId, userEmail }) {
     const fetchData = async () => {
         const chatMsgList = await chatApi.getAllChatMessages(presentationId);
         setChatMsgs(chatMsgList.data)
-        console.log(chatMsgList);
     }
 
     useEffect(() => {
@@ -23,15 +22,6 @@ function ChatBox({ connection, presentationId, userEmail }) {
             console.log(message);
             await fetchData();
         });
-        // if (connection) {
-        //     connection
-        //         .start()
-        //         .then(() => {
-        //             console.log(connection.connectionId);
-
-        //         })
-        //         .catch((error) => console.log(error));
-        // }
     }, [connection])
 
     const StopPropa = (e) => {
@@ -43,11 +33,14 @@ function ChatBox({ connection, presentationId, userEmail }) {
         if (msg) {
             console.log('msg not empty');
             $('#inputMsgField').find('input[name=message]').val('');
-            const sendMsgResult = chatApi.sendMessage(userEmail, msg, presentationId);
-            if (connection) {
-                await connection.send("SendMessage", presentationId, msg);
+            const sendMsgResult = await chatApi.sendMessage(userEmail, msg, presentationId);
+            if(sendMsgResult.status == true){
+                if (connection) {
+                    await connection.send("SendMessage", presentationId, msg);
+                }
+                fetchData();
             }
-            fetchData();
+            
         }
     }
 

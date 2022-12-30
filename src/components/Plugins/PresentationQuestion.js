@@ -116,10 +116,13 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
         const question = $('#inputQuestionField').find('input[name=question]').val();
         if(question){
             $('#inputQuestionField').find('input[name=question]').val('')
-            const sendQuestionResult = presentationQuestionApi.sendQuestion(question, presentationId);
-            if(connection){
-                connection.send("SendQuestion", presentationId, question);
+            const sendQuestionResult = await presentationQuestionApi.sendQuestion(question, presentationId);
+            if(sendQuestionResult.status == true){
+                if(connection){
+                    connection.send("SendQuestion", presentationId, question);
+                }
             }
+            
             fetchData();
         }
     }

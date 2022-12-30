@@ -228,10 +228,10 @@ function SlideDetail({usrToken, setToken}) {
             </div>
             <div className="middle-bottom-screen plugin-panel" >
                 <div className="plugin-panel__element">
-                    <ChatBox presentationId={params.id} userEmail={jwt(usrToken).email}></ChatBox>
+                    <ChatBox connection={connection} presentationId={params.id} userEmail={jwt(usrToken).email}></ChatBox>
                 </div>
                 <div className="plugin-panel__element">
-                    <PresentationQuestion presentationId={params.id} viewer={'presenter'} groupId = {groupId.current}></PresentationQuestion>
+                    <PresentationQuestion connection={connection} presentationId={params.id} viewer={'presenter'} groupId = {groupId.current}></PresentationQuestion>
                 </div>
             </div>
         </>

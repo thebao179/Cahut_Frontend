@@ -4,8 +4,8 @@ import presentationQuestionApi from "../../api/PresentationQuestionApi";
 import {HubConnectionBuilder} from "@microsoft/signalr";
 import $ from 'jquery';
 
-function PresentationQuestion({presentationId, viewer, groupId}) {
-    const [connection, setConnection] = useState();
+function PresentationQuestion({connection, presentationId, viewer, groupId}) {
+    //const [connection, setConnection] = useState();
     const [presentationQuestion, setPresentationQuestion] = useState([]);
     
     const fetchData = async() => {
@@ -26,28 +26,38 @@ function PresentationQuestion({presentationId, viewer, groupId}) {
         fetchData()
     }, [])
 
-    useEffect(() => {
-        const connect = new HubConnectionBuilder()
-            // .withUrl(process.env.REACT_APP_REALTIME_HOST + "?slideId=" + currSlideId.current, { accessTokenFactory: () => usrToken })
-            .withUrl(process.env.REACT_APP_REALTIME_HOST + "?presentationId=" + presentationId)
-            .withAutomaticReconnect()
-            .build();
-        setConnection(connect);
-    }, []);
+    // useEffect(() => {
+    //     const connect = new HubConnectionBuilder()
+    //         // .withUrl(process.env.REACT_APP_REALTIME_HOST + "?slideId=" + currSlideId.current, { accessTokenFactory: () => usrToken })
+    //         .withUrl(process.env.REACT_APP_REALTIME_HOST + "?presentationId=" + presentationId)
+    //         .withAutomaticReconnect()
+    //         .build();
+    //     setConnection(connect);
+    // }, []);
 
     useEffect(() => {
-        if (connection) {
-            connection
-                .start()
-                .then(() => {
-                    console.log(connection.connectionId);
-                    connection.on("ReceiveResult", (slideId, message) => {
-                        if (message === "updateResult")
-                            fetchData();
-                    });
-                })
-                .catch((error) => console.log(error));
-        }
+        connection.on("ReceiveQuestion", (slideId, question) => {
+            console.log("receive question: " + question)
+                fetchData();
+        });
+        connection.on("ChangeQuestionStatus", (slideId, question) => {
+                fetchData();
+        });
+        // if (connection) {
+        //     connection
+        //         .start()
+        //         .then(() => {
+        //             console.log(connection.connectionId);
+        //             connection.on("ReceiveQuestion", (slideId, question) => {
+        //                 console.log("receive question: " + question)
+        //                     fetchData();
+        //             });
+        //             connection.on("ChangeQuestionStatus", (slideId, question) => {
+        //                     fetchData();
+        //             });
+        //         })
+        //         .catch((error) => console.log(error));
+        // }
     }, [connection])
 
     console.log(viewer);
@@ -57,10 +67,7 @@ function PresentationQuestion({presentationId, viewer, groupId}) {
     };
 
     const changeQuestionStatus = async(e) => {
-        console.log(e);
         let questionId = $(e).find('input[name=questionId]').val();
-        console.log(e.className);
-        console.log('viewer', viewer);
         if(viewer == 'presenter'){
             const markAnsweredResult = await presentationQuestionApi.markQuestionAsAnswered(questionId, groupId)
             if(e.className == 'plugin-question__status plugin-question__notanswered'){
@@ -83,10 +90,8 @@ function PresentationQuestion({presentationId, viewer, groupId}) {
             }
         }
         else{
-            console.log('chay vao student');
             if(e.className == 'far fa-thumbs-up'){
                 const upvoteQuestionResult = await presentationQuestionApi.upvoteQuestion(questionId)
-                console.log('ket qua like');
                 if(upvoteQuestionResult.status == true){
                     e.className = 'fas fa-thumbs-up'
                 }
@@ -96,8 +101,6 @@ function PresentationQuestion({presentationId, viewer, groupId}) {
             }
             else{
                 const unUpvoteQuestionResult = await presentationQuestionApi.unUpvoteQuestion(questionId)
-                console.log('ket qua unlike');
-                
                 if(unUpvoteQuestionResult.status == true){
                     e.className = 'far fa-thumbs-up'
                 }
@@ -106,13 +109,19 @@ function PresentationQuestion({presentationId, viewer, groupId}) {
                 }
             }
         }
+        connection.send("ChangeQuestionStatus", presentationId, questionId);
     }
 
     const sendQuestion = async () => {
-        const msg = $('#inputQuestionField').find('input[name=question]').val();
-        $('#inputQuestionField').find('input[name=question]').val('')
-        const sendQuestionResult = presentationQuestionApi.sendQuestion(msg, presentationId);
-        console.log('kq gui question', sendQuestionResult);
+        const question = $('#inputQuestionField').find('input[name=question]').val();
+        if(question){
+            $('#inputQuestionField').find('input[name=question]').val('')
+            const sendQuestionResult = presentationQuestionApi.sendQuestion(question, presentationId);
+            if(connection){
+                connection.send("SendQuestion", presentationId, question);
+            }
+            fetchData();
+        }
     }
 
     return (

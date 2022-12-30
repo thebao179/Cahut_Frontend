@@ -34,7 +34,6 @@ function SlideDetail({usrToken, setToken}) {
     const fetchData = async () => {
         if (isInitial.current) {
             const info = await presentationApi.getPresentationInfoTeacher(params.id);
-            console.log(info)
             if (info.status) {
                 pType.current = info.data.presentationType;
                 groupId.current = info.data.groupId;
@@ -131,7 +130,7 @@ function SlideDetail({usrToken, setToken}) {
 
     const endPresentation = async () => {
         const result = await presentationApi.endPresentation(params.id);
-        if (result.status) navigate(-1);
+        if (result.status) navigate('/presentation/edit/' + params.id);
     }
 
     if (!isAccess) {

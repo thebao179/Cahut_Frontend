@@ -14,7 +14,7 @@ import headingSlideApi from "../api/HeadingSlideApi";
 import paragraphSlideApi from "../api/ParagraphSlideApi";
 import jwt from "jwt-decode";
 
-function PresentationView({usrToken}) {
+function PresentationView({usrToken, setToken}) {
     const params = useParams();
     const [answers, setAnswers] = useState([]);
     const [question, setQuestion] = useState();
@@ -38,21 +38,23 @@ function PresentationView({usrToken}) {
         if (data.answer) {
             await choiceApi.submitAnswer(data.answer);
             setIsSubmitted(true);
-            // if (pType.current === "group") {
-            //     const email = jwt(usrToken).email;
-            //     const quesId = question.questionId;
-            //     const arr = JSON.parse(localStorage.getItem('syssave'));
-            //     arr.push(`${email};${quesId}`);
-            //     localStorage.setItem('syssave', JSON.stringify(arr));
-            // }
-            if (connection) {
-                await connection.send("SendResult", params.id, "updateResult");
+            if (pType.current === "group") {
+
             }
+            if (connection) await connection.send("SendResult", params.id, "updateResult");
         }
         else One.helpers('jq-notify', {type: 'danger', icon: 'fa fa-times me-1', message: 'Please submit your answer'});
     };
 
     const fetchData = async () => {
+        if (usrToken) {
+            const payload = jwt(usrToken);
+            const currentDate = new Date();
+            if (payload.exp * 1000 < currentDate.getTime()) {
+                localStorage.removeItem('token');
+                setToken('');
+            }
+        }
         if (isInitial.current) {
             const res = await presentationApi.getPresentationType(params.id);
             if (res.status) {
@@ -77,22 +79,17 @@ function PresentationView({usrToken}) {
         if (pType.current === "public") result = await presentationApi.getCurrentSlidePublic(params.id);
         else if (pType.current === "group") result = await presentationApi.getCurrentSlideGroup(params.id, groupId.current);
         if (result.status) {
+            setIsSubmitted(false);
             currSlideId.current = result.data.slideId;
             setType(result.data.slideType);
             if (result.data.slideType === "multipleChoice") {
-                setIsSubmitted(dataChanged.current);
-                dataChanged.current = !dataChanged.current;
+                if (dataChanged.current) {
+                    dataChanged.current = false;
+                    setIsSubmitted(true);
+                }
                 const question = await multipleChoiceQuestionApi.getQuestion(result.data.slideId);
                 setQuestion(question.data);
                 if (question.data) {
-                    // const arr = JSON.parse(localStorage.getItem('syssave'));
-                    // for (const ele of arr) {
-                    //     const str = ele.split(';');
-                    //     if (str[0] === jwt(usrToken).email && str[1] === question.data.questionId) {
-                    //         setIsSubmitted(true);
-                    //         break;
-                    //     }
-                    // }
                     const answers = await choiceApi.getAnswers(question.data.questionId);
                     setAnswers(answers.data);
                 } else setAnswers([]);
@@ -132,6 +129,7 @@ function PresentationView({usrToken}) {
                         fetchData();
                     });
                     connection.on("ChangeSlide", (presentationId, action) => {
+                        dataChanged.current = false;
                         fetchData();
                     })
                 })
@@ -169,7 +167,13 @@ function PresentationView({usrToken}) {
         )
     }
 
-    if (isSubmitted) {
+    if (!isAccess) {
+        return (
+            <></>
+        );
+    }
+
+    else if (isSubmitted) {
         return (
             <Container>
                 <div className="block-content text-center">
@@ -194,12 +198,6 @@ function PresentationView({usrToken}) {
                 </div>
             </Container>
         )
-    }
-
-    if (!isAccess) {
-        return (
-            <></>
-        );
     }
 
     return (
@@ -267,7 +265,7 @@ function PresentationView({usrToken}) {
             </div>
             <div className="middle-bottom-screen plugin-panel" >
                 <div className="plugin-panel__element">
-                    <ChatBox presentationId={params.id} userEmail={typeof(jwt) !== "undefined" ? jwt(usrToken).email : null}></ChatBox>
+                    <ChatBox presentationId={params.id} userEmail={usrToken ? jwt(usrToken).email : null}></ChatBox>
                 </div>
                 <div className="plugin-panel__element">
                     <PresentationQuestion presentationId={params.id} viewer={'student'} groupId = {groupId.current}></PresentationQuestion >

@@ -75,7 +75,7 @@ function App() {
         },
         {
             path: "/view/:id",
-            element: <PresentationView usrToken={token}/>
+            element: <PresentationView usrToken={token} setToken={setToken}/>
         },
         {
             path: "/presentation/present/:id",

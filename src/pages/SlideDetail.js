@@ -146,11 +146,13 @@ function SlideDetail({usrToken, setToken}) {
                     <button type="button" className="btn btn-lg btn-danger" onClick={endPresentation}>
                         <i className="fa fa-fw fa-xmark"></i> End
                     </button>
-                    <Link to={'/presentation/result/' + params.id}>
-                        <button type="button" className="btn btn-lg btn-alt-info ms-3">
-                            <i className="fa fa-fw fa-square-poll-vertical me-1"></i> View Results
-                        </button>
-                    </Link>
+                    {pType.current === "group" &&
+                        <Link to={'/presentation/result/' + params.id}>
+                            <button type="button" className="btn btn-lg btn-alt-info ms-3">
+                                <i className="fa fa-fw fa-square-poll-vertical me-1"></i> View Results
+                            </button>
+                        </Link>
+                    }
                 </div>
                 {isPrev &&
                     <div className="middle-screen" style={{left: 0}}>

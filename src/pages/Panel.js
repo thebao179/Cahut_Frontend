@@ -38,11 +38,12 @@ function Panel({component, usrToken, setToken}) {
                 .start()
                 .then(() => {
                     connection.on("NotifyGroup", (notifyInfo) => {
+                        console.log(notifyInfo);
                         One.helpers('jq-notify', {
                             type: 'info',
                             icon: 'fa fa-info-circle me-1',
-                            message: `Presentating in group: ${notifyInfo.grpName}`,
-                            url: notifyInfo.link,
+                            message: `Click here! Go to view presentation in group: ${notifyInfo.grpName}`,
+                            url: `${notifyInfo.link}`,
                         });
                     });
                 })

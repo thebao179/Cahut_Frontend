@@ -2,6 +2,8 @@
 import {useNavigate, useParams} from "react-router-dom";
 import React, {useEffect, useRef, useState} from "react";
 import presentationApi from "../../api/PresentationApi";
+import multipleChoiceQuestionApi from "../../api/MultipleChoiceQuestionApi";
+import choiceApi from "../../api/ChoiceApi";
 
 function PresentationResult({token}) {
     const params = useParams();
@@ -10,7 +12,6 @@ function PresentationResult({token}) {
     const [presName, setPresName] = useState();
     const [questions, setQuestions] = useState([]);
     const [choices, setChoices] = useState([]);
-    const [refresh, setRefresh] = useState(0);
     const [isAccess, setIsAccess] = useState(false);
 
     useEffect(() => {
@@ -20,6 +21,8 @@ function PresentationResult({token}) {
             else navigate('/dashboard');
             const result = await presentationApi.getPresentationName(params.id);
             if (result.status) setPresName(result.data.presentationName);
+            const questionArr = await multipleChoiceQuestionApi.getResultQuestions(params.id);
+            if (questionArr.status) setQuestions(questionArr.data);
             isInitial = false;
         }
         if (isInitial && token) fetchData();
@@ -33,25 +36,11 @@ function PresentationResult({token}) {
                 destroy: true,
                 bInfo: false,
             });
-    }, [choices, refresh]);
+    }, [choices]);
 
-    const getResults = (e) => {
-        //console.log(e.target.value);
-        setChoices([
-            {username: "trong le2", email: 'hello owlr'},
-            {username: "trong le3", email: 'hello owlr'},
-            {username: "trong le2", email: 'hello owlr'},
-            {username: "trong le3", email: 'hello owlr'},
-            {username: "trong le2", email: 'hello owlr'},
-            {username: "trong le3", email: 'hello owlr'},
-            {username: "trong le2", email: 'hello owlr'},
-            {username: "trong le3", email: 'hello owlr'},
-            {username: "trong le2", email: 'hello owlr'},
-            {username: "trong le3", email: 'hello owlr'},
-            {username: "trong le2", email: 'hello owlr'},
-            {username: "trong le3", email: 'hello owlr'},
-        ]);
-        setRefresh(refresh + 1);
+    const getResults = async (e) => {
+        const choiceArr = await choiceApi.getChoiceResults(params.id, e.target.value);
+        if (choiceArr.status) setChoices(choiceArr.data);
         if (DataTable.isDataTable('#presentation-results'))
             $('#presentation-results').DataTable().destroy();
     }
@@ -74,8 +63,9 @@ function PresentationResult({token}) {
                 <label className="fw-bold mb-1">Question</label>
                 <select className="form-select" onChange={getResults}>
                     <option hidden>Choose your question</option>
-                    <option value="1">Option #1</option>
-                    <option value="2">Option #2</option>
+                    {questions.map(e =>
+                        <option key={e.questionId} value={e.questionId}>{e.content}</option>
+                    )}
                 </select>
             </div>
             <div className="mt-4 mb-4" id="result-table">
@@ -92,15 +82,11 @@ function PresentationResult({token}) {
                     </thead>
                     <tbody>
                     {choices.map(e =>
-                        <tr key={e.email} id={`row_${e.email}`}>
-                            <td className="fw-semibold fs-sm">{e.username}</td>
+                        <tr key={e.email}>
+                            <td className="fw-semibold fs-sm">{e.userName}</td>
                             <td className="d-none d-sm-table-cell fs-sm">{e.email}</td>
-                            <td className="d-none d-sm-table-cell">
-
-                            </td>
-                            <td>
-
-                            </td>
+                            <td className="d-none d-sm-table-cell fw-semibold">{e.choiceContent}</td>
+                            <td>{new Date(e.submitTime).toLocaleString('en-GB')}</td>
                         </tr>
                     )}
                     </tbody>

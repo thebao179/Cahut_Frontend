@@ -27,6 +27,25 @@ const choiceApi = {
         }
         const url = "/slide/multiplechoice/submitchoice";
         return axiosClient.post(url, null, config);
+    },
+    checkSubmitted: (questionId) => {
+        const config = {
+            params: {
+                questionId: questionId
+            }
+        }
+        const url = "/slide/multiplechoice/checkSubmitted";
+        return axiosClient.get(url, config);
+    },
+    getChoiceResults: (presentationId, questionId) => {
+        const config = {
+            params: {
+                questionId: questionId,
+                presentationId: presentationId,
+            }
+        }
+        const url = "/presentation/get/choiceResult";
+        return axiosClient.get(url, config);
     }
 }
 

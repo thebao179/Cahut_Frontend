@@ -38,9 +38,6 @@ function PresentationView({usrToken, setToken}) {
         if (data.answer) {
             await choiceApi.submitAnswer(data.answer);
             setIsSubmitted(true);
-            if (pType.current === "group") {
-
-            }
             if (connection) await connection.send("SendResult", params.id, "updateResult");
         }
         else One.helpers('jq-notify', {type: 'danger', icon: 'fa fa-times me-1', message: 'Please submit your answer'});
@@ -90,6 +87,10 @@ function PresentationView({usrToken, setToken}) {
                 const question = await multipleChoiceQuestionApi.getQuestion(result.data.slideId);
                 setQuestion(question.data);
                 if (question.data) {
+                    if (pType.current === "group") {
+                        const cSubmitted = await choiceApi.checkSubmitted(question.data.questionId);
+                        if (!cSubmitted.status) setIsSubmitted(true);
+                    }
                     const answers = await choiceApi.getAnswers(question.data.questionId);
                     setAnswers(answers.data);
                 } else setAnswers([]);
@@ -195,6 +196,14 @@ function PresentationView({usrToken, setToken}) {
                             </Bar>
                         </BarChart>
                     </ResponsiveContainer>
+                </div>
+                <div className="middle-bottom-screen plugin-panel" >
+                    <div className="plugin-panel__element">
+                        <ChatBox connection={connection} presentationId={params.id} userEmail={usrToken ? jwt(usrToken).email : null}></ChatBox>
+                    </div>
+                    <div className="plugin-panel__element">
+                        <PresentationQuestion connection={connection} presentationId={params.id} viewer={'student'} groupId = {groupId.current}></PresentationQuestion >
+                    </div>
                 </div>
             </Container>
         )

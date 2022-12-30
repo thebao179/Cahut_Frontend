@@ -34,7 +34,6 @@ function SlideDetail({usrToken, setToken}) {
     const fetchData = async () => {
         if (isInitial.current) {
             const info = await presentationApi.getPresentationInfoTeacher(params.id);
-            console.log(info)
             if (info.status) {
                 pType.current = info.data.presentationType;
                 groupId.current = info.data.groupId;
@@ -131,7 +130,7 @@ function SlideDetail({usrToken, setToken}) {
 
     const endPresentation = async () => {
         const result = await presentationApi.endPresentation(params.id);
-        if (result.status) navigate(-1);
+        if (result.status) navigate('/presentation/edit/' + params.id);
     }
 
     if (!isAccess) {
@@ -147,11 +146,13 @@ function SlideDetail({usrToken, setToken}) {
                     <button type="button" className="btn btn-lg btn-danger" onClick={endPresentation}>
                         <i className="fa fa-fw fa-xmark"></i> End
                     </button>
-                    <Link to={'/presentation/result/' + params.id}>
-                        <button type="button" className="btn btn-lg btn-alt-info ms-3">
-                            <i className="fa fa-fw fa-square-poll-vertical me-1"></i> View Results
-                        </button>
-                    </Link>
+                    {pType.current === "group" &&
+                        <Link to={'/presentation/result/' + params.id}>
+                            <button type="button" className="btn btn-lg btn-alt-info ms-3">
+                                <i className="fa fa-fw fa-square-poll-vertical me-1"></i> View Results
+                            </button>
+                        </Link>
+                    }
                 </div>
                 {isPrev &&
                     <div className="middle-screen" style={{left: 0}}>

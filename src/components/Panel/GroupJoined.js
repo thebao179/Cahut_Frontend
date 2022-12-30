@@ -4,7 +4,7 @@ import GroupDetail from "../Modals/GroupDetail";
 import groupApi from "../../api/GroupApi";
 import jwt from 'jwt-decode';
 
-function GroupJoined({token, grpCreate}) {
+function GroupJoined({token, grpCreate, connection}) {
     const [groupId, setGroupId] = useState();
     const [role, setRole] = useState(0);
     const [groups, setGroups] = useState();
@@ -67,7 +67,7 @@ function GroupJoined({token, grpCreate}) {
                     {groups}
                 </div>
             </div>
-            <GroupDetail groupId={groupId} role={role} self={self} setGrpRefresh={setGrpRefresh} grpRefresh={grpRefresh}/>
+            <GroupDetail groupId={groupId} role={role} self={self} setGrpRefresh={setGrpRefresh} grpRefresh={grpRefresh} connection={connection}/>
         </>
     );
 }

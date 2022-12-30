@@ -37,9 +37,14 @@ function Panel({component, usrToken, setToken}) {
             connection
                 .start()
                 .then(() => {
-                    console.log(connection.connectionId);
                     connection.on("NotifyGroup", (notifyInfo) => {
                         console.log(notifyInfo);
+                        One.helpers('jq-notify', {
+                            type: 'info',
+                            icon: 'fa fa-info-circle me-1',
+                            message: `Click here! Go to view presentation in group: ${notifyInfo.grpName}`,
+                            url: `${notifyInfo.link}`,
+                        });
                     });
                 })
                 .catch((error) => console.log(error));
@@ -77,8 +82,8 @@ function Panel({component, usrToken, setToken}) {
                 <Navbar component={component}/>
                 {component === 'dashboard' &&
                     <Dashboard token={usrToken} grpCreate={grpCreate} presentationsCreate={presentationsCreated}/>}
-                {component === 'gjoined' && <GroupJoined token={usrToken} grpCreate={grpCreate}/>}
-                {component === 'gowned' && <GroupOwned token={usrToken} grpCreate={grpCreate}/>}
+                {component === 'gjoined' && <GroupJoined token={usrToken} grpCreate={grpCreate} connection={connection}/>}
+                {component === 'gowned' && <GroupOwned token={usrToken} grpCreate={grpCreate} connection={connection}/>}
                 {component === 'profile' &&
                     <Profile token={usrToken} profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
                 {component === 'powned' &&

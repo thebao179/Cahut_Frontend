@@ -5,7 +5,7 @@ import GroupDetail from "../Modals/GroupDetail";
 import groupApi from "../../api/GroupApi";
 import jwt from 'jwt-decode';
 
-function GroupOwned({token, grpCreate}) {
+function GroupOwned({token, grpCreate, connection}) {
     const [groupId, setGroupId] = useState();
     const [groups, setGroups] = useState();
     const [self, setSelf] = useState();
@@ -88,7 +88,7 @@ function GroupOwned({token, grpCreate}) {
                     {groups}
                 </div>
             </div>
-            <GroupDetail groupId={groupId} role={'Owner'} self={self} setGrpRefresh={setGrpRefresh} grpRefresh={grpRefresh}/>
+            <GroupDetail groupId={groupId} role={'Owner'} self={self} setGrpRefresh={setGrpRefresh} grpRefresh={grpRefresh} connection={connection}/>
         </>
     );
 }

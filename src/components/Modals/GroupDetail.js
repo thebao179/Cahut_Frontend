@@ -7,17 +7,19 @@ function validateEmail(email) {
     return str.test(email);
 }
 
-function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh}) {
+function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh, connection}) {
     const [data, setData] = useState([]);
     const [invitation, setInvitation] = useState();
     const [present, setPresent] = useState({});
     let idChanged = useRef(false);
 
-    const getPresentation = async () => {
-        const result = await groupApi.getPresentation(groupId);
-        if (result.status) setPresent(result.data);
-        else setPresent({});
-    }
+    useEffect(() => {
+        if (connection && groupId) {
+            connection.on("NotifyGroup", (notifyInfo) => {
+                getPresentation();
+            });
+        }
+    }, [connection, groupId])
 
     useEffect(() => {
         async function fetchData() {
@@ -26,7 +28,6 @@ function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh}) {
             setData(groupMems.data);
             setInvitation(groupInv.data);
         }
-
         if (idChanged.current) {
             if (!DataTable.isDataTable('#group-members'))
                 $('#group-members').DataTable({
@@ -61,6 +62,12 @@ function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh}) {
             idChanged.current = true;
         }
     }, [groupId, data]);
+
+    const getPresentation = async () => {
+        const result = await groupApi.getPresentation(groupId);
+        if (result.status) setPresent(result.data);
+        else setPresent({});
+    }
 
     if (DataTable.isDataTable('#group-members'))
         $('#group-members').DataTable().destroy();

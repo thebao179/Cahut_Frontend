@@ -17,6 +17,10 @@ const collabApi = {
     removeCollab: (presentationId, email) => {
         const url = "/presentation/removeCollaborator";
         return axiosClient.post(url, {presentationId: presentationId, email: email});
+    },
+    addCollab: (presentationId, email) => {
+        const url = "/presentation/addCollaborator";
+        return axiosClient.post(url, {presentationId: presentationId, email: email});
     }
 };
 

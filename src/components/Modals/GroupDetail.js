@@ -49,14 +49,14 @@ function GroupDetail({groupId, role, self, setGrpRefresh, grpRefresh, connection
                 multiple: true,
                 createTag: function (term, data) {
                     const value = term.term;
-                    if (validateEmail(value)) {
+                    if (validateEmail(value))
                         return {
                             id: value,
                             text: value
                         };
-                    }
                     return null;
                 },
+                selectOnClose: true,
             });
             $('#group-select2').val(null).trigger('change');
             idChanged.current = true;

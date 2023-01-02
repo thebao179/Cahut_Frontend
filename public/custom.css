@@ -92,12 +92,17 @@
 
 .plugin-student-question__board{
     height: 380px;
+    /* overflow-anchor: none; */
     overflow-y: scroll;
+    /* overscroll-behavior-y: contain;
+    scroll-snap-type: y proximity; */
 }
 
 .plugin-teacher-question__board{
     overflow-y: scroll;
-    
+    /* overflow-anchor: none; */
+    /* overscroll-behavior-y: contain;
+    scroll-snap-type: y proximity; */
 }
 
 .plugin-question__status{

@@ -43,6 +43,26 @@ const presentationQuestionApi = {
         return axiosClient.get(url, config);
     },
 
+    getAnsweredQuestion: (presentationId) => {
+        const config = {
+            params:{
+                presentationId:presentationId,
+            },
+        }
+        const url = "/question/getAnsweredQuestions";
+        return axiosClient.get(url,config);
+    },
+
+    getUnAnsweredQuestion: (presentationId) => {
+        const config = {
+            params:{
+                presentationId:presentationId,
+            },
+        }
+        const url = "/question/getUnAnsweredQuestions";
+        return axiosClient.get(url,config);
+    },
+
     updateQuestionStatus: (questionId, groupId) =>{
         const config = {
             params:{

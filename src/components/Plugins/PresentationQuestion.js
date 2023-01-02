@@ -1,5 +1,5 @@
 import { data, event } from "jquery";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import presentationQuestionApi from "../../api/PresentationQuestionApi";
 import {HubConnectionBuilder} from "@microsoft/signalr";
 import $ from 'jquery';
@@ -7,24 +7,42 @@ import $ from 'jquery';
 function PresentationQuestion({connection, presentationId, viewer, groupId}) {
     //const [connection, setConnection] = useState();
     const [presentationQuestion, setPresentationQuestion] = useState([]);
+    const questionFilter = useRef('All status')
     
-    const fetchData = async() => {
-        const questionList = await presentationQuestionApi.getAllQuestion(presentationId);
-        console.log('lit question ne', questionList);
+    // const fetchData = async() => {
+    //     const questionList = await presentationQuestionApi.getAll statusQuestion(presentationId);
+    //     console.log('lit question ne', questionList);
 
-        const questionUpvoted = [];
-        for(let i =0; i < questionList.length; i ++){
-            questionUpvoted.push(questionList[i].isAnswered);
+    //     const questionUpvoted = [];
+    //     for(let i =0; i < questionList.length; i ++){
+    //         questionUpvoted.push(questionList[i].isAnswered);
+    //     }
+
+    //     console.log('arr upvote cau hoi',questionUpvoted);
+
+    //     setPresentationQuestion(questionList.data);
+    // }
+
+    const fetchData = async() => {
+        if(questionFilter.current === 'All status'){
+            const questionList = await presentationQuestionApi.getAllQuestion(presentationId);
+            setPresentationQuestion(questionList.data);
+        }
+        else if(questionFilter.current === 'Not answered'){
+            const questionList = await presentationQuestionApi.getUnAnsweredQuestion(presentationId);
+            setPresentationQuestion(questionList.data);
+        }
+        else if(questionFilter.current === 'Answered'){
+            const questionList = await presentationQuestionApi.getAnsweredQuestion(presentationId);
+            setPresentationQuestion(questionList.data);
         }
 
-        console.log('arr upvote cau hoi',questionUpvoted);
-
-        setPresentationQuestion(questionList.data);
     }
 
     useEffect(() => {
         fetchData()
     }, [])
+
 
     // useEffect(() => {
     //     const connect = new HubConnectionBuilder()
@@ -37,11 +55,10 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
 
     useEffect(() => {
         connection.on("ReceiveQuestion", (slideId, question) => {
-            console.log("receive question: " + question)
-                fetchData();
+                fetchData(questionFilter.current);
         });
         connection.on("ChangeQuestionStatus", (slideId, question) => {
-                fetchData();
+                fetchData(questionFilter.current);
         });
         // if (connection) {
         //     connection
@@ -60,25 +77,24 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
         // }
     }, [connection])
 
-    console.log(viewer);
 
     const StopPropa = (e) => {
         e.stopPropagation();
     };
 
     const changeQuestionStatus = async(e) => {
-        let questionId = $(e).find('input[name=questionId]').val();
+        let questionId = $(e.target).find('input[name=questionId]').val();
         if(viewer == 'presenter'){
-            console.log('questionId', questionId);
-            console.log('groupId', groupId);
             const updateQuestionStatusResult = await presentationQuestionApi.updateQuestionStatus(questionId, groupId)
-            if(e.className == 'plugin-question__status plugin-question__notanswered'){
+            if(e.target.className == 'plugin-question__status plugin-question__notanswered' ){
                 if(updateQuestionStatusResult.status == true){
-                    e.className = 'plugin-question__status plugin-question__answered'
-                    // e.innerHTML = 'Answered'
-                    e.innerHTML = ` Answered
-                    <input name="questionId" type="hidden" value=${questionId}></input>
-                    `
+                    if(questionFilter.current == 'All status'){
+                        e.target.className = 'plugin-question__status plugin-question__answered'
+                        // e.innerHTML = 'Answered'
+                        e.target.innerHTML = ` Answered
+                        <input name="questionId" type="hidden" value=${questionId}></input>
+                        `
+                    }
                 }
                 else{
                     // eslint-disable-next-line no-undef
@@ -91,10 +107,12 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
             }
             else{
                 if(updateQuestionStatusResult.status == true){
-                    e.className = 'plugin-question__status plugin-question__notanswered'
-                    // e.innerHTML = 'Not answered'
-                    e.innerHTML = ` Not answered
-                    <input name="questionId" type="hidden" value=${questionId}></input>`
+                    if(questionFilter.current == 'All status'){
+                        e.target.className = 'plugin-question__status plugin-question__notanswered'
+                        // e.innerHTML = 'Not answered'
+                        e.target.innerHTML = ` Not answered
+                        <input name="questionId" type="hidden" value=${questionId}></input>`
+                    }
                 }
                 else{
                     // eslint-disable-next-line no-undef
@@ -107,10 +125,10 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
             }
         }
         else{
-            if(e.className == 'far fa-thumbs-up'){
+            if(e.target.className == 'far fa-thumbs-up'){
                 const upvoteQuestionResult = await presentationQuestionApi.upvoteQuestion(questionId)
                 if(upvoteQuestionResult.status == true){
-                    e.className = 'fas fa-thumbs-up'
+                    e.target.className = 'fas fa-thumbs-up'
                 }
                 else{
                     // eslint-disable-next-line no-undef
@@ -124,7 +142,7 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
             else{
                 const unUpvoteQuestionResult = await presentationQuestionApi.unUpvoteQuestion(questionId)
                 if(unUpvoteQuestionResult.status == true){
-                    e.className = 'far fa-thumbs-up'
+                    e.target.className = 'far fa-thumbs-up'
                 }
                 else{
                     // eslint-disable-next-line no-undef
@@ -148,8 +166,7 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                 if(connection){
                     connection.send("SendQuestion", presentationId, question);
                 }
-            }
-            
+            }  
             fetchData();
         }
         else{
@@ -168,54 +185,19 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
         }
     }
 
+    const handleQuestionFilter = async(e) => {
+        let filterString = e.target.innerHTML;
+        const dropDownBtn = document.getElementById('dropdown-default-primary')
+        dropDownBtn.innerHTML = filterString;
+        if(filterString != questionFilter.current){
+            console.log('filter string', filterString);
+            questionFilter.current = filterString;
+            fetchData();
+        }
+    }
+
     return (
         <>
-            {/* <div className="collapse mt-3 plugin-data" id="collapseQuestion" >
-                        <table className="table table-hover table-vcenter">
-                            <thead>
-                                <tr>
-                                    <th className="text-center" style={{ width: "50px" }}>
-                                        Order
-                                    </th>
-                                    <th>Question</th>
-                                    <th>Upvote</th>
-                                    <th>
-                                        Status
-                                    </th>
-                                    <th className="text-center" style={{ width: "100px" }}>
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th className="text-center" scope="row">
-                                        1
-                                    </th>
-                                    <td className="fw-semibold fs-sm">
-                                        This is a question
-                                    </td>
-                                    <td className="text-center" scope="row">
-                                        12
-                                    </td>
-                                    <td className="text-center" scope="row">
-                                        Answered
-                                    </td>
-                                    <td className="text-center" scope="row">
-                                        <div className="btn-group">
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary"
-                                            >
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                            <span>Mark as answered</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div> */}
 
             <div className="plugin-container" >
                 <div className="btn btn-info btn-lg btn-block" data-mdb-toggle="collapse" href="#collapseQuestion"
@@ -230,7 +212,7 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                 {
                     viewer == 'presenter' ?
                     <div className="collapse mt-3 plugin-data-question plugin-question__body plugin-teacher-question__board" id="collapseQuestion" >
-                    <table className="table table-hover table-vcenter " style={{ width: "max-content"}}>
+                    <table id="tableAnswer" className="table table-hover table-vcenter " style={{ width: "max-content"}}>
                         <thead>
                             <tr>
                                 <th className="text-center plugin-table-th" style={{ width: "50px" }}>
@@ -239,7 +221,17 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                 <th className="text-center plugin-table-th" style={{ width: "250px" }}>Question</th>
                                 <th className="plugin-table-th">Upvote</th>
                                 <th className="plugin-table-th">
-                                     Status
+                                     <div class="dropdown" id="filterQuestionDropdown">
+                                        <div  name="btnFilterQuestion" type="button" class="btn btn-primary dropdown-toggle" id="dropdown-default-primary" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        All status
+                                        </div>
+                                        <div class="dropdown-menu fs-sm" aria-labelledby="dropdown-default-primary">
+                                            <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Answered</span>
+                                            <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Not answered</span>
+                                            <div class="dropdown-divider"></div>
+                                            <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">All status</span>
+                                        </div>
+                                    </div>
                                 </th>
                             </tr>
                         </thead>
@@ -258,12 +250,12 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                 </td>
                                 <td className="text-center" scope="row">
                                     {data.isAnswered == true? 
-                                    <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__answered">
+                                    <div onClick={e => changeQuestionStatus(e)} type="button" className="plugin-question__status plugin-question__answered">
                                     Answered
                                     <input name="questionId" type="hidden" value={data.questionId}></input>
                                     </div>
                                     :
-                                    <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
+                                    <div onClick={e => changeQuestionStatus(e)} type="button" className="plugin-question__status plugin-question__notanswered">
                                             Not answered
                                             <input name="questionId" type="hidden" value={data.questionId}></input>
                                             </div>
@@ -271,24 +263,6 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                 </td>
                                 </tr>
                             )}
-                            {/* <tr>
-                                <th className="text-center" scope="row">
-                                    1
-                                </th>
-                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
-                                    This is a question 1
-                                </td>
-                                <td className="text-center" scope="row">
-                                    12
-                                </td>
-                                <td className="text-center" scope="row">
-                                    <div onClick={e => changeQuestionStatus(e.target)} type="button" className="plugin-question__status plugin-question__notanswered">
-                                            Not answered
-                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
-                                            </div>
-                                    
-                                </td>
-                            </tr> */}
                         </tbody>
                     </table>
                 </div>
@@ -304,7 +278,19 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                 </th>
                                 <th className="text-center plugin-table-th" style={{ width: "250px" }}>Question</th>
                                 <th className="plugin-table-th">Upvote</th>
-                                <th className="plugin-table-th">Is answered</th>
+                                <th className="plugin-table-th">
+                                    <div class="dropdown" id="filterQuestionDropdown">
+                                            <div  name="btnFilterQuestion" type="button" class="btn btn-primary dropdown-toggle" id="dropdown-default-primary" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            All status
+                                            </div>
+                                            <div class="dropdown-menu fs-sm" aria-labelledby="dropdown-default-primary">
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Answered</span>
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Not answered</span>
+                                                <div class="dropdown-divider"></div>
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">All status</span>
+                                            </div>
+                                        </div>
+                                </th>
                                 <th className="plugin-table-th">
                                      Actions
                                 </th>   
@@ -336,14 +322,14 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                 </td>
                                 {data.isUpvote == true? 
                                     <td className="text-center" scope="row">
-                                    <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                    <i onClick={e => changeQuestionStatus(e)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
                                                 <input name="questionId" type="hidden" value={data.questionId}></input>
                                             </i>   
                                         
                                     </td>
                                     :
                                     <td className="text-center" scope="row">
-                                    <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="far fa-thumbs-up" style={{"fontSize":"20px"}}>
+                                    <i onClick={e => changeQuestionStatus(e)} type="button" name="UpvoteIcon" className="far fa-thumbs-up" style={{"fontSize":"20px"}}>
                                                 <input name="questionId" type="hidden" value={data.questionId}></input>
                                             </i>   
                                         
@@ -353,29 +339,6 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                 
                                 </tr>
                             )}
-                            {/* <tr>
-                                <td className="text-center" scope="row">
-                                    1
-                                </td>
-                                <td className="fw-semibold fs-sm" style={{ padding: "0px", textAlign:"center"}}>
-                                    This is a question 1
-                                </td>
-                                <td className="text-center" scope="row">
-                                    12
-                                </td>
-                                <td className="text-center" scope="row">
-                                <div className="plugin-question__status plugin-question__notanswered">
-                                            Not answered
-                                            </div>
-                                </td>
-
-                                <td className="text-center" scope="row">
-                                <i onClick={e => changeQuestionStatus(e.target)} type="button" name="UpvoteIcon" className="fas fa-thumbs-up" style={{"fontSize":"20px"}}>
-                                            <input name="questionId" type="hidden" value={"QuestionId"}></input>
-                                        </i>   
-                                    
-                                </td>
-                            </tr> */}
                         </tbody>
                     </table>
 
@@ -388,248 +351,6 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                 }
 
             </div>
-
-            {/* <div className="col-md-6">
-                <div className={isQuestionHide ? 'block':'block block-mode-hidden'}>
-                    <div className="block-header block-header-default">
-                        <h3 className="block-title">Question <small>(Num of question)</small></h3>
-                        <div className="block-options">
-                            <button onClick={ToggleQuestionPanel} type="button" className="btn-block-option" data-toggle="block-option" data-action="content_toggle"><i className={isQuestionHide ? 'si si-arrow-up' :'si si-arrow-down'}></i></button>
-                        </div>
-                    </div>
-                    <div className="block-content">
-                        <table className="table table-hover table-vcenter">
-                            <thead>
-                                <tr>
-                                    <th className="text-center" style={{ width: "50px" }}>
-                                        Order
-                                    </th>
-                                    <th>Question</th>
-                                    <th className="d-none d-sm-table-cell" style={{ width: "15%" }}>
-                                        Status
-                                    </th>
-                                    <th className="text-center" style={{ width: "100px" }}>
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th className="text-center" scope="row">
-                                        1
-                                    </th>
-                                    <td className="fw-semibold fs-sm">
-                                        <a href="be_pages_generic_profile.html">Carol Ray</a>
-                                    </td>
-                                    <td className="d-none d-sm-table-cell">
-                                        <span className="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-warning-light text-warning">
-                                            Trial
-                                        </span>
-                                    </td>
-                                    <td className="text-center">
-                                        <div className="btn-group">
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                                data-bs-toggle="tooltip"
-                                                aria-label="Edit Client"
-                                                data-bs-original-title="Edit Client"
-                                            >
-                                                <i className="fa fa-fw fa-pencil-alt"></i>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                                data-bs-toggle="tooltip"
-                                                aria-label="Remove Client"
-                                                data-bs-original-title="Remove Client"
-                                            >
-                                                <i className="fa fa-fw fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th className="text-center" scope="row">
-                                        2
-                                    </th>
-                                    <td className="fw-semibold fs-sm">
-                                        <a href="be_pages_generic_profile.html">Barbara Scott</a>
-                                    </td>
-                                    <td className="d-none d-sm-table-cell">
-                                        <span className="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-info-light text-info">
-                                            Business
-                                        </span>
-                                    </td>
-                                    <td className="text-center">
-                                        <div className="btn-group">
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                                data-bs-toggle="tooltip"
-                                                aria-label="Edit Client"
-                                                data-bs-original-title="Edit Client"
-                                            >
-                                                <i className="fa fa-fw fa-pencil-alt"></i>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                                data-bs-toggle="tooltip"
-                                                aria-label="Remove Client"
-                                                data-bs-original-title="Remove Client"
-                                            >
-                                                <i className="fa fa-fw fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th className="text-center" scope="row">
-                                        3
-                                    </th>
-                                    <td className="fw-semibold fs-sm">
-                                        <a href="be_pages_generic_profile.html">Barbara Scott</a>
-                                    </td>
-                                    <td className="d-none d-sm-table-cell">
-                                        <span className="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-danger-light text-danger">
-                                            Disabled
-                                        </span>
-                                    </td>
-                                    <td className="text-center">
-                                        <div className="btn-group">
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                                data-bs-toggle="tooltip"
-                                                aria-label="Edit Client"
-                                                data-bs-original-title="Edit Client"
-                                            >
-                                                <i className="fa fa-fw fa-pencil-alt"></i>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                                data-bs-toggle="tooltip"
-                                                aria-label="Remove Client"
-                                                data-bs-original-title="Remove Client"
-                                            >
-                                                <i className="fa fa-fw fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th className="text-center" scope="row">
-                                        4
-                                    </th>
-                                    <td className="fw-semibold fs-sm">
-                                        <a href="be_pages_generic_profile.html">Carol White</a>
-                                    </td>
-                                    <td className="d-none d-sm-table-cell">
-                                        <span className="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-info-light text-info">
-                                            Business
-                                        </span>
-                                    </td>
-                                    <td className="text-center">
-                                        <div className="btn-group">
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                                data-bs-toggle="tooltip"
-                                                aria-label="Edit Client"
-                                                data-bs-original-title="Edit Client"
-                                            >
-                                                <i className="fa fa-fw fa-pencil-alt"></i>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                                data-bs-toggle="tooltip"
-                                                aria-label="Remove Client"
-                                                data-bs-original-title="Remove Client"
-                                            >
-                                                <i className="fa fa-fw fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th className="text-center" scope="row">
-                                        5
-                                    </th>
-                                    <td className="fw-semibold fs-sm">
-                                        <a href="be_pages_generic_profile.html">Susan Day</a>
-                                    </td>
-                                    <td className="d-none d-sm-table-cell">
-                                        <span className="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-warning-light text-warning">
-                                            Trial
-                                        </span>
-                                    </td>
-                                    <td className="text-center">
-                                        <div className="btn-group">
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                                data-bs-toggle="tooltip"
-                                                aria-label="Edit Client"
-                                                data-bs-original-title="Edit Client"
-                                            >
-                                                <i className="fa fa-fw fa-pencil-alt"></i>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                                data-bs-toggle="tooltip"
-                                                aria-label="Remove Client"
-                                                data-bs-original-title="Remove Client"
-                                            >
-                                                <i className="fa fa-fw fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th className="text-center" scope="row">
-                                        6
-                                    </th>
-                                    <td className="fw-semibold fs-sm">
-                                        <a href="be_pages_generic_profile.html">Barbara Scott</a>
-                                    </td>
-                                    <td className="d-none d-sm-table-cell">
-                                        <span className="fs-xs fw-semibold d-inline-block py-1 px-3 rounded-pill bg-info-light text-info">
-                                            Business
-                                        </span>
-                                    </td>
-                                    <td className="text-center">
-                                        <div className="btn-group">
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                                data-bs-toggle="tooltip"
-                                                aria-label="Edit Client"
-                                                data-bs-original-title="Edit Client"
-                                            >
-                                                <i className="fa fa-fw fa-pencil-alt"></i>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled"
-                                                data-bs-toggle="tooltip"
-                                                aria-label="Remove Client"
-                                                data-bs-original-title="Remove Client"
-                                            >
-                                                <i className="fa fa-fw fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-  
-                    </div>
-                </div>
-            </div> */}
         </>
     );
 }

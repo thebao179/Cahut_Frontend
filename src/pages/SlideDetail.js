@@ -133,6 +133,13 @@ function SlideDetail({usrToken, setToken}) {
         if (result.status) navigate('/presentation/edit/' + params.id);
     }
 
+    const copyLink = () => {
+        const copyText = document.getElementById('presentation-link');
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value);
+    }
+
     if (!isAccess) {
         return (
             <></>
@@ -172,10 +179,19 @@ function SlideDetail({usrToken, setToken}) {
                 }
                 <div className="p-4" style={{height: '100vh'}}>
                     <div className="bg-white p-4 h-100">
-                        <div className="d-flex pt-2 justify-content-center">
-                            <p>Go to <span
-                                style={{fontWeight: 'bold'}}>{process.env.REACT_APP_CLIENT + 'view/' + params.id}</span> to
-                                play</p>
+                        <div className="d-flex justify-content-center">
+                            <p className="pt-1 me-2 fw-bold" style={{fontSize: '18px'}}>Go to</p>
+                            <div className="input-group h-100" style={{width: "45%"}}>
+                                <input className="form-control" id="presentation-link"
+                                       defaultValue={process.env.REACT_APP_CLIENT + 'view/' + params.id} disabled={true}/>
+                                <button type="button" className="btn btn-secondary"
+                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                        title="Copy to clipboard"
+                                        onClick={copyLink}>
+                                    <i className="far fa-copy"></i>
+                                </button>
+                            </div>
+                            <p className="pt-1 ms-2 fw-bold" style={{fontSize: '18px'}}>to play</p>
                         </div>
                         {type === 'multipleChoice' &&
                             <>

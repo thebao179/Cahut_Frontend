@@ -32,19 +32,20 @@ function PresentationCollabList({pId}) {
         } else if (pId && !idChanged.current) {
             fetchData();
             $('#presentation-select2').select2({
-                placeholder: 'Enter Email',
+                placeholder: 'Enter An Email',
                 tags: true,
                 multiple: true,
                 createTag: function (term, data) {
                     const value = term.term;
-                    if (validateEmail(value)) {
+                    if (validateEmail(value))
                         return {
                             id: value,
                             text: value
                         };
-                    }
                     return null;
                 },
+                maximumSelectionLength: 1,
+                selectOnClose: true,
             });
             $('#presentation-select2').val(null).trigger('change');
             idChanged.current = true;
@@ -57,7 +58,7 @@ function PresentationCollabList({pId}) {
     const addCollab = async () => {
         const value = $('#presentation-select2').val();
         if (value.length) {
-            const result = await collabApi.addCollabs(pId, value);
+            const result = await collabApi.addCollab(pId, value[0]);
             One.helpers('jq-notify', {
                 type: `${result.status === true ? 'success' : 'danger'}`,
                 icon: `${result.status === true ? 'fa fa-check me-1' : 'fa fa-times me-1'}`,

@@ -5,7 +5,7 @@ import presentationQuestionApi from "../../api/PresentationQuestionApi";
 function PresentationQuestion({connection, presentationId, viewer, groupId}) {
     //const [connection, setConnection] = useState();
     const [presentationQuestion, setPresentationQuestion] = useState([]);
-    const questionFilter = useRef('All status')
+    const questionFilter = useRef('Asc time send')
 
     // const fetchData = async() => {
     //     const questionList = await presentationQuestionApi.getAll statusQuestion(presentationId);
@@ -22,14 +22,36 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
     // }
 
     const fetchData = async () => {
-        if (questionFilter.current === 'All status') {
-            const questionList = await presentationQuestionApi.getAllQuestion(presentationId);
-            setPresentationQuestion(questionList.data);
-        } else if (questionFilter.current === 'Not answered') {
+        // if (questionFilter.current === 'Default') {
+        //     const questionList = await presentationQuestionApi.getAllQuestion(presentationId);
+        //     setPresentationQuestion(questionList.data);
+        // } else 
+
+        if (questionFilter.current === 'Not answered') {
             const questionList = await presentationQuestionApi.getUnAnsweredQuestion(presentationId);
+            console.log('data', questionList);
             setPresentationQuestion(questionList.data);
         } else if (questionFilter.current === 'Answered') {
             const questionList = await presentationQuestionApi.getAnsweredQuestion(presentationId);
+            console.log('data', questionList);
+            setPresentationQuestion(questionList.data);
+        } else if (questionFilter.current === 'Desc time send') {
+            const questionList = await presentationQuestionApi.getPresentationSortByTime(presentationId, 'Descending');
+            console.log('data', questionList);
+            setPresentationQuestion(questionList.data);
+        } else if (questionFilter.current === 'Asc time send') {
+            const questionList = await presentationQuestionApi.getPresentationSortByTime(presentationId, 'Ascending');
+            console.log('data', questionList);
+            setPresentationQuestion(questionList.data);
+        } else if (questionFilter.current === 'Desc upvote num') {
+            const questionList = await presentationQuestionApi.getPresentationSortByVote(presentationId, 'Descending');
+            console.log('data', questionList);
+
+            setPresentationQuestion(questionList.data);
+        } else if (questionFilter.current === 'Asc upvote num') {
+            const questionList = await presentationQuestionApi.getPresentationSortByVote(presentationId, 'Ascending');
+            console.log('data', questionList);
+
             setPresentationQuestion(questionList.data);
         }
 
@@ -51,10 +73,10 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
 
     useEffect(() => {
         connection.on("ReceiveQuestion", (slideId, question) => {
-            fetchData(questionFilter.current);
+            fetchData();
         });
         connection.on("ChangeQuestionStatus", (slideId, question) => {
-            fetchData(questionFilter.current);
+            fetchData();
         });
         // if (connection) {
         //     connection
@@ -84,13 +106,15 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
             const updateQuestionStatusResult = await presentationQuestionApi.updateQuestionStatus(questionId, groupId)
             if (e.target.className == 'plugin-question__status plugin-question__notanswered') {
                 if (updateQuestionStatusResult.status == true) {
-                    if (questionFilter.current == 'All status') {
-                        e.target.className = 'plugin-question__status plugin-question__answered'
-                        // e.innerHTML = 'Answered'
-                        e.target.innerHTML = ` Answered
-                        <input name="questionId" type="hidden" value=${questionId}></input>
-                        `
-                    }
+                    // if (questionFilter.current != 'Not answered' && questionFilter.current != 'Answered') {
+                    //     e.target.className = 'plugin-question__status plugin-question__answered'
+                    //     // e.innerHTML = 'Answered'
+                    //     e.target.innerHTML = ` Answered
+                    //     <input name="questionId" type="hidden" value=${questionId}></input>
+                    //     `
+                    // }
+
+                    fetchData()
                 } else {
                     // eslint-disable-next-line no-undef
                     One.helpers('jq-notify', {
@@ -101,12 +125,13 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                 }
             } else {
                 if (updateQuestionStatusResult.status == true) {
-                    if (questionFilter.current == 'All status') {
-                        e.target.className = 'plugin-question__status plugin-question__notanswered'
-                        // e.innerHTML = 'Not answered'
-                        e.target.innerHTML = ` Not answered
-                        <input name="questionId" type="hidden" value=${questionId}></input>`
-                    }
+                    // if (questionFilter.current != 'Not answered' && questionFilter.current != 'Answered') {
+                    //     e.target.className = 'plugin-question__status plugin-question__notanswered'
+                    //     // e.innerHTML = 'Not answered'
+                    //     e.target.innerHTML = ` Not answered
+                    //     <input name="questionId" type="hidden" value=${questionId}></input>`
+                    // }
+                    fetchData()
                 } else {
                     // eslint-disable-next-line no-undef
                     One.helpers('jq-notify', {
@@ -200,32 +225,19 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                 {
                     viewer == 'presenter' ?
                         <div
-                            className="collapse mt-3 plugin-data-question plugin-question__body plugin-teacher-question__board"
-                            id="collapseQuestion">
-                            <table id="tableAnswer" className="table table-hover table-vcenter "
+                            className="collapse mt-3 plugin-data-question plugin-question__body" id="collapseQuestion">
+                                <div className="plugin-question__board"> 
+                            <table className="table table-hover table-vcenter "
                                    style={{width: "max-content"}}>
                                 <thead>
                                 <tr>
-                                    <th className="text-center plugin-table-th" style={{width: "50px"}}>
+                                    <th className="text-center plugin-table-th" style={{width: "25px"}}>
                                         Order
                                     </th>
                                     <th className="text-center plugin-table-th" style={{width: "250px"}}>Question</th>
                                     <th className="plugin-table-th">Upvote</th>
                                     <th className="plugin-table-th">
-                                        <div class="dropdown" id="filterQuestionDropdown">
-                                            <div name="btnFilterQuestion" type="button"
-                                                 class="btn btn-primary dropdown-toggle" id="dropdown-default-primary"
-                                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                All status
-                                            </div>
-                                            <div class="dropdown-menu fs-sm" aria-labelledby="dropdown-default-primary">
-                                                <span onClick={e => handleQuestionFilter(e)}
-                                                      class="dropdown-item">Answered</span>
-                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Not answered</span>
-                                                <div class="dropdown-divider"></div>
-                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">All status</span>
-                                            </div>
-                                        </div>
+                                    Status
                                     </th>
                                 </tr>
                                 </thead>
@@ -233,9 +245,9 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
 
                                 {presentationQuestion.map((data, index) =>
                                     <tr>
-                                        <th className="text-center" scope="row">
+                                        <td className="text-center" scope="row">
                                             {index + 1}
-                                        </th>
+                                        </td>
                                         <td className="fw-semibold fs-sm" style={{padding: "0px", textAlign: "center"}}>
                                             {data.question}
                                         </td>
@@ -263,38 +275,50 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                 )}
                                 </tbody>
                             </table>
+                            </div>
+                            <div
+                                className="send-question-field card-footer d-flex justify-content-start align-items-center p-3"
+                                id="inputQuestionField">
+                                <input onKeyUp={e => handleKeyPressInInputField(e)} type="text"
+                                       className="form-control form-control-lg" name="question"
+                                       placeholder="Type question"/>
+                                <span className="ms-3 link-info send-msg-btn"><i className="fas fa-paper-plane btn"
+                                                                                 onClick={sendQuestion}></i></span>
+                                <div class="dropdown question-Sorter" id="filterQuestionDropdown">
+                                            <div name="btnFilterQuestion" type="button"
+                                                 class="btn btn-primary dropdown-toggle" id="dropdown-default-primary"
+                                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    Asc time send
+                                            </div>
+                                            <div class="dropdown-menu fs-sm" aria-labelledby="dropdown-default-primary">
+                                                <span onClick={e => handleQuestionFilter(e)}
+                                                      class="dropdown-item">Answered</span>
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Not answered</span>
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Desc time send</span>
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Asc time send</span>
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Desc upvote num</span>
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Asc upvote num</span>
+                                                {/* <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Default</span> */}
+                                                {/* <div class="dropdown-divider"></div> */}
+                                            </div>
+                                        </div>
+                            </div>
                         </div>
                         :
-
                         <div className="collapse mt-3 plugin-data-question plugin-question__body" id="collapseQuestion">
-                            <div className="plugin-student-question__board">
+                            <div className="plugin-question__board" >
                                 <table className="table table-hover table-vcenter "
                                        style={{width: "max-content", maxHeight: "360px"}}>
                                     <thead>
                                     <tr>
-                                        <th className="text-center plugin-table-th" style={{width: "50px"}}>
+                                        <th className="text-center plugin-table-th" style={{width: "25px"}}>
                                             Order
                                         </th>
                                         <th className="text-center plugin-table-th" style={{width: "250px"}}>Question
                                         </th>
                                         <th className="plugin-table-th">Upvote</th>
                                         <th className="plugin-table-th">
-                                            <div class="dropdown" id="filterQuestionDropdown">
-                                                <div name="btnFilterQuestion" type="button"
-                                                     class="btn btn-primary dropdown-toggle"
-                                                     id="dropdown-default-primary" data-bs-toggle="dropdown"
-                                                     aria-haspopup="true" aria-expanded="false">
-                                                    All status
-                                                </div>
-                                                <div class="dropdown-menu fs-sm"
-                                                     aria-labelledby="dropdown-default-primary">
-                                                    <span onClick={e => handleQuestionFilter(e)}
-                                                          class="dropdown-item">Answered</span>
-                                                    <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Not answered</span>
-                                                    <div class="dropdown-divider"></div>
-                                                    <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">All status</span>
-                                                </div>
-                                            </div>
+                                        Status
                                         </th>
                                         <th className="plugin-table-th">
                                             Actions
@@ -327,15 +351,16 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                                     </div>
                                                 }
                                             </td>
-                                            {data.isUpvote == true ?
+                                            {
+                                            data.isUpvote === true ?
                                                 <td className="text-center" scope="row">
                                                     <i onClick={e => changeQuestionStatus(e)} type="button"
                                                        name="UpvoteIcon" className="fas fa-thumbs-up"
                                                        style={{"fontSize": "20px"}}>
                                                         <input name="questionId" type="hidden"
-                                                               value={data.questionId}></input>
+                                                               value={data.questionId}>
+                                                               </input>
                                                     </i>
-
                                                 </td>
                                                 :
                                                 <td className="text-center" scope="row">
@@ -347,7 +372,6 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                                     </i>
 
                                                 </td>
-
                                             }
 
                                         </tr>
@@ -364,8 +388,27 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                        placeholder="Type question"/>
                                 <span className="ms-3 link-info send-msg-btn"><i className="fas fa-paper-plane btn"
                                                                                  onClick={sendQuestion}></i></span>
+                                <div class="dropdown question-Sorter" id="filterQuestionDropdown">
+                                            <div name="btnFilterQuestion" type="button"
+                                                 class="btn btn-primary dropdown-toggle" id="dropdown-default-primary"
+                                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    Asc time send
+                                            </div>
+                                            <div class="dropdown-menu fs-sm" aria-labelledby="dropdown-default-primary">
+                                                <span onClick={e => handleQuestionFilter(e)}
+                                                      class="dropdown-item">Answered</span>
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Not answered</span>
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Desc time send</span>
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Asc time send</span>
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Desc upvote num</span>
+                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Asc upvote num</span>
+                                                {/* <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Default</span> */}
+                                                {/* <div class="dropdown-divider"></div> */}
+                                            </div>
+                                        </div>                                     
                             </div>
                         </div>
+
                 }
 
             </div>

@@ -76,7 +76,7 @@ function ChatBox({connection, presentationId, userEmail}) {
                     <div className="d-flex justify-content-between align-items-center">
                         <span>Chat Box</span>
                         {hasNewMessage.current == true && isChatBoxOpen.current == false ? 
-                        <i className='far fa-bell' style={{color:"yellow"}}></i>
+                        <i className='fas fa-bell' style={{color:"red"}}></i>
                         :
                         <i className="ms-2 fas fa-message"></i>
                         }

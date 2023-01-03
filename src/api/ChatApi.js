@@ -1,10 +1,9 @@
-import { sendMessage } from "@microsoft/signalr/dist/esm/Utils";
 import axiosClient from "./AxiosClient";
 
 const chatApi = {
     getAllChatMessages: (presentationId) => {
         const config = {
-            params:{
+            params: {
                 presentationId: presentationId,
             },
         }
@@ -12,7 +11,7 @@ const chatApi = {
         return axiosClient.get(url, config);
     },
 
-    sendMessage: (senderEmail, message, presentationId ) =>{
+    sendMessage: (senderEmail, message, presentationId) => {
         const config = {
             params: {
                 senderEmail: senderEmail,

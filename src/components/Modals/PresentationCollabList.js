@@ -17,6 +17,7 @@ function PresentationCollabList({pId}) {
             const result = await collabApi.getCollabs(pId);
             setData(result.data);
         }
+
         if (idChanged.current) {
             if (!DataTable.isDataTable('#presentation-collabs'))
                 $('#presentation-collabs').DataTable({
@@ -128,7 +129,8 @@ function PresentationCollabList({pId}) {
                                             <td className="fw-semibold fs-sm">{e.username}</td>
                                             <td className="d-none d-sm-table-cell fs-sm">{e.email}</td>
                                             <td>
-                                                <button type="button" className="text-center btn btn-sm btn-danger" onClick={() => removeCollab(e.email)}>
+                                                <button type="button" className="text-center btn btn-sm btn-danger"
+                                                        onClick={() => removeCollab(e.email)}>
                                                     <i className="fa fa-fw fa-xmark"></i>
                                                 </button>
                                             </td>

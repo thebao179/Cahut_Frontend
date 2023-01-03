@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import * as yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
@@ -32,6 +32,7 @@ function PasswordReset() {
             const result = await authenticationApi.checkResetCode(params.code);
             if (!result.status) navigate('/');
         }
+
         fetchData();
     }, []);
 

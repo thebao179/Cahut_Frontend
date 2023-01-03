@@ -1,9 +1,8 @@
 import $ from 'jquery';
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import chatApi from "../../api/ChatApi";
-import { HubConnectionBuilder } from "@microsoft/signalr";
 
-function ChatBox({ connection, presentationId, userEmail }) {
+function ChatBox({connection, presentationId, userEmail}) {
     // const [connection, setConnection] = useState();
     const [chatMsgs, setChatMsgs] = useState([]);
 
@@ -13,8 +12,8 @@ function ChatBox({ connection, presentationId, userEmail }) {
     }
 
     useEffect(() => {
-        fetchData()
-    }, []
+            fetchData()
+        }, []
     )
 
     useEffect(() => {
@@ -34,15 +33,14 @@ function ChatBox({ connection, presentationId, userEmail }) {
             console.log('msg not empty');
             $('#inputMsgField').find('input[name=message]').val('');
             const sendMsgResult = await chatApi.sendMessage(userEmail, msg, presentationId);
-            if(sendMsgResult.status == true){
+            if (sendMsgResult.status == true) {
                 if (connection) {
                     await connection.send("SendMessage", presentationId, msg);
                 }
                 fetchData();
             }
-            
-        }
-        else{
+
+        } else {
             // eslint-disable-next-line no-undef
             One.helpers('jq-notify', {
                 type: `${'danger'}`,
@@ -56,8 +54,8 @@ function ChatBox({ connection, presentationId, userEmail }) {
         return new Date(data).toLocaleString()
     }
 
-    const handleKeyPressInInputField = async(e) => {
-        if(e.key === 'Enter'){
+    const handleKeyPressInInputField = async (e) => {
+        if (e.key === 'Enter') {
             sendMessage()
         }
     }
@@ -66,7 +64,7 @@ function ChatBox({ connection, presentationId, userEmail }) {
         <>
             <div className="plugin-container">
                 <div className="btn btn-info btn-lg btn-block" data-mdb-toggle="collapse" href="#collapseChat"
-                    role="button" aria-expanded="false">
+                     role="button" aria-expanded="false">
                     <div className="d-flex justify-content-between align-items-center">
                         <span>Chat Box</span>
                         <i className="ms-2 fas fa-message"></i>
@@ -77,16 +75,18 @@ function ChatBox({ connection, presentationId, userEmail }) {
                 <div className="collapse mt-3 plugin-data-chat" id="collapseChat">
                     <div className="card">
                         <div className="card-body"
-                            style={{ position: "relative", height: "370px", width: "400px" }}>
+                             style={{position: "relative", height: "370px", width: "400px"}}>
                             {/* className="d-flex flex-row justify-content-start" */}
                             <div>
                                 <div className='chat-content'>
                                     {chatMsgs.map((data, index) =>
                                         <>
-                                            <p key={data.timeSent} className='small p-2 ms-3 mb-1 rounded-3' style={{ backgroundColor: "#f5f6f7", maxWidth: "90%" }}>
+                                            <p key={data.timeSent} className='small p-2 ms-3 mb-1 rounded-3'
+                                               style={{backgroundColor: "#f5f6f7", maxWidth: "90%"}}>
                                                 {data.sender}: {data.message}
                                             </p>
-                                            <p className="small ms-4 mb-3 rounded-3 text-muted" style={{ fontSize: "11px" }}>
+                                            <p className="small ms-4 mb-3 rounded-3 text-muted"
+                                               style={{fontSize: "11px"}}>
                                                 {dateFormat(data.timeSent)}
                                             </p>
                                         </>
@@ -103,9 +103,12 @@ function ChatBox({ connection, presentationId, userEmail }) {
                                 </div>
                             </div>
                         </div>
-                        <div className="card-footer d-flex justify-content-start align-items-center p-3" id="inputMsgField">
-                            <input onKeyUp={e => handleKeyPressInInputField(e)} type="text" className="form-control form-control-lg" name="message" placeholder="Type message" />
-                            <span className="ms-3 link-info send-msg-btn"><i className="fas fa-paper-plane btn" onClick={sendMessage}></i></span>
+                        <div className="card-footer d-flex justify-content-start align-items-center p-3"
+                             id="inputMsgField">
+                            <input onKeyUp={e => handleKeyPressInInputField(e)} type="text"
+                                   className="form-control form-control-lg" name="message" placeholder="Type message"/>
+                            <span className="ms-3 link-info send-msg-btn"><i className="fas fa-paper-plane btn"
+                                                                             onClick={sendMessage}></i></span>
                         </div>
                     </div>
                 </div>

@@ -17,7 +17,7 @@ const SignInSchema = yup.object().shape({
         .required("Password is a required field")
 });
 
-function SignInForm({setToken}) {
+function SignInForm() {
     const {
         register,
         handleSubmit,
@@ -26,7 +26,7 @@ function SignInForm({setToken}) {
         resolver: yupResolver(SignInSchema)
     });
 
-    const {handleGoogle, loading, error} = useFetch(setToken);
+    const {handleGoogle, loading, error} = useFetch();
     useEffect(() => {
         if (window.google) {
             google.accounts.id.initialize({
@@ -47,9 +47,11 @@ function SignInForm({setToken}) {
         const res = await authenticationApi.login(data.email, data.password);
         if (res.status) {
             One.helpers('jq-notify', {type: 'success', icon: 'fa fa-check me-1', message: res.message});
-            setTimeout(function () {
-                setToken(res.data.accessToken);
-            }, 1500);
+            localStorage.setItem("session", JSON.stringify(res.data));
+            const url = localStorage.getItem('prevurl');
+            localStorage.removeItem('prevurl');
+            if (url) navigate(url);
+            else navigate('/dashboard');
             return;
         }
         One.helpers('jq-notify', {type: 'danger', icon: 'fa fa-times me-1', message: res.message});
@@ -103,7 +105,8 @@ function SignInForm({setToken}) {
                             </div>
                             <div className="d-flex justify-content-between align-items-center mb-4">
                                 <div>
-                                    <a href={'/password-reset'} className="text-muted fs-sm fw-medium d-block d-lg-inline-block mb-1">
+                                    <a href={'/password-reset'}
+                                       className="text-muted fs-sm fw-medium d-block d-lg-inline-block mb-1">
                                         Forgot Password?
                                     </a>
                                 </div>

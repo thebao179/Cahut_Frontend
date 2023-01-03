@@ -5,7 +5,7 @@ import presentationApi from "../../api/PresentationApi";
 import {Link} from "react-router-dom";
 import PresentationCollabList from "../Modals/PresentationCollabList";
 
-function PresentationOwned({token, presentationsCreate}) {
+function PresentationOwned({presentationsCreate}) {
     const [presentations, setPresentations] = useState();
     const [refresh, setRefresh] = useState(0);
     const [presentationId, setPresentationId] = useState();
@@ -52,7 +52,7 @@ function PresentationOwned({token, presentationsCreate}) {
             setPresentations(data);
         }
 
-        if (token) fetchData();
+        fetchData();
     }, [presentationsCreate, refresh]);
 
     const deletePresentation = (presentationName) => {
@@ -85,7 +85,7 @@ function PresentationOwned({token, presentationsCreate}) {
                     {presentations}
                 </div>
             </div>
-            <PresentationCollabList pId={presentationId} />
+            <PresentationCollabList pId={presentationId}/>
         </>
     );
 }

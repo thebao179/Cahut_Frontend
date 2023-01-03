@@ -1,6 +1,6 @@
 import {Bar, BarChart, LabelList, ResponsiveContainer} from "recharts";
 import React, {useEffect, useRef, useState} from "react";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
 import {HubConnectionBuilder} from "@microsoft/signalr";
 import jwt from "jwt-decode";
 import multipleChoiceQuestionApi from "../api/MultipleChoiceQuestionApi";
@@ -11,9 +11,10 @@ import presentationApi from "../api/PresentationApi";
 import headingSlideApi from "../api/HeadingSlideApi";
 import paragraphSlideApi from "../api/ParagraphSlideApi";
 
-function SlideDetail({usrToken, setToken}) {
+function SlideDetail() {
     const navigate = useNavigate();
     const params = useParams();
+    const location = useLocation();
     const [question, setQuestion] = useState();
     const [answers, setAnswers] = useState([]);
     const [connection, setConnection] = useState();
@@ -22,10 +23,10 @@ function SlideDetail({usrToken, setToken}) {
     const [pHeading, setPHeading] = useState();
     const [paragraph, setParagraph] = useState();
     const [type, setType] = useState();
-    const [refresh, setRefresh] = useState(0);
     const [isPrev, setIsPrev] = useState(true);
     const [isNext, setIsNext] = useState(true);
     const [isAccess, setIsAccess] = useState(false);
+    const accessToken = useRef(JSON.parse(localStorage.getItem("session"))?.accessToken);
     let isInitial = useRef(true);
     let pType = useRef();
     let groupId = useRef();
@@ -38,9 +39,12 @@ function SlideDetail({usrToken, setToken}) {
                 pType.current = info.data.presentationType;
                 groupId.current = info.data.groupId;
                 setIsAccess(true);
-            }
-            else navigate('/dashboard');
+            } else navigate('/dashboard');
         }
+        await updateData();
+    }
+
+    const updateData = async () => {
         let result;
         if (pType.current === "public") result = await presentationApi.getCurrentSlidePublic(params.id);
         else if (pType.current === "group") result = await presentationApi.getCurrentSlideGroup(params.id, groupId.current);
@@ -56,15 +60,13 @@ function SlideDetail({usrToken, setToken}) {
                     const answers = await choiceApi.getAnswers(question.data.questionId);
                     setAnswers(answers.data);
                 } else setAnswers([]);
-            }
-            else if (result.data.slideType === "heading") {
+            } else if (result.data.slideType === "heading") {
                 const heading = await headingSlideApi.getData(result.data.slideId);
                 if (heading.data) {
                     setHHeading(heading.data.headingContent);
                     setSubHeading(heading.data.subHeadingContent);
                 }
-            }
-            else if (result.data.slideType === "paragraph") {
+            } else if (result.data.slideType === "paragraph") {
                 const paragraph = await paragraphSlideApi.getData(result.data.slideId);
                 if (paragraph.data) {
                     setPHeading(paragraph.data.headingContent);
@@ -75,21 +77,16 @@ function SlideDetail({usrToken, setToken}) {
     }
 
     useEffect(() => {
-        if (!usrToken) navigate('/');
-        else if (usrToken) {
-            const payload = jwt(usrToken);
-            const currentDate = new Date();
-            if (payload.exp * 1000 < currentDate.getTime()) {
-                localStorage.removeItem('token');
-                setToken('');
-            }
+        if (!accessToken.current) {
+            localStorage.setItem('prevurl', location.pathname);
+            navigate('/');
         }
-        if (usrToken) fetchData();
-    }, [usrToken, refresh]);
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const connect = new HubConnectionBuilder()
-            .withUrl(process.env.REACT_APP_REALTIME_HOST + "?presentationId=" + params.id, { accessTokenFactory: () => usrToken })
+            .withUrl(process.env.REACT_APP_REALTIME_HOST + "?presentationId=" + params.id, {accessTokenFactory: () => accessToken.current})
             .withAutomaticReconnect()
             .build();
         setConnection(connect);
@@ -100,32 +97,33 @@ function SlideDetail({usrToken, setToken}) {
             connection
                 .start()
                 .then(() => {
-                    console.log(connection.connectionId);
                     connection.on("ReceiveResult", (slideId, message) => {
                         if (message === "updateResult")
-                            fetchData();
+                            updateData();
                     });
+                    connection.on("ChangeSlide", (presentationId, action) => {
+                        updateData();
+                    })
                 })
                 .catch((error) => console.log(error));
+            return () => {
+                connection.stop().then(() => {
+                    console.log("Closed connection");
+                });
+            };
         }
     }, [connection])
 
     const goPreviousSlide = async () => {
         const result = await presentationApi.updatePreviousSlide(params.id, groupId.current);
-        if(connection){
-            connection.send("ChangeSlide", params.id, "Previous");
-        }
         if (result.message === 'Has meet start of presentation') setIsPrev(false);
-        else if (result.status) setRefresh(refresh + 1);
+        else if (result.status) if (connection) connection.send("ChangeSlide", params.id, "Previous");
     }
 
     const goNextSlide = async () => {
         const result = await presentationApi.updateNextSlide(params.id, groupId.current);
-        if(connection){
-            connection.send("ChangeSlide", params.id, "Next");
-        }
         if (result.message === 'Has reached end of presentation') setIsNext(false);
-        else if (result.status) setRefresh(refresh + 1);
+        else if (result.status) if (connection) connection.send("ChangeSlide", params.id, "Next");
     }
 
     const endPresentation = async () => {
@@ -183,7 +181,8 @@ function SlideDetail({usrToken, setToken}) {
                             <p className="pt-1 me-2 fw-bold" style={{fontSize: '18px'}}>Go to</p>
                             <div className="input-group h-100" style={{width: "45%"}}>
                                 <input className="form-control" id="presentation-link"
-                                       defaultValue={process.env.REACT_APP_CLIENT + 'view/' + params.id} disabled={true}/>
+                                       defaultValue={process.env.REACT_APP_CLIENT + 'view/' + params.id}
+                                       disabled={true}/>
                                 <button type="button" className="btn btn-secondary"
                                         data-bs-toggle="tooltip" data-bs-placement="top"
                                         title="Copy to clipboard"
@@ -196,7 +195,10 @@ function SlideDetail({usrToken, setToken}) {
                         {type === 'multipleChoice' &&
                             <>
                                 <div className="d-flex ps-4" style={{lineHeight: 1}}>
-                                    <p style={{fontSize: '30px', fontWeight: 'bold'}}>{question ? question.content : 'Multiple Choice'}</p>
+                                    <p style={{
+                                        fontSize: '30px',
+                                        fontWeight: 'bold'
+                                    }}>{question ? question.content : 'Multiple Choice'}</p>
                                 </div>
                                 <div className="d-flex justify-content-center" style={{height: '500px', width: '100%'}}>
                                     <ResponsiveContainer width="90%" height="100%">
@@ -243,12 +245,14 @@ function SlideDetail({usrToken, setToken}) {
                     </div>
                 </div>
             </div>
-            <div className="middle-bottom-screen plugin-panel" >
+            <div className="middle-bottom-screen plugin-panel">
                 <div className="plugin-panel__element">
-                    <ChatBox connection={connection} presentationId={params.id} userEmail={jwt(usrToken).email}></ChatBox>
+                    <ChatBox connection={connection} presentationId={params.id}
+                             userEmail={jwt(accessToken.current).email}></ChatBox>
                 </div>
                 <div className="plugin-panel__element">
-                    <PresentationQuestion connection={connection} presentationId={params.id} viewer={'presenter'} groupId = {groupId.current}></PresentationQuestion>
+                    <PresentationQuestion connection={connection} presentationId={params.id} viewer={'presenter'}
+                                          groupId={groupId.current}></PresentationQuestion>
                 </div>
             </div>
         </>

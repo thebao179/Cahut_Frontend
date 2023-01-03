@@ -5,14 +5,14 @@ import presentationApi from "../../api/PresentationApi";
 import multipleChoiceQuestionApi from "../../api/MultipleChoiceQuestionApi";
 import choiceApi from "../../api/ChoiceApi";
 
-function PresentationResult({token}) {
+function PresentationResult() {
     const params = useParams();
     const navigate = useNavigate();
-    let isInitial = useRef(true);
     const [presName, setPresName] = useState();
     const [questions, setQuestions] = useState([]);
     const [choices, setChoices] = useState([]);
     const [isAccess, setIsAccess] = useState(false);
+    let isInitial = useRef(true);
 
     useEffect(() => {
         async function fetchData() {
@@ -25,7 +25,8 @@ function PresentationResult({token}) {
             if (questionArr.status) setQuestions(questionArr.data);
             isInitial = false;
         }
-        if (isInitial && token) fetchData();
+
+        if (isInitial) fetchData();
         if (!DataTable.isDataTable('#presentation-results'))
             $('#presentation-results').DataTable({
                 pageLength: 10,

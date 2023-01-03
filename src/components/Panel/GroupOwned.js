@@ -1,21 +1,22 @@
 /* eslint-disable */
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import PanelHero from "../General/PanelHero";
 import GroupDetail from "../Modals/GroupDetail";
 import groupApi from "../../api/GroupApi";
 import jwt from 'jwt-decode';
 
-function GroupOwned({token, grpCreate, connection}) {
+function GroupOwned({grpCreate, connection}) {
     const [groupId, setGroupId] = useState();
     const [groups, setGroups] = useState();
     const [self, setSelf] = useState();
     const [refresh, setRefresh] = useState(0);
     const [grpRefresh, setGrpRefresh] = useState(0);
+    const accessToken = useRef(JSON.parse(localStorage.getItem("session"))?.accessToken);
 
     useEffect(() => {
         async function fetchData() {
             const data = await groupApi.getOwnedGroups();
-            const temp = data.data.map(group =>
+            const grpList = data.data.map(group =>
                 <div key={group.groupName} className="col-md-6 col-lg-4 col-xl-3">
                     <a className="block block-rounded block-link-pop h-100 mb-0">
                         <div className="block-content block-content-full text-center bg-city">
@@ -49,13 +50,11 @@ function GroupOwned({token, grpCreate, connection}) {
                     </a>
                 </div>
             );
-            setGroups(temp);
+            setGroups(grpList);
+            setSelf(jwt(accessToken.current).email);
         }
 
-        if (token) {
-            fetchData();
-            setSelf(jwt(token).email);
-        }
+        fetchData();
     }, [grpCreate, refresh, grpRefresh]);
 
     const deleteGroup = (groupName) => {
@@ -88,7 +87,8 @@ function GroupOwned({token, grpCreate, connection}) {
                     {groups}
                 </div>
             </div>
-            <GroupDetail groupId={groupId} role={'Owner'} self={self} setGrpRefresh={setGrpRefresh} grpRefresh={grpRefresh} connection={connection}/>
+            <GroupDetail groupId={groupId} role={'Owner'} self={self} setGrpRefresh={setGrpRefresh}
+                         grpRefresh={grpRefresh} connection={connection}/>
         </>
     );
 }

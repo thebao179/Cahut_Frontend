@@ -10,6 +10,7 @@ function PresentGroup({presentationId, setIsPresent}) {
             const data = await groupApi.getOwnedGroups();
             setGroups(data.data);
         }
+
         fetchData();
     }, []);
 
@@ -18,8 +19,7 @@ function PresentGroup({presentationId, setIsPresent}) {
         if (result.status) {
             setIsPresent(true);
             window.location.href = '/presentation/present/' + presentationId;
-        }
-        else {
+        } else {
             // eslint-disable-next-line no-undef
             One.helpers('jq-notify', {
                 type: `${result.status === true ? 'success' : 'danger'}`,
@@ -60,7 +60,8 @@ function PresentGroup({presentationId, setIsPresent}) {
                                         </td>
                                         <td className="text-end">
                                             <div className="btn-group">
-                                                <button type="button" className="btn btn-sm btn-alt-primary" onClick={() => presentGroup(group.groupName)}>
+                                                <button type="button" className="btn btn-sm btn-alt-primary"
+                                                        onClick={() => presentGroup(group.groupName)}>
                                                     <i className="fa fa-fw fa-display"></i> Present
                                                 </button>
                                             </div>

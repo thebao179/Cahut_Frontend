@@ -12,7 +12,12 @@ const paragraphSlideApi = {
     },
     updateData: (presentationId, slideId, heading, paragraph) => {
         const url = "/slide/paragraph/editSlide";
-        return axiosClient.post(url, {presentationId: presentationId, slideId: slideId, headingContent: heading, paragraphContent: paragraph});
+        return axiosClient.post(url, {
+            presentationId: presentationId,
+            slideId: slideId,
+            headingContent: heading,
+            paragraphContent: paragraph
+        });
     }
 };
 

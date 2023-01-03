@@ -5,15 +5,16 @@ import {useNavigate} from "react-router-dom";
 import ForgotPassword from "../components/Authentication/ForgotPassword";
 import PasswordReset from "../components/Authentication/PasswordReset";
 
-function Authentication({component, setToken, usrToken}) {
+function Authentication({component}) {
     const navigate = useNavigate();
     useEffect(() => {
-        if (usrToken) {
-            let path = localStorage.getItem('prevurl');
+        const session = localStorage.getItem('session');
+        if (session) {
+            const path = localStorage.getItem('prevurl');
             localStorage.removeItem('prevurl');
             navigate(path ? path : '/dashboard');
         }
-    }, [usrToken]);
+    }, []);
 
     return (
         <div id="page-container">
@@ -53,7 +54,7 @@ function Authentication({component, setToken, usrToken}) {
                                 </a>
                             </div>
                             <div className="p-4 w-100 flex-grow-1 d-flex align-items-center">
-                                {component === 'signin' && <SignInForm setToken={setToken}/>}
+                                {component === 'signin' && <SignInForm/>}
                                 {component === 'signup' && <SignUpForm/>}
                                 {component === 'password-reset' && <ForgotPassword/>}
                                 {component === 'change-password' && <PasswordReset/>}

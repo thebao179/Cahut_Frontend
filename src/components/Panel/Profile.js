@@ -28,7 +28,7 @@ const PasswordSchema = yup.object().shape({
         .oneOf([yup.ref("password"), null], "Your password does not match")
 });
 
-function Profile({token, setProfileUpd, profileUpd}) {
+function Profile({setProfileUpd, profileUpd}) {
     const {
         register,
         handleSubmit,
@@ -49,7 +49,7 @@ function Profile({token, setProfileUpd, profileUpd}) {
             setPhoneNumber(data.data.phone);
         }
 
-        if (token) fetchData();
+        fetchData();
     }, []);
     const onSubmit = async (data) => {
         const result = await userApi.editUserInfo(data.username, data.phone)

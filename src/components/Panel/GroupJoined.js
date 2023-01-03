@@ -1,20 +1,21 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import PanelHero from "../General/PanelHero";
 import GroupDetail from "../Modals/GroupDetail";
 import groupApi from "../../api/GroupApi";
 import jwt from 'jwt-decode';
 
-function GroupJoined({token, grpCreate, connection}) {
+function GroupJoined({grpCreate, connection}) {
     const [groupId, setGroupId] = useState();
     const [role, setRole] = useState(0);
     const [groups, setGroups] = useState();
     const [self, setSelf] = useState();
     const [grpRefresh, setGrpRefresh] = useState(0);
+    const accessToken = useRef(JSON.parse(localStorage.getItem("session"))?.accessToken);
 
     useEffect(() => {
         async function fetchData() {
             const data = await groupApi.getJoinedGroups();
-            const temp = data.data.map(group =>
+            const grpList = data.data.map(group =>
                 <div key={group.groupName} className="col-md-6 col-lg-4 col-xl-3">
                     <a className="block block-rounded block-link-pop h-100 mb-0">
                         <div className="block-content block-content-full text-center bg-amethyst">
@@ -32,7 +33,8 @@ function GroupJoined({token, grpCreate, connection}) {
                             <div className="fs-sm text-end">
                                 <div className="block-options d-flex" style={{paddingLeft: 0}}>
                                     <div className="col-sm-6 text-start">
-                                        <p style={{marginBottom: 0}} className={`group-role ${group.role === 'Co-owner' ? 'text-warning' : 'text-success'} pt-1`}>{group.role}</p>
+                                        <p style={{marginBottom: 0}}
+                                           className={`group-role ${group.role === 'Co-owner' ? 'text-warning' : 'text-success'} pt-1`}>{group.role}</p>
                                     </div>
                                     <div className="col-sm-6">
                                         <button type="button" className="btn-block-option"
@@ -50,13 +52,11 @@ function GroupJoined({token, grpCreate, connection}) {
                     </a>
                 </div>
             );
-            setGroups(temp);
+            setGroups(grpList);
+            setSelf(jwt(accessToken.current).email);
         }
 
-        if (token) {
-            fetchData();
-            setSelf(jwt(token).email);
-        }
+        fetchData();
     }, [grpCreate, grpRefresh]);
 
     return (
@@ -67,7 +67,8 @@ function GroupJoined({token, grpCreate, connection}) {
                     {groups}
                 </div>
             </div>
-            <GroupDetail groupId={groupId} role={role} self={self} setGrpRefresh={setGrpRefresh} grpRefresh={grpRefresh} connection={connection}/>
+            <GroupDetail groupId={groupId} role={role} self={self} setGrpRefresh={setGrpRefresh} grpRefresh={grpRefresh}
+                         connection={connection}/>
         </>
     );
 }

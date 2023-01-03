@@ -1,22 +1,26 @@
 import React, {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import authenticationApi from "../../api/AuthenticationApi";
 import userApi from "../../api/UserApi";
 
-function Header({setToken, token, profileUpd}) {
+function Header({profileUpd}) {
     const [user, setUser] = useState({});
+    const navigate = useNavigate();
+
     const handleLogout = async () => {
-        await authenticationApi.logout();
-        localStorage.removeItem('token');
-        setToken('');
+        const result = await authenticationApi.logout();
+        if (result.status) {
+            localStorage.removeItem('session');
+            navigate('/');
+        }
     };
     useEffect(() => {
         async function fetchData() {
             const data = await userApi.getUserInfo();
-            setUser(data.data);
+            if (data.status) setUser(data.data);
         }
 
-        if (token) fetchData();
+        fetchData();
     }, [profileUpd]);
 
     return (

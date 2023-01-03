@@ -1,10 +1,9 @@
-import { sendMessage } from "@microsoft/signalr/dist/esm/Utils";
 import axiosClient from "./AxiosClient";
 
 const presentationQuestionApi = {
     sendQuestion: (question, presentationId) => {
         const config = {
-            params:{
+            params: {
                 presentationId: presentationId,
                 question: question
             },
@@ -13,9 +12,9 @@ const presentationQuestionApi = {
         return axiosClient.post(url, {presentationId: presentationId, question: question});
     },
 
-    upvoteQuestion: (questionId) =>{
+    upvoteQuestion: (questionId) => {
         const config = {
-            params:{
+            params: {
                 questionId: questionId
             },
         }
@@ -23,9 +22,9 @@ const presentationQuestionApi = {
         return axiosClient.post(url, null, config);
     },
 
-    unUpvoteQuestion: (questionId) =>{
+    unUpvoteQuestion: (questionId) => {
         const config = {
-            params:{
+            params: {
                 questionId: questionId
             },
         }
@@ -35,7 +34,7 @@ const presentationQuestionApi = {
 
     getAllQuestion: (presentationId) => {
         const config = {
-            params:{
+            params: {
                 presentationId: presentationId,
             },
         }
@@ -45,27 +44,27 @@ const presentationQuestionApi = {
 
     getAnsweredQuestion: (presentationId) => {
         const config = {
-            params:{
-                presentationId:presentationId,
+            params: {
+                presentationId: presentationId,
             },
         }
         const url = "/question/getAnsweredQuestions";
-        return axiosClient.get(url,config);
+        return axiosClient.get(url, config);
     },
 
     getUnAnsweredQuestion: (presentationId) => {
         const config = {
-            params:{
-                presentationId:presentationId,
+            params: {
+                presentationId: presentationId,
             },
         }
         const url = "/question/getUnAnsweredQuestions";
-        return axiosClient.get(url,config);
+        return axiosClient.get(url, config);
     },
 
-    updateQuestionStatus: (questionId, groupId) =>{
+    updateQuestionStatus: (questionId, groupId) => {
         const config = {
-            params:{
+            params: {
                 questionId: questionId,
                 groupId: groupId
             },

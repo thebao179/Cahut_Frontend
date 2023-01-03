@@ -1,9 +1,8 @@
 /* eslint-disable */
-import React, {useEffect, useState} from "react";
-import {Link, useLocation, useNavigate, useParams} from "react-router-dom";
+import React, {useEffect, useRef, useState} from "react";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {Bar, BarChart, LabelList, ResponsiveContainer} from "recharts";
 import presentationApi from "../api/PresentationApi";
-import jwt from "jwt-decode";
 import slideApi from "../api/SlideApi";
 import multipleChoiceQuestionApi from "../api/MultipleChoiceQuestionApi";
 import choiceApi from "../api/ChoiceApi";
@@ -13,7 +12,7 @@ import headingSlideApi from "../api/HeadingSlideApi";
 import paragraphSlideApi from "../api/ParagraphSlideApi";
 import multipleChoiceSlideApi from "../api/MultipleChoiceSlideApi";
 
-function PresentationDetail({usrToken, setToken}) {
+function PresentationDetail() {
     const navigate = useNavigate();
     const params = useParams();
     const location = useLocation();
@@ -34,20 +33,9 @@ function PresentationDetail({usrToken, setToken}) {
     const [role, setRole] = useState();
     const [isAccess, setIsAccess] = useState(false);
     const [presentType, setPresentType] = useState();
+    const accessToken = useRef(JSON.parse(localStorage.getItem("session"))?.accessToken);
 
     useEffect(() => {
-        if (!usrToken) {
-            localStorage.setItem('prevurl', location.pathname);
-            navigate('/');
-        } else if (usrToken) {
-            const payload = jwt(usrToken);
-            const currentDate = new Date();
-            if (payload.exp * 1000 < currentDate.getTime()) {
-                localStorage.removeItem('token');
-                setToken('');
-            }
-        }
-
         async function fetchData() {
             if (refresh === 0) {
                 const info = await presentationApi.getPresentationInfo(params.id);
@@ -57,8 +45,7 @@ function PresentationDetail({usrToken, setToken}) {
                     setIsPresent(info.data.isBeingPresented);
                     setRole(info.data.role);
                     setPresentType(info.data.presentatingType);
-                }
-                else navigate('/dashboard');
+                } else navigate('/dashboard');
             }
             const slides = await presentationApi.getSlides(params.id);
             setSlideList(slides.data[0]);
@@ -71,15 +58,13 @@ function PresentationDetail({usrToken, setToken}) {
                         const answers = await choiceApi.getAnswers(question.data.questionId);
                         setAnswers(answers.data);
                     } else setAnswers([]);
-                }
-                else if (slideType === 'Heading') {
+                } else if (slideType === 'Heading') {
                     const result = await headingSlideApi.getData(currSlide);
                     if (result.data) {
                         setHHeading(result.data.headingContent);
                         setSubHeading(result.data.subHeadingContent);
                     }
-                }
-                else if (slideType === 'Paragraph') {
+                } else if (slideType === 'Paragraph') {
                     const result = await paragraphSlideApi.getData(currSlide);
                     if (result.data) {
                         setPHeading(result.data.headingContent);
@@ -89,8 +74,12 @@ function PresentationDetail({usrToken, setToken}) {
             }
         }
 
-        if (usrToken) fetchData();
-    }, [refresh, currSlide, usrToken]);
+        if (!accessToken.current) {
+            localStorage.setItem('prevurl', location.pathname);
+            navigate('/');
+        }
+        fetchData();
+    }, [refresh, currSlide]);
 
     const addOption = () => {
         $('#slide-options').append(`<div id="option-${Math.random().toString(36).slice(2, 7)}" class="d-flex mb-3">\n` +
@@ -323,7 +312,10 @@ function PresentationDetail({usrToken, setToken}) {
                      style={{width: '230px', overflowY: "auto"}}>
                     <ol className="slide-preview pe-0 ps-0">
                         {slideList.map((data, index) =>
-                            <a key={data.slideId} onClick={() => {setCurrSlide(data.slideId);setSlideType(data.slideType);}}
+                            <a key={data.slideId} onClick={() => {
+                                setCurrSlide(data.slideId);
+                                setSlideType(data.slideType);
+                            }}
                                style={{color: "black", cursor: 'pointer'}}>
                                 <li className={`d-flex pt-3 pb-3 ${currSlide === data.slideId ? 'bg-info-light' : ''}`}
                                     style={{paddingLeft: '10px', paddingRight: '10px'}}>
@@ -337,9 +329,12 @@ function PresentationDetail({usrToken, setToken}) {
                                          }}>
 
                                         <div className="mt-4">
-                                            {(currSlide === data.slideId && slideType === 'MultipleChoice') || data.slideType === 'MultipleChoice' ? <i className="fa fa-chart-simple"></i> :
-                                                (currSlide === data.slideId && slideType === 'Heading') || data.slideType === 'Heading' ? <i className="fa fa-heading"></i> :
-                                                    (currSlide === data.slideId && slideType === 'Paragraph') || data.slideType === 'Paragraph' ? <i className="fa fa-paragraph"></i> : <></>
+                                            {(currSlide === data.slideId && slideType === 'MultipleChoice') || data.slideType === 'MultipleChoice' ?
+                                                <i className="fa fa-chart-simple"></i> :
+                                                (currSlide === data.slideId && slideType === 'Heading') || data.slideType === 'Heading' ?
+                                                    <i className="fa fa-heading"></i> :
+                                                    (currSlide === data.slideId && slideType === 'Paragraph') || data.slideType === 'Paragraph' ?
+                                                        <i className="fa fa-paragraph"></i> : <></>
                                             }
                                         </div>
                                         <span className="fw-bold">
@@ -372,7 +367,8 @@ function PresentationDetail({usrToken, setToken}) {
                                                     fontWeight: 'bold'
                                                 }}>{question ? question.content : 'Multiple Choice'}</p>
                                             </div>
-                                            <div className="d-flex justify-content-center" style={{height: '300px', width: '100%'}}>
+                                            <div className="d-flex justify-content-center"
+                                                 style={{height: '300px', width: '100%'}}>
                                                 <ResponsiveContainer width="90%" height="100%">
                                                     <BarChart width={150} height={40} data={answers}
                                                               margin={{top: 20, bottom: 20}}>
@@ -427,7 +423,8 @@ function PresentationDetail({usrToken, setToken}) {
                                 <button type="button" className="btn btn-danger" onClick={removeSlide}>
                                     <i className="fa fa-fw fa-times me-1"></i> Delete Slide
                                 </button>
-                                <button type="button" className="btn btn-primary" onClick={slideType === 'MultipleChoice' ? saveMultipleChoiceSlide : slideType === 'Heading' ? saveHeadingSlide : slideType === 'Paragraph' ? saveParagraphSlide : ''}>
+                                <button type="button" className="btn btn-primary"
+                                        onClick={slideType === 'MultipleChoice' ? saveMultipleChoiceSlide : slideType === 'Heading' ? saveHeadingSlide : slideType === 'Paragraph' ? saveParagraphSlide : ''}>
                                     <i className="fa fa-fw fa-upload me-1"></i> Save Changes
                                 </button>
                             </div>
@@ -445,7 +442,9 @@ function PresentationDetail({usrToken, setToken}) {
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Your Question</label>
                                         <input type="text" name="question"
                                                className={`form-control ${questionInvalid ? 'is-invalid' : ''}`}
-                                               value={question ? question.content : ''} onChange={(e) => {setQuestion({...question, content: e.target.value})}}
+                                               value={question ? question.content : ''} onChange={(e) => {
+                                            setQuestion({...question, content: e.target.value})
+                                        }}
                                                placeholder={'Type Your Question'}/>
                                     </div>
                                     <div className="mb-4" id="slide-options">
@@ -463,7 +462,8 @@ function PresentationDetail({usrToken, setToken}) {
                                         )}
                                     </div>
                                     <div className="d-flex">
-                                        <button type="button" className="btn btn-alt-secondary w-100" onClick={addOption}>
+                                        <button type="button" className="btn btn-alt-secondary w-100"
+                                                onClick={addOption}>
                                             <i className="fa fa-fw fa-plus me-1"></i>Add option
                                         </button>
                                     </div>
@@ -482,14 +482,18 @@ function PresentationDetail({usrToken, setToken}) {
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Heading</label>
                                         <input type="text" className="form-control" name="h-heading"
-                                               value={hHeading} onChange={(e) => {setHHeading(e.target.value)}}
-                                               placeholder="Slide with heading" />
+                                               value={hHeading} onChange={(e) => {
+                                            setHHeading(e.target.value)
+                                        }}
+                                               placeholder="Slide with heading"/>
                                     </div>
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Subheading</label>
                                         <textarea className="form-control" name="subheading"
                                                   rows="5" placeholder="Subheading"
-                                                  value={subHeading} onChange={(e) => {setSubHeading(e.target.value)}}
+                                                  value={subHeading} onChange={(e) => {
+                                            setSubHeading(e.target.value)
+                                        }}
                                                   spellCheck="false" style={{resize: 'none'}}></textarea>
                                     </div>
                                 </>
@@ -507,14 +511,19 @@ function PresentationDetail({usrToken, setToken}) {
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Heading</label>
                                         <input type="text" className="form-control" name="p-heading"
-                                               value={pHeading} onChange={(e) => {setPHeading(e.target.value)}}
-                                               placeholder="Slide with heading" />
+                                               value={pHeading} onChange={(e) => {
+                                            setPHeading(e.target.value)
+                                        }}
+                                               placeholder="Slide with heading"/>
                                     </div>
                                     <div className="mb-4">
                                         <label className="form-label" style={{fontWeight: 'bold'}}>Paragraph</label>
                                         <textarea className="form-control" name="paragraph"
-                                                  rows="6" placeholder="Use this paragraph to explain something in detail. Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition."
-                                                  value={paragraph} onChange={(e) => {setParagraph(e.target.value)}}
+                                                  rows="6"
+                                                  placeholder="Use this paragraph to explain something in detail. Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition."
+                                                  value={paragraph} onChange={(e) => {
+                                            setParagraph(e.target.value)
+                                        }}
                                                   spellCheck="false" style={{resize: 'none'}}></textarea>
                                     </div>
                                 </>

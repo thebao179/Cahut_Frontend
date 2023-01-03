@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Footer from "../components/General/Footer";
 import Dashboard from "../components/Panel/Dashboard";
 import GroupOwned from "../components/Panel/GroupOwned";
@@ -9,24 +9,24 @@ import Navbar from "../components/General/Navbar";
 import GroupAdd from "../components/Modals/GroupAdd";
 import Profile from "../components/Panel/Profile";
 import {useLocation, useNavigate} from "react-router-dom";
-import jwt from "jwt-decode";
 import PresentationAdd from "../components/Modals/PresentationAdd";
 import PresentationOwned from "../components/Panel/PresentationOwned";
 import PresentationCollab from "../components/Panel/PresentationCollab";
 import PresentationResult from "../components/Panel/PresentationResult";
 import {HubConnectionBuilder} from "@microsoft/signalr";
 
-function Panel({component, usrToken, setToken}) {
+function Panel({component}) {
     const navigate = useNavigate();
     const location = useLocation();
     const [profileUpd, setProfileUpd] = useState(0);
     const [grpCreate, setGrpCreate] = useState(0);
     const [presentationsCreated, setPresentationsCreated] = useState(0);
     const [connection, setConnection] = useState();
+    const accessToken = useRef(JSON.parse(localStorage.getItem("session"))?.accessToken);
 
     useEffect(() => {
         const connect = new HubConnectionBuilder()
-            .withUrl(process.env.REACT_APP_REALTIME_HOST + "?presentationId=" + null, { accessTokenFactory: () => usrToken })
+            .withUrl(process.env.REACT_APP_REALTIME_HOST + "?presentationId=" + null, {accessTokenFactory: () => accessToken.current})
             .withAutomaticReconnect()
             .build();
         setConnection(connect);
@@ -38,7 +38,6 @@ function Panel({component, usrToken, setToken}) {
                 .start()
                 .then(() => {
                     connection.on("NotifyGroup", (notifyInfo) => {
-                        console.log(notifyInfo);
                         One.helpers('jq-notify', {
                             type: 'info',
                             icon: 'fa fa-info-circle me-1',
@@ -48,20 +47,18 @@ function Panel({component, usrToken, setToken}) {
                     });
                 })
                 .catch((error) => console.log(error));
+            return () => {
+                connection.stop().then(() => {
+                    console.log("Closed connection");
+                });
+            };
         }
     }, [connection])
 
     useEffect(() => {
-        if (!usrToken) {
+        if (!accessToken.current) {
             localStorage.setItem('prevurl', location.pathname);
             navigate('/');
-        } else if (usrToken) {
-            const payload = jwt(usrToken);
-            const currentDate = new Date();
-            if (payload.exp * 1000 < currentDate.getTime()) {
-                localStorage.removeItem('token');
-                setToken('');
-            }
         }
         document.querySelectorAll('[data-toggle="class-toggle"]:not(.js-class-toggle-enabled), .js-class-toggle:not(.js-class-toggle-enabled)').forEach((e => {
             e.addEventListener("click", (() => {
@@ -74,22 +71,22 @@ function Panel({component, usrToken, setToken}) {
                 }))
             }))
         }))
-    }, [usrToken]);
+    }, []);
     return (
         <div id="page-container" className="page-header-dark main-content-boxed">
-            <Header setToken={setToken} token={usrToken} profileUpd={profileUpd}/>
+            <Header profileUpd={profileUpd}/>
             <main id="main-container">
                 <Navbar component={component}/>
                 {component === 'dashboard' &&
-                    <Dashboard token={usrToken} grpCreate={grpCreate} presentationsCreate={presentationsCreated}/>}
-                {component === 'gjoined' && <GroupJoined token={usrToken} grpCreate={grpCreate} connection={connection}/>}
-                {component === 'gowned' && <GroupOwned token={usrToken} grpCreate={grpCreate} connection={connection}/>}
+                    <Dashboard grpCreate={grpCreate} presentationsCreate={presentationsCreated}/>}
+                {component === 'gjoined' && <GroupJoined grpCreate={grpCreate} connection={connection}/>}
+                {component === 'gowned' && <GroupOwned grpCreate={grpCreate} connection={connection}/>}
                 {component === 'profile' &&
-                    <Profile token={usrToken} profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
+                    <Profile profileUpd={profileUpd} setProfileUpd={setProfileUpd}/>}
                 {component === 'powned' &&
-                    <PresentationOwned token={usrToken} presentationsCreate={presentationsCreated}/>}
-                {component === 'pcollab' && <PresentationCollab token={usrToken}/>}
-                {component === 'presult' && <PresentationResult token={usrToken}/>}
+                    <PresentationOwned presentationsCreate={presentationsCreated}/>}
+                {component === 'pcollab' && <PresentationCollab/>}
+                {component === 'presult' && <PresentationResult/>}
             </main>
             <GroupAdd grpCreate={grpCreate} setGrpCreate={setGrpCreate}/>
             <PresentationAdd preCreate={presentationsCreated} setPreCreate={setPresentationsCreated}/>

@@ -2,7 +2,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Container} from "react-bootstrap";
 import {useForm} from "react-hook-form";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import choiceApi from "../api/ChoiceApi";
 import multipleChoiceQuestionApi from "../api/MultipleChoiceQuestionApi";
 import {HubConnectionBuilder} from "@microsoft/signalr";
@@ -14,8 +14,9 @@ import headingSlideApi from "../api/HeadingSlideApi";
 import paragraphSlideApi from "../api/ParagraphSlideApi";
 import jwt from "jwt-decode";
 
-function PresentationView({usrToken, setToken}) {
+function PresentationView() {
     const params = useParams();
+    const location = useLocation();
     const [answers, setAnswers] = useState([]);
     const [question, setQuestion] = useState();
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -28,6 +29,7 @@ function PresentationView({usrToken, setToken}) {
     const [pHeading, setPHeading] = useState();
     const [paragraph, setParagraph] = useState();
     const [isAccess, setIsAccess] = useState(false);
+    const accessToken = useRef(JSON.parse(localStorage.getItem("session"))?.accessToken);
     let isInitial = useRef(true);
     let pType = useRef();
     let groupId = useRef();
@@ -39,38 +41,30 @@ function PresentationView({usrToken, setToken}) {
             await choiceApi.submitAnswer(data.answer);
             setIsSubmitted(true);
             if (connection) await connection.send("SendResult", params.id, "updateResult");
-        }
-        else One.helpers('jq-notify', {type: 'danger', icon: 'fa fa-times me-1', message: 'Please submit your answer'});
+        } else One.helpers('jq-notify', {
+            type: 'danger',
+            icon: 'fa fa-times me-1',
+            message: 'Please submit your answer'
+        });
     };
 
     const fetchData = async () => {
-        if (usrToken) {
-            const payload = jwt(usrToken);
-            const currentDate = new Date();
-            if (payload.exp * 1000 < currentDate.getTime()) {
-                localStorage.removeItem('token');
-                setToken('');
-            }
-        }
         if (isInitial.current) {
             const res = await presentationApi.getPresentationType(params.id);
             if (res.status) {
                 if (res.data.presentationType === 'group') {
-                    if (!usrToken) navigate('/');
+                    if (!accessToken.current) navigate('/dashboard');
                     const info = await presentationApi.getGroupPresentationInfoStudent(params.id, res.data.groupId);
                     if (info.status) {
                         pType.current = res.data.presentationType;
                         groupId.current = res.data.groupId;
-                    }
-                    else navigate('/');
-                }
-                else {
+                    } else navigate('/dashboard');
+                } else {
                     pType.current = res.data.presentationType;
                     groupId.current = res.data.groupId;
                 }
                 setIsAccess(true);
-            }
-            else navigate('/');
+            } else navigate('/');
         }
         let result;
         if (pType.current === "public") result = await presentationApi.getCurrentSlidePublic(params.id);
@@ -94,15 +88,13 @@ function PresentationView({usrToken, setToken}) {
                     const answers = await choiceApi.getAnswers(question.data.questionId);
                     setAnswers(answers.data);
                 } else setAnswers([]);
-            }
-            else if (result.data.slideType === "heading") {
+            } else if (result.data.slideType === "heading") {
                 const heading = await headingSlideApi.getData(result.data.slideId);
                 if (heading.data) {
                     setHHeading(heading.data.headingContent);
                     setSubHeading(heading.data.subHeadingContent);
                 }
-            }
-            else if (result.data.slideType === "paragraph") {
+            } else if (result.data.slideType === "paragraph") {
                 const paragraph = await paragraphSlideApi.getData(result.data.slideId);
                 if (paragraph.data) {
                     setPHeading(paragraph.data.headingContent);
@@ -114,7 +106,7 @@ function PresentationView({usrToken, setToken}) {
 
     useEffect(() => {
         const connect = new HubConnectionBuilder()
-            .withUrl(process.env.REACT_APP_REALTIME_HOST+ "?presentationId=" + params.id)
+            .withUrl(process.env.REACT_APP_REALTIME_HOST + "?presentationId=" + params.id)
             .withAutomaticReconnect()
             .build();
         setConnection(connect);
@@ -135,6 +127,11 @@ function PresentationView({usrToken, setToken}) {
                     })
                 })
                 .catch((error) => console.log(error));
+            return () => {
+                connection.stop().then(() => {
+                    console.log("Closed connection");
+                });
+            };
         }
     }, [connection])
 
@@ -172,9 +169,7 @@ function PresentationView({usrToken, setToken}) {
         return (
             <></>
         );
-    }
-
-    else if (isSubmitted) {
+    } else if (isSubmitted) {
         return (
             <Container>
                 <div className="block-content text-center">
@@ -197,12 +192,14 @@ function PresentationView({usrToken, setToken}) {
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
-                <div className="middle-bottom-screen plugin-panel" >
+                <div className="middle-bottom-screen plugin-panel">
                     <div className="plugin-panel__element">
-                        <ChatBox connection={connection} presentationId={params.id} userEmail={usrToken ? jwt(usrToken).email : null}></ChatBox>
+                        <ChatBox connection={connection} presentationId={params.id}
+                                 userEmail={accessToken.current ? jwt(accessToken.current).email : null}></ChatBox>
                     </div>
                     <div className="plugin-panel__element">
-                        <PresentationQuestion connection={connection} presentationId={params.id} viewer={'student'} groupId = {groupId.current}></PresentationQuestion >
+                        <PresentationQuestion connection={connection} presentationId={params.id} viewer={'student'}
+                                              groupId={groupId.current}></PresentationQuestion>
                     </div>
                 </div>
             </Container>
@@ -272,12 +269,14 @@ function PresentationView({usrToken, setToken}) {
                     </div>
                 }
             </div>
-            <div className="middle-bottom-screen plugin-panel" >
+            <div className="middle-bottom-screen plugin-panel">
                 <div className="plugin-panel__element">
-                    <ChatBox connection={connection} presentationId={params.id} userEmail={usrToken ? jwt(usrToken).email : null}></ChatBox>
+                    <ChatBox connection={connection} presentationId={params.id}
+                             userEmail={accessToken.current ? jwt(accessToken.current).email : null}></ChatBox>
                 </div>
                 <div className="plugin-panel__element">
-                    <PresentationQuestion connection={connection} presentationId={params.id} viewer={'student'} groupId = {groupId.current}></PresentationQuestion >
+                    <PresentationQuestion connection={connection} presentationId={params.id} viewer={'student'}
+                                          groupId={groupId.current}></PresentationQuestion>
                 </div>
             </div>
         </>

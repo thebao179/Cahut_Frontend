@@ -1,4 +1,6 @@
 import axios from "axios";
+import {memoizedRefreshToken} from "./RefreshToken";
+import history from "../router/history";
 
 const axiosClient = axios.create({
     baseURL: process.env.REACT_APP_API
@@ -6,11 +8,9 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(
     async (config) => {
-
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+        const session = JSON.parse(localStorage.getItem("session"));
+        if (session?.accessToken)
+            config.headers.Authorization = `Bearer ${session?.accessToken}`;
         return config;
     },
     function (error) {
@@ -18,7 +18,6 @@ axiosClient.interceptors.request.use(
     }
 );
 
-// Add a response interceptor
 axiosClient.interceptors.response.use(
     function (response) {
         if (response && response.data) {
@@ -26,9 +25,20 @@ axiosClient.interceptors.response.use(
         }
         return response;
     },
-    function (error) {
-        // Any status codes that falls outside the range of 2xx cause this function to trigger
-        // Do something with response error
+    async function (error) {
+        const config = error?.config;
+        if (error?.response?.status === 401 && !config?.sent) {
+            config.sent = true;
+            const result = await memoizedRefreshToken();
+            if (result?.accessToken) {
+                config.headers = {
+                    authorization: `Bearer ${result?.accessToken}`,
+                };
+                return axios(config);
+            } else {
+                history.navigate('/');
+            }
+        }
         return Promise.reject(error);
     }
 );

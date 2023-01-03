@@ -52,6 +52,28 @@ const presentationQuestionApi = {
         return axiosClient.get(url, config);
     },
 
+    getPresentationSortByTime: (presentationId, sortType) => {
+        const config = {
+            params: {
+                presentationId: presentationId,
+                sortType: sortType
+            },
+        }
+        const url = "/question/get/questionSortedByTime";
+        return axiosClient.get(url, config);
+    },
+
+    getPresentationSortByVote: (presentationId, sortType) => {
+        const config = {
+            params: {
+                presentationId: presentationId,
+                sortType: sortType
+            },
+        }
+        const url = "/question/get/questionSortedByVote";
+        return axiosClient.get(url, config);
+    },
+
     getUnAnsweredQuestion: (presentationId) => {
         const config = {
             params: {

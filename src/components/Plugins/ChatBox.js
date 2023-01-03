@@ -1,10 +1,12 @@
 import $ from 'jquery';
-import React, {useEffect, useState} from "react";
+import React, {useEffect,useRef, useState} from "react";
 import chatApi from "../../api/ChatApi";
 
 function ChatBox({connection, presentationId, userEmail}) {
     // const [connection, setConnection] = useState();
     const [chatMsgs, setChatMsgs] = useState([]);
+    const hasNewMessage = useRef(false)
+    const isChatBoxOpen = useRef(false)
 
     const fetchData = async () => {
         const chatMsgList = await chatApi.getAllChatMessages(presentationId);
@@ -18,7 +20,7 @@ function ChatBox({connection, presentationId, userEmail}) {
 
     useEffect(() => {
         connection.on("ReceiveMessage", async (slideId, message) => {
-            console.log(message);
+            hasNewMessage.current = true;
             await fetchData();
         });
     }, [connection])
@@ -60,14 +62,24 @@ function ChatBox({connection, presentationId, userEmail}) {
         }
     }
 
+    const ChangeChatBoxOpenStatus = () => {
+        isChatBoxOpen.current = !isChatBoxOpen.current;
+        hasNewMessage.current = false;
+        fetchData();
+    }
+
     return (
         <>
             <div className="plugin-container">
                 <div className="btn btn-info btn-lg btn-block" data-mdb-toggle="collapse" href="#collapseChat"
-                     role="button" aria-expanded="false">
+                     role="button" aria-expanded="false" onClick={ChangeChatBoxOpenStatus}>
                     <div className="d-flex justify-content-between align-items-center">
                         <span>Chat Box</span>
+                        {hasNewMessage.current == true && isChatBoxOpen.current == false ? 
+                        <i className='far fa-bell' style={{color:"yellow"}}></i>
+                        :
                         <i className="ms-2 fas fa-message"></i>
+                        }
                     </div>
 
                 </div>

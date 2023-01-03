@@ -90,7 +90,7 @@
     border-radius: 3px;
 }
 
-.plugin-student-question__board{
+.plugin-question__board{
     height: 380px;
     /* overflow-anchor: none; */
     overflow-y: scroll;
@@ -98,12 +98,9 @@
     scroll-snap-type: y proximity; */
 }
 
-.plugin-teacher-question__board{
+/* .plugin-teacher-question__board{
     overflow-y: scroll;
-    /* overflow-anchor: none; */
-    /* overscroll-behavior-y: contain;
-    scroll-snap-type: y proximity; */
-}
+} */
 
 .plugin-question__status{
     padding: 2px 0;
@@ -113,6 +110,11 @@
 
 .plugin-question__status:hover{
     opacity: 0.75;
+}
+
+.question-Sorter{
+    padding-left: 4px;
+    width: fit-content;
 }
 
 .plugin-question__body{

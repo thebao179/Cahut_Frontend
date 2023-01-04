@@ -1,75 +1,36 @@
 import $ from "jquery";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import presentationQuestionApi from "../../api/PresentationQuestionApi";
 
 function PresentationQuestion({connection, presentationId, viewer, groupId}) {
-    //const [connection, setConnection] = useState();
     const [presentationQuestion, setPresentationQuestion] = useState([]);
-    const questionFilter = useRef('Asc time send')
-
-    // const fetchData = async() => {
-    //     const questionList = await presentationQuestionApi.getAll statusQuestion(presentationId);
-    //     console.log('lit question ne', questionList);
-
-    //     const questionUpvoted = [];
-    //     for(let i =0; i < questionList.length; i ++){
-    //         questionUpvoted.push(questionList[i].isAnswered);
-    //     }
-
-    //     console.log('arr upvote cau hoi',questionUpvoted);
-
-    //     setPresentationQuestion(questionList.data);
-    // }
+    const questionFilter = useRef('Oldest to Newest')
 
     const fetchData = async () => {
-        // if (questionFilter.current === 'Default') {
-        //     const questionList = await presentationQuestionApi.getAllQuestion(presentationId);
-        //     setPresentationQuestion(questionList.data);
-        // } else 
-
-        if (questionFilter.current === 'Not answered') {
+        if (questionFilter.current === 'Not Answered') {
             const questionList = await presentationQuestionApi.getUnAnsweredQuestion(presentationId);
-            console.log('data', questionList);
             setPresentationQuestion(questionList.data);
         } else if (questionFilter.current === 'Answered') {
             const questionList = await presentationQuestionApi.getAnsweredQuestion(presentationId);
-            console.log('data', questionList);
             setPresentationQuestion(questionList.data);
-        } else if (questionFilter.current === 'Desc time send') {
+        } else if (questionFilter.current === 'Latest to Oldest') {
             const questionList = await presentationQuestionApi.getPresentationSortByTime(presentationId, 'Descending');
-            console.log('data', questionList);
             setPresentationQuestion(questionList.data);
-        } else if (questionFilter.current === 'Asc time send') {
+        } else if (questionFilter.current === 'Oldest to Newest') {
             const questionList = await presentationQuestionApi.getPresentationSortByTime(presentationId, 'Ascending');
-            console.log('data', questionList);
             setPresentationQuestion(questionList.data);
-        } else if (questionFilter.current === 'Desc upvote num') {
+        } else if (questionFilter.current === 'Descending Upvote') {
             const questionList = await presentationQuestionApi.getPresentationSortByVote(presentationId, 'Descending');
-            console.log('data', questionList);
-
             setPresentationQuestion(questionList.data);
-        } else if (questionFilter.current === 'Asc upvote num') {
+        } else if (questionFilter.current === 'Ascending Upvote') {
             const questionList = await presentationQuestionApi.getPresentationSortByVote(presentationId, 'Ascending');
-            console.log('data', questionList);
-
             setPresentationQuestion(questionList.data);
         }
-
     }
 
     useEffect(() => {
         fetchData()
     }, [])
-
-
-    // useEffect(() => {
-    //     const connect = new HubConnectionBuilder()
-    //         // .withUrl(process.env.REACT_APP_REALTIME_HOST + "?slideId=" + currSlideId.current, { accessTokenFactory: () => usrToken })
-    //         .withUrl(process.env.REACT_APP_REALTIME_HOST + "?presentationId=" + presentationId)
-    //         .withAutomaticReconnect()
-    //         .build();
-    //     setConnection(connect);
-    // }, []);
 
     useEffect(() => {
         connection.on("ReceiveQuestion", (slideId, question) => {
@@ -78,27 +39,7 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
         connection.on("ChangeQuestionStatus", (slideId, question) => {
             fetchData();
         });
-        // if (connection) {
-        //     connection
-        //         .start()
-        //         .then(() => {
-        //             console.log(connection.connectionId);
-        //             connection.on("ReceiveQuestion", (slideId, question) => {
-        //                 console.log("receive question: " + question)
-        //                     fetchData();
-        //             });
-        //             connection.on("ChangeQuestionStatus", (slideId, question) => {
-        //                     fetchData();
-        //             });
-        //         })
-        //         .catch((error) => console.log(error));
-        // }
     }, [connection])
-
-
-    const StopPropa = (e) => {
-        e.stopPropagation();
-    };
 
     const changeQuestionStatus = async (e) => {
         let questionId = $(e.target).find('input[name=questionId]').val();
@@ -106,14 +47,6 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
             const updateQuestionStatusResult = await presentationQuestionApi.updateQuestionStatus(questionId, groupId)
             if (e.target.className == 'plugin-question__status plugin-question__notanswered') {
                 if (updateQuestionStatusResult.status == true) {
-                    // if (questionFilter.current != 'Not answered' && questionFilter.current != 'Answered') {
-                    //     e.target.className = 'plugin-question__status plugin-question__answered'
-                    //     // e.innerHTML = 'Answered'
-                    //     e.target.innerHTML = ` Answered
-                    //     <input name="questionId" type="hidden" value=${questionId}></input>
-                    //     `
-                    // }
-
                     fetchData()
                 } else {
                     // eslint-disable-next-line no-undef
@@ -125,12 +58,6 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                 }
             } else {
                 if (updateQuestionStatusResult.status == true) {
-                    // if (questionFilter.current != 'Not answered' && questionFilter.current != 'Answered') {
-                    //     e.target.className = 'plugin-question__status plugin-question__notanswered'
-                    //     // e.innerHTML = 'Not answered'
-                    //     e.target.innerHTML = ` Not answered
-                    //     <input name="questionId" type="hidden" value=${questionId}></input>`
-                    // }
                     fetchData()
                 } else {
                     // eslint-disable-next-line no-undef
@@ -203,7 +130,6 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
         const dropDownBtn = document.getElementById('dropdown-default-primary')
         dropDownBtn.innerHTML = filterString;
         if (filterString != questionFilter.current) {
-            console.log('filter string', filterString);
             questionFilter.current = filterString;
             fetchData();
         }
@@ -211,7 +137,6 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
 
     return (
         <>
-
             <div className="plugin-container">
                 <div className="btn btn-info btn-lg btn-block" data-mdb-toggle="collapse" href="#collapseQuestion"
                      role="button" aria-expanded="false">
@@ -226,55 +151,79 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                     viewer == 'presenter' ?
                         <div
                             className="collapse mt-3 plugin-data-question plugin-question__body" id="collapseQuestion">
-                                <div className="plugin-question__board"> 
-                            <table className="table table-hover table-vcenter "
-                                   style={{width: "max-content"}}>
-                                <thead>
-                                <tr>
-                                    <th className="text-center plugin-table-th" style={{width: "25px"}}>
-                                        Order
-                                    </th>
-                                    <th className="text-center plugin-table-th" style={{width: "250px"}}>Question</th>
-                                    <th className="plugin-table-th">Upvote</th>
-                                    <th className="plugin-table-th">
-                                    Status
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
+                            <div className="p-3 d-flex justify-content-end">
+                                <label className="form-label modal-title text-info pt-2 me-2 mb-1"
+                                       style={{fontSize: '14px'}}>Sort by: </label>
+                                <div className="dropdown question-Sorter" id="filterQuestionDropdown">
+                                    <div name="btnFilterQuestion" type="button"
+                                         className="btn btn-sm btn-primary dropdown-toggle"
+                                         id="dropdown-default-primary"
+                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Oldest to Newest
+                                    </div>
+                                    <div className="dropdown-menu fs-sm" aria-labelledby="dropdown-default-primary">
+                                                <span onClick={e => handleQuestionFilter(e)}
+                                                      className="dropdown-item">Answered</span>
+                                        <span onClick={e => handleQuestionFilter(e)} className="dropdown-item">Not Answered</span>
+                                        <span onClick={e => handleQuestionFilter(e)} className="dropdown-item">Latest to Oldest</span>
+                                        <span onClick={e => handleQuestionFilter(e)} className="dropdown-item">Oldest to Newest</span>
+                                        <span onClick={e => handleQuestionFilter(e)} className="dropdown-item">Descending Upvote</span>
+                                        <span onClick={e => handleQuestionFilter(e)} className="dropdown-item">Ascending Upvote</span>
+                                    </div>
+                                </div>
+                            </div>
 
-                                {presentationQuestion.map((data, index) =>
+                            <div className="plugin-question__board">
+                                <table className="table table-hover table-vcenter "
+                                       style={{width: "max-content"}}>
+                                    <thead>
                                     <tr>
-                                        <td className="text-center" scope="row">
-                                            {index + 1}
-                                        </td>
-                                        <td className="fw-semibold fs-sm" style={{padding: "0px", textAlign: "center"}}>
-                                            {data.question}
-                                        </td>
-                                        <td className="text-center" scope="row">
-                                            {data.numUpVote}
-                                        </td>
-                                        <td className="text-center" scope="row">
-                                            {data.isAnswered == true ?
-                                                <div onClick={e => changeQuestionStatus(e)} type="button"
-                                                     className="plugin-question__status plugin-question__answered">
-                                                    Answered
-                                                    <input name="questionId" type="hidden"
-                                                           value={data.questionId}></input>
-                                                </div>
-                                                :
-                                                <div onClick={e => changeQuestionStatus(e)} type="button"
-                                                     className="plugin-question__status plugin-question__notanswered">
-                                                    Not answered
-                                                    <input name="questionId" type="hidden"
-                                                           value={data.questionId}></input>
-                                                </div>
-                                            }
-                                        </td>
+                                        <th className="text-center plugin-table-th" style={{width: "25px"}}>
+                                            Order
+                                        </th>
+                                        <th className="text-center plugin-table-th" style={{width: "250px"}}>Question
+                                        </th>
+                                        <th className="plugin-table-th">Upvote</th>
+                                        <th className="plugin-table-th">
+                                            Status
+                                        </th>
                                     </tr>
-                                )}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+
+                                    {presentationQuestion.map((data, index) =>
+                                        <tr>
+                                            <td className="text-center" scope="row">
+                                                {index + 1}
+                                            </td>
+                                            <td className="fw-semibold fs-sm"
+                                                style={{padding: "0px", textAlign: "center"}}>
+                                                {data.question}
+                                            </td>
+                                            <td className="text-center" scope="row">
+                                                {data.numUpVote}
+                                            </td>
+                                            <td className="text-center" scope="row">
+                                                {data.isAnswered == true ?
+                                                    <div onClick={e => changeQuestionStatus(e)} type="button"
+                                                         className="plugin-question__status plugin-question__answered">
+                                                        Answered
+                                                        <input name="questionId" type="hidden"
+                                                               value={data.questionId}></input>
+                                                    </div>
+                                                    :
+                                                    <div onClick={e => changeQuestionStatus(e)} type="button"
+                                                         className="plugin-question__status plugin-question__notanswered">
+                                                        Not Answered
+                                                        <input name="questionId" type="hidden"
+                                                               value={data.questionId}></input>
+                                                    </div>
+                                                }
+                                            </td>
+                                        </tr>
+                                    )}
+                                    </tbody>
+                                </table>
                             </div>
                             <div
                                 className="send-question-field card-footer d-flex justify-content-start align-items-center p-3"
@@ -284,29 +233,32 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                        placeholder="Type question"/>
                                 <span className="ms-3 link-info send-msg-btn"><i className="fas fa-paper-plane btn"
                                                                                  onClick={sendQuestion}></i></span>
-                                <div class="dropdown question-Sorter" id="filterQuestionDropdown">
-                                            <div name="btnFilterQuestion" type="button"
-                                                 class="btn btn-primary dropdown-toggle" id="dropdown-default-primary"
-                                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    Asc time send
-                                            </div>
-                                            <div class="dropdown-menu fs-sm" aria-labelledby="dropdown-default-primary">
-                                                <span onClick={e => handleQuestionFilter(e)}
-                                                      class="dropdown-item">Answered</span>
-                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Not answered</span>
-                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Desc time send</span>
-                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Asc time send</span>
-                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Desc upvote num</span>
-                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Asc upvote num</span>
-                                                {/* <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Default</span> */}
-                                                {/* <div class="dropdown-divider"></div> */}
-                                            </div>
-                                        </div>
                             </div>
                         </div>
                         :
                         <div className="collapse mt-3 plugin-data-question plugin-question__body" id="collapseQuestion">
-                            <div className="plugin-question__board" >
+                            <div className="p-3 d-flex justify-content-end">
+                                <label className="form-label modal-title text-info pt-2 me-2 mb-1"
+                                       style={{fontSize: '14px'}}>Sort by: </label>
+                                <div className="dropdown question-Sorter" id="filterQuestionDropdown">
+                                    <div name="btnFilterQuestion" type="button"
+                                         className="btn btn-sm btn-primary dropdown-toggle"
+                                         id="dropdown-default-primary"
+                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Oldest to Newest
+                                    </div>
+                                    <div className="dropdown-menu fs-sm" aria-labelledby="dropdown-default-primary">
+                                                <span onClick={e => handleQuestionFilter(e)}
+                                                      className="dropdown-item">Answered</span>
+                                        <span onClick={e => handleQuestionFilter(e)} className="dropdown-item">Not Answered</span>
+                                        <span onClick={e => handleQuestionFilter(e)} className="dropdown-item">Latest to Oldest</span>
+                                        <span onClick={e => handleQuestionFilter(e)} className="dropdown-item">Oldest to Newest</span>
+                                        <span onClick={e => handleQuestionFilter(e)} className="dropdown-item">Descending Upvote</span>
+                                        <span onClick={e => handleQuestionFilter(e)} className="dropdown-item">Ascending Upvote</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="plugin-question__board">
                                 <table className="table table-hover table-vcenter "
                                        style={{width: "max-content", maxHeight: "360px"}}>
                                     <thead>
@@ -318,7 +270,7 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                         </th>
                                         <th className="plugin-table-th">Upvote</th>
                                         <th className="plugin-table-th">
-                                        Status
+                                            Status
                                         </th>
                                         <th className="plugin-table-th">
                                             Actions
@@ -347,38 +299,36 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                                     :
                                                     <div
                                                         className="plugin-question__status plugin-question__notanswered">
-                                                        Not answered
+                                                        Not Answered
                                                     </div>
                                                 }
                                             </td>
                                             {
-                                            data.isUpvote === true ?
-                                                <td className="text-center" scope="row">
-                                                    <i onClick={e => changeQuestionStatus(e)} type="button"
-                                                       name="UpvoteIcon" className="fas fa-thumbs-up"
-                                                       style={{"fontSize": "20px"}}>
-                                                        <input name="questionId" type="hidden"
-                                                               value={data.questionId}>
-                                                               </input>
-                                                    </i>
-                                                </td>
-                                                :
-                                                <td className="text-center" scope="row">
-                                                    <i onClick={e => changeQuestionStatus(e)} type="button"
-                                                       name="UpvoteIcon" className="far fa-thumbs-up"
-                                                       style={{"fontSize": "20px"}}>
-                                                        <input name="questionId" type="hidden"
-                                                               value={data.questionId}></input>
-                                                    </i>
+                                                data.isUpvote === true ?
+                                                    <td className="text-center" scope="row">
+                                                        <i onClick={e => changeQuestionStatus(e)} type="button"
+                                                           name="UpvoteIcon" className="text-amethyst fas fa-thumbs-up"
+                                                           style={{"fontSize": "20px"}}>
+                                                            <input name="questionId" type="hidden"
+                                                                   value={data.questionId}>
+                                                            </input>
+                                                        </i>
+                                                    </td>
+                                                    :
+                                                    <td className="text-center" scope="row">
+                                                        <i onClick={e => changeQuestionStatus(e)} type="button"
+                                                           name="UpvoteIcon" className="far fa-thumbs-up"
+                                                           style={{"fontSize": "20px"}}>
+                                                            <input name="questionId" type="hidden"
+                                                                   value={data.questionId}></input>
+                                                        </i>
 
-                                                </td>
+                                                    </td>
                                             }
-
                                         </tr>
                                     )}
                                     </tbody>
                                 </table>
-
                             </div>
                             <div
                                 className="send-question-field card-footer d-flex justify-content-start align-items-center p-3"
@@ -388,29 +338,9 @@ function PresentationQuestion({connection, presentationId, viewer, groupId}) {
                                        placeholder="Type question"/>
                                 <span className="ms-3 link-info send-msg-btn"><i className="fas fa-paper-plane btn"
                                                                                  onClick={sendQuestion}></i></span>
-                                <div class="dropdown question-Sorter" id="filterQuestionDropdown">
-                                            <div name="btnFilterQuestion" type="button"
-                                                 class="btn btn-primary dropdown-toggle" id="dropdown-default-primary"
-                                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    Asc time send
-                                            </div>
-                                            <div class="dropdown-menu fs-sm" aria-labelledby="dropdown-default-primary">
-                                                <span onClick={e => handleQuestionFilter(e)}
-                                                      class="dropdown-item">Answered</span>
-                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Not answered</span>
-                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Desc time send</span>
-                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Asc time send</span>
-                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Desc upvote num</span>
-                                                <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Asc upvote num</span>
-                                                {/* <span onClick={e => handleQuestionFilter(e)} class="dropdown-item">Default</span> */}
-                                                {/* <div class="dropdown-divider"></div> */}
-                                            </div>
-                                        </div>                                     
                             </div>
                         </div>
-
                 }
-
             </div>
         </>
     );

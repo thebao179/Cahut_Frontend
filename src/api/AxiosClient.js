@@ -36,6 +36,7 @@ axiosClient.interceptors.response.use(
                 };
                 return axios(config);
             } else {
+                localStorage.setItem('prevurl', history.state.location.pathname);
                 history.navigate('/');
             }
         }

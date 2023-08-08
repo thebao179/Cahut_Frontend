@@ -36,7 +36,6 @@ function SignInForm() {
             google.accounts.id.renderButton(document.getElementById("google-signin"), {
                 theme: "dark",
                 text: "continue_with",
-                width: "300",
             });
         }
     }, [handleGoogle]);
